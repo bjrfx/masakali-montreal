@@ -2,6 +2,8 @@ import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import { ArrowRight, Play } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import useLocalizedPath from '../utils/useLocalizedPath';
 import introVideo from '../assets/video/masakali-intro.mp4';
 
 function AnimatedSection({ children, className = '', delay = 0 }) {
@@ -13,15 +15,6 @@ function AnimatedSection({ children, className = '', delay = 0 }) {
     </motion.div>
   );
 }
-
-const timeline = [
-  { year: '2021', title: 'The Beginning', desc: 'Masakali Indian Cuisine opens its first location in Stittsville, Ottawa, bringing authentic Indian flavors to the community.' },
-  { year: '2022', title: 'Growing Roots', desc: 'Expanding to Wellington Street, Ottawa. Launch of RangDe Indian Cuisine at 700 March Rd.' },
-  { year: '2023', title: 'Restobar Launch', desc: 'Masakali Restobar opens in the vibrant Byward Market, offering a modern fusion dining experience.' },
-  { year: '2024', title: 'Montreal Expansion', desc: 'Masakali arrives in Montreal, bringing our signature flavors to Quebec.' },
-  { year: '2025', title: 'Going International', desc: 'Masakali launches in Cupertino, California, USA — our first international location in the heart of Silicon Valley.' },
-  { year: '2026', title: 'Digital Future', desc: 'Launch of unified digital platform for all locations. Building the future of Masakali Restaurant Group.' },
-];
 
 function VideoPlayer({ src }) {
   const videoRef = useRef(null);
@@ -75,6 +68,24 @@ function VideoPlayer({ src }) {
 }
 
 export default function About() {
+  const { t } = useTranslation();
+  const localePath = useLocalizedPath();
+
+  const timeline = [
+    { year: '2021', titleKey: 'timeline2021Title', descKey: 'timeline2021Desc' },
+    { year: '2022', titleKey: 'timeline2022Title', descKey: 'timeline2022Desc' },
+    { year: '2023', titleKey: 'timeline2023Title', descKey: 'timeline2023Desc' },
+    { year: '2024', titleKey: 'timeline2024Title', descKey: 'timeline2024Desc' },
+    { year: '2025', titleKey: 'timeline2025Title', descKey: 'timeline2025Desc' },
+    { year: '2026', titleKey: 'timeline2026Title', descKey: 'timeline2026Desc' },
+  ];
+
+  const brandCards = [
+    { name: 'Masakali Indian Cuisine', logo: '/logo/Masakali-Indian-Cuisine.svg', descKey: 'brandMasakaliDesc', locations: 4 },
+    { name: 'Masakali Restobar', logo: '/logo/Masakali-RestoBar.png', descKey: 'brandRestobarDesc', locations: 1 },
+    { name: 'RangDe Indian Cuisine', logo: '/logo/RangDe-Indian-Cuisine.png', descKey: 'brandRangDeDesc', locations: 1 },
+  ];
+
   return (
     <div className="min-h-screen pt-20 relative">
       {/* Indian ornamental overlays */}
@@ -88,15 +99,13 @@ export default function About() {
         <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl" />
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <AnimatedSection className="max-w-3xl">
-            <span className="text-amber-500 dark:text-amber-400 text-sm font-semibold uppercase tracking-wider">About Us</span>
+            <span className="text-amber-500 dark:text-amber-400 text-sm font-semibold uppercase tracking-wider">{t('about.aboutUs')}</span>
             <div className="section-divider !mx-0" />
             <h1 className="font-display text-5xl md:text-6xl font-bold text-neutral-900 dark:text-white mt-4 mb-6">
-              The Story of <span className="text-gold-gradient">Masakali</span>
+              {t('about.storyOf')} <span className="text-gold-gradient">{t('about.masakali')}</span>
             </h1>
             <p className="text-neutral-600 dark:text-neutral-400 text-lg leading-relaxed">
-              What began as a dream in 2021 has grown into one of Canada's most exciting 
-              Indian restaurant groups. Masakali is more than a restaurant — it's a celebration 
-              of culture, flavor, and community.
+              {t('about.heroDesc')}
             </p>
           </AnimatedSection>
         </div>
@@ -112,13 +121,13 @@ export default function About() {
 
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <AnimatedSection className="text-center mb-16">
-            <span className="text-amber-500 dark:text-amber-400 text-sm font-semibold uppercase tracking-wider">Experience Masakali</span>
+            <span className="text-amber-500 dark:text-amber-400 text-sm font-semibold uppercase tracking-wider">{t('about.experienceMasakali')}</span>
             <div className="section-divider" />
             <h2 className="font-display text-4xl md:text-5xl font-bold text-neutral-900 dark:text-white mt-4">
-              A Glimpse Into Our <span className="text-gold-gradient">World</span>
+              {t('about.glimpseInto')} <span className="text-gold-gradient">{t('about.world')}</span>
             </h2>
             <p className="text-neutral-600 dark:text-neutral-400 mt-4 max-w-xl mx-auto">
-              Where tradition meets artistry — discover the essence of Masakali
+              {t('about.glimpseDesc')}
             </p>
           </AnimatedSection>
 
@@ -192,10 +201,10 @@ export default function About() {
       <section className="py-24 bg-neutral-50 dark:bg-neutral-950 bg-indian-jali relative overflow-hidden">
         <div className="max-w-4xl mx-auto px-4">
           <AnimatedSection className="text-center mb-16">
-            <span className="text-amber-500 dark:text-amber-400 text-sm font-semibold uppercase tracking-wider">Our Journey</span>
+            <span className="text-amber-500 dark:text-amber-400 text-sm font-semibold uppercase tracking-wider">{t('about.ourJourney')}</span>
             <div className="section-divider" />
             <h2 className="font-display text-4xl md:text-5xl font-bold text-neutral-900 dark:text-white mt-4">
-              The Masakali <span className="text-gold-gradient">Timeline</span>
+              {t('about.theMasakali')} <span className="text-gold-gradient">{t('about.timeline')}</span>
             </h2>
           </AnimatedSection>
 
@@ -216,8 +225,8 @@ export default function About() {
                     i % 2 === 0 ? 'md:pr-16 md:text-right' : 'md:pl-16'
                   }`}>
                     <span className="text-amber-500 dark:text-amber-400 font-bold text-xl font-display">{item.year}</span>
-                    <h3 className="text-neutral-900 dark:text-white font-semibold text-lg mt-1 mb-2">{item.title}</h3>
-                    <p className="text-neutral-500 text-sm leading-relaxed">{item.desc}</p>
+                    <h3 className="text-neutral-900 dark:text-white font-semibold text-lg mt-1 mb-2">{t(`about.${item.titleKey}`)}</h3>
+                    <p className="text-neutral-500 text-sm leading-relaxed">{t(`about.${item.descKey}`)}</p>
                   </div>
                 </div>
               </AnimatedSection>
@@ -230,19 +239,15 @@ export default function About() {
       <section className="py-24 bg-pattern bg-indian-paisley relative overflow-hidden bg-indian-arch">
         <div className="max-w-7xl mx-auto px-4">
           <AnimatedSection className="text-center mb-16">
-            <span className="text-amber-500 dark:text-amber-400 text-sm font-semibold uppercase tracking-wider">Our Family</span>
+            <span className="text-amber-500 dark:text-amber-400 text-sm font-semibold uppercase tracking-wider">{t('about.ourFamily')}</span>
             <div className="section-divider" />
             <h2 className="font-display text-4xl md:text-5xl font-bold text-neutral-900 dark:text-white mt-4">
-              Restaurant <span className="text-gold-gradient">Brands</span>
+              {t('about.restaurant')} <span className="text-gold-gradient">{t('about.brands')}</span>
             </h2>
           </AnimatedSection>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { name: 'Masakali Indian Cuisine', logo: '/logo/Masakali-Indian-Cuisine.svg', desc: 'Our flagship brand serving authentic Indian cuisine across Ottawa, Montreal, and Cupertino, California.', locations: 4 },
-              { name: 'Masakali Restobar', logo: '/logo/Masakali-RestoBar.png', desc: 'A modern Indian fusion experience at 97 Clarence St., Byward Market, Ottawa.', locations: 1 },
-              { name: 'RangDe Indian Cuisine', logo: '/logo/RangDe-Indian-Cuisine.png', desc: 'Vibrant and colorful Indian dining at 700 March Rd Unit H, Kanata.', locations: 1 },
-            ].map((brand, i) => (
+            {brandCards.map((brand, i) => (
               <AnimatedSection key={brand.name} delay={i * 0.1}>
                 <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-8 text-center card-hover gold-glow-hover shadow-sm dark:shadow-none">
                   <div className="h-20 flex items-center justify-center mb-6">
@@ -251,8 +256,8 @@ export default function About() {
                     <span className="hidden font-display text-2xl text-gold-gradient">{brand.name}</span>
                   </div>
                   <h3 className="text-neutral-900 dark:text-white font-semibold text-lg mb-2">{brand.name}</h3>
-                  <p className="text-neutral-500 text-sm mb-4">{brand.desc}</p>
-                  <span className="text-amber-500 dark:text-amber-400 text-sm">{brand.locations} Location{brand.locations > 1 ? 's' : ''}</span>
+                  <p className="text-neutral-500 text-sm mb-4">{t(`about.${brand.descKey}`)}</p>
+                  <span className="text-amber-500 dark:text-amber-400 text-sm">{brand.locations} {brand.locations > 1 ? t('home.locations') : t('home.location')}</span>
                 </div>
               </AnimatedSection>
             ))}
@@ -265,10 +270,10 @@ export default function About() {
         <div className="max-w-4xl mx-auto px-4 text-center">
           <AnimatedSection>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-6">
-              Come Be a Part of Our Story
+              {t('about.comeBePartOfStory')}
             </h2>
-            <Link to="/reservations" className="btn-gold text-lg">
-              Reserve Your Table <ArrowRight size={18} className="ml-2" />
+            <Link to={localePath('/reservations')} className="btn-gold text-lg">
+              {t('about.reserveYourTable')} <ArrowRight size={18} className="ml-2" />
             </Link>
           </AnimatedSection>
         </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ThemeProvider } from './ThemeContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -23,6 +24,58 @@ import AdminNotificationEmailSettings from './pages/admin/NotificationEmailSetti
 import AdminLayout from './components/AdminLayout';
 import ScrollToTop from './components/ScrollToTop';
 import QuickBot from './components/QuickBot/QuickBot';
+
+/**
+ * Wrapper that syncs the URL language prefix with i18next
+ * and updates the document's lang attribute + meta tags.
+ */
+function LanguageSync({ children, lang }) {
+  const { i18n } = useTranslation();
+
+  useEffect(() => {
+    const targetLang = lang === 'fr' ? 'fr' : 'en';
+    if (i18n.language !== targetLang) {
+      i18n.changeLanguage(targetLang);
+    }
+    document.documentElement.lang = targetLang;
+    localStorage.setItem('i18nextLng', targetLang);
+  }, [lang, i18n]);
+
+  return children;
+}
+
+/**
+ * Renders the public page layout (Navbar + Page + Footer)
+ */
+function PublicLayout({ children }) {
+  return (
+    <>
+      <Navbar />
+      {children}
+      <Footer />
+    </>
+  );
+}
+
+/**
+ * 404 page component
+ */
+function NotFoundPage() {
+  const { t, i18n } = useTranslation();
+  const homeLink = i18n.language === 'fr' ? '/fr' : '/';
+
+  return (
+    <PublicLayout>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-6xl font-display text-gold-gradient mb-4">404</h1>
+          <p className="text-neutral-500 dark:text-neutral-400 mb-8">{t('common.pageNotFound')}</p>
+          <a href={homeLink} className="btn-gold">{t('common.returnHome')}</a>
+        </div>
+      </div>
+    </PublicLayout>
+  );
+}
 
 function App() {
   const [adminToken, setAdminToken] = useState(localStorage.getItem('adminToken'));
@@ -60,22 +113,44 @@ function App() {
     return children;
   };
 
+  /**
+   * Build the public routes for a given language prefix.
+   * prefix = "" for English, "fr" for French.
+   */
+  const publicRoutes = (prefix) => {
+    const base = prefix ? `/${prefix}` : '';
+    return (
+      <Route path={base || '/'} element={<LanguageSync><PublicLayout><Home /></PublicLayout></LanguageSync>}>
+      </Route>
+    );
+  };
+
   return (
     <ThemeProvider>
       <Router>
         <ScrollToTop />
         <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<><Navbar /><Home /><Footer /></>} />
-          <Route path="/about" element={<><Navbar /><About /><Footer /></>} />
-          <Route path="/menu" element={<><Navbar /><Menu /><Footer /></>} />
-          <Route path="/locations" element={<><Navbar /><Locations /><Footer /></>} />
-          <Route path="/reservations" element={<><Navbar /><Reservations /><Footer /></>} />
-          <Route path="/manage-reservations" element={<><Navbar /><ManageReservations /><Footer /></>} />
-          <Route path="/catering" element={<><Navbar /><Catering /><Footer /></>} />
-          <Route path="/contact" element={<><Navbar /><Contact /><Footer /></>} />
+          {/* ===== English public routes ===== */}
+          <Route path="/" element={<LanguageSync><PublicLayout><Home /></PublicLayout></LanguageSync>} />
+          <Route path="/about" element={<LanguageSync><PublicLayout><About /></PublicLayout></LanguageSync>} />
+          <Route path="/menu" element={<LanguageSync><PublicLayout><Menu /></PublicLayout></LanguageSync>} />
+          <Route path="/locations" element={<LanguageSync><PublicLayout><Locations /></PublicLayout></LanguageSync>} />
+          <Route path="/reservations" element={<LanguageSync><PublicLayout><Reservations /></PublicLayout></LanguageSync>} />
+          <Route path="/manage-reservations" element={<LanguageSync><PublicLayout><ManageReservations /></PublicLayout></LanguageSync>} />
+          <Route path="/catering" element={<LanguageSync><PublicLayout><Catering /></PublicLayout></LanguageSync>} />
+          <Route path="/contact" element={<LanguageSync><PublicLayout><Contact /></PublicLayout></LanguageSync>} />
 
-          {/* Admin Routes */}
+          {/* ===== French public routes (/fr prefix) ===== */}
+          <Route path="/fr" element={<LanguageSync lang="fr"><PublicLayout><Home /></PublicLayout></LanguageSync>} />
+          <Route path="/fr/about" element={<LanguageSync lang="fr"><PublicLayout><About /></PublicLayout></LanguageSync>} />
+          <Route path="/fr/menu" element={<LanguageSync lang="fr"><PublicLayout><Menu /></PublicLayout></LanguageSync>} />
+          <Route path="/fr/locations" element={<LanguageSync lang="fr"><PublicLayout><Locations /></PublicLayout></LanguageSync>} />
+          <Route path="/fr/reservations" element={<LanguageSync lang="fr"><PublicLayout><Reservations /></PublicLayout></LanguageSync>} />
+          <Route path="/fr/manage-reservations" element={<LanguageSync lang="fr"><PublicLayout><ManageReservations /></PublicLayout></LanguageSync>} />
+          <Route path="/fr/catering" element={<LanguageSync lang="fr"><PublicLayout><Catering /></PublicLayout></LanguageSync>} />
+          <Route path="/fr/contact" element={<LanguageSync lang="fr"><PublicLayout><Contact /></PublicLayout></LanguageSync>} />
+
+          {/* Admin Routes (English only) */}
           <Route path="/admin/login" element={
             adminToken ? <Navigate to="/admin" replace /> : <AdminLogin onLogin={handleLogin} />
           } />
@@ -137,7 +212,8 @@ function App() {
           } />
 
           {/* 404 */}
-          <Route path="*" element={<><Navbar /><div className="min-h-screen flex items-center justify-center"><div className="text-center"><h1 className="text-6xl font-display text-gold-gradient mb-4">404</h1><p className="text-neutral-500 dark:text-neutral-400 mb-8">Page not found</p><a href="/" className="btn-gold">Return Home</a></div></div><Footer /></>} />
+          <Route path="/fr/*" element={<LanguageSync lang="fr"><NotFoundPage /></LanguageSync>} />
+          <Route path="*" element={<LanguageSync><NotFoundPage /></LanguageSync>} />
         </Routes>
       </Router>
       <QuickBot />

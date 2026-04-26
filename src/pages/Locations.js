@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import { MapPin, Phone, Mail, Globe, Clock, ExternalLink, Navigation } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import useLocalizedPath from '../utils/useLocalizedPath';
 import api from '../api';
 
 const CALIFORNIA_PHONE = '(408) 352-5097';
@@ -63,14 +65,14 @@ const locationImages = {
 
 const locationDetails = {
   wellington: { hours: 'Mon-Sun: 11:30 AM - 10:00 PM', maps: 'https://maps.google.com/?q=1111+Wellington+St+W+Ottawa+ON+K1Y+1P1' },
-  stittsville: { hours: 'Mon-Sun: 11:30 AM - 10:00 PM', maps: 'https://maps.google.com/?q=5507+Hazeldean+Rd+Unit+C3-1+Stittsville+ON+K2S+0P5', badge: 'Main Branch' },
-  montreal: { hours: 'Mon-Sun: 12:00 PM - 10:00 PM', maps: 'https://maps.google.com/?q=1015+Sherbrooke+St+W+Montreal+Quebec+H3A+1G5', badge: 'New' },
+  stittsville: { hours: 'Mon-Sun: 11:30 AM - 10:00 PM', maps: 'https://maps.google.com/?q=5507+Hazeldean+Rd+Unit+C3-1+Stittsville+ON+K2S+0P5', badgeKey: 'mainBranch' },
+  montreal: { hours: 'Mon-Sun: 12:00 PM - 10:00 PM', maps: 'https://maps.google.com/?q=1015+Sherbrooke+St+W+Montreal+Quebec+H3A+1G5', badgeKey: 'new' },
   rangde: { hours: 'Mon-Sun: 11:30 AM - 10:00 PM', maps: 'https://maps.google.com/?q=700+March+Rd+Unit+H+Kanata+ON+K2K+2V9' },
   restobar: { hours: 'Mon-Thu: 4:00 PM - 12:00 AM, Fri-Sun: 12:00 PM - 2:00 AM', maps: 'https://maps.google.com/?q=97+Clarence+St+Ottawa+ON+K1N+5P9' },
-  california: { hours: 'Now Open', maps: 'https://maps.google.com/?q=10310+S+De+Anza+Blvd+Cupertino+CA+95014', badge: 'USA' },
+  california: { hours: 'Now Open', maps: 'https://maps.google.com/?q=10310+S+De+Anza+Blvd+Cupertino+CA+95014', badgeKey: 'usa' },
 };
 
-function LocationCard({ restaurant, delay = 0 }) {
+function LocationCard({ restaurant, delay = 0, t, localePath }) {
   const details = locationDetails[restaurant.slug] || {};
   const gradient = locationImages[restaurant.slug] || 'from-amber-900/20 to-neutral-900';
   const displayPhone = resolveDisplayPhone(restaurant);
@@ -80,9 +82,9 @@ function LocationCard({ restaurant, delay = 0 }) {
       <div className="group bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden card-hover gold-glow-hover h-full flex flex-col shadow-sm dark:shadow-none">
         <div className={`h-32 bg-gradient-to-br ${gradient} flex items-center justify-center relative`}>
           <MapPin size={44} className="text-white/10 group-hover:text-white/20 transition-colors" />
-          {details.badge && (
+          {details.badgeKey && (
             <span className="absolute top-3 right-3 text-xs font-bold px-3 py-1 rounded-full bg-amber-500/90 text-black">
-              {details.badge}
+              {details.badgeKey === 'usa' ? 'USA' : t(`locations.${details.badgeKey}`)}
             </span>
           )}
         </div>
@@ -126,11 +128,11 @@ function LocationCard({ restaurant, delay = 0 }) {
           </div>
 
           <div className="flex gap-3">
-            <Link to="/reservations" className="flex-1 text-center px-4 py-2.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 rounded-lg text-sm font-medium hover:bg-amber-500/20 transition-all">
-              Reserve
+            <Link to={localePath('/reservations')} className="flex-1 text-center px-4 py-2.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 rounded-lg text-sm font-medium hover:bg-amber-500/20 transition-all">
+              {t('locations.reserve')}
             </Link>
-            <Link to="/menu" className="flex-1 text-center px-4 py-2.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all">
-              View Menu
+            <Link to={localePath('/menu')} className="flex-1 text-center px-4 py-2.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all">
+              {t('locations.viewMenu')}
             </Link>
             {details.maps && (
               <a href={details.maps} target="_blank" rel="noopener noreferrer" className="px-3 py-2.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all" title="Open in Google Maps">
@@ -152,6 +154,8 @@ function LocationCard({ restaurant, delay = 0 }) {
 }
 
 export default function Locations() {
+  const { t } = useTranslation();
+  const localePath = useLocalizedPath();
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -188,13 +192,13 @@ export default function Locations() {
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl" />
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <AnimatedSection>
-            <span className="text-amber-500 dark:text-amber-400 text-sm font-semibold uppercase tracking-wider">Our Locations</span>
+            <span className="text-amber-500 dark:text-amber-400 text-sm font-semibold uppercase tracking-wider">{t('locations.ourLocations')}</span>
             <div className="section-divider !mx-0" />
             <h1 className="font-display text-5xl md:text-6xl font-bold text-neutral-900 dark:text-white mt-4 mb-4">
-              Find a <span className="text-gold-gradient">Masakali</span> Near You
+              {t('locations.findA')} <span className="text-gold-gradient">{t('locations.masakali')}</span> {t('locations.nearYou')}
             </h1>
             <p className="text-neutral-600 dark:text-neutral-400 text-lg max-w-2xl">
-              Browse all branches grouped by country.
+              {t('locations.heroDesc')}
             </p>
           </AnimatedSection>
         </div>
@@ -219,14 +223,14 @@ export default function Locations() {
             <div className="space-y-12">
               <div>
                 <AnimatedSection className="mb-6">
-                  <h2 className="font-display text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white">USA</h2>
+                  <h2 className="font-display text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white">{t('locations.usa')}</h2>
                 </AnimatedSection>
                 {usaLocations.length === 0 ? (
-                  <p className="text-neutral-500 dark:text-neutral-400">No USA locations available yet.</p>
+                  <p className="text-neutral-500 dark:text-neutral-400">{t('locations.noUSA')}</p>
                 ) : (
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {usaLocations.map((restaurant, i) => (
-                      <LocationCard key={restaurant.id || restaurant.slug || `usa-${i}`} restaurant={restaurant} delay={i * 0.08} />
+                      <LocationCard key={restaurant.id || restaurant.slug || `usa-${i}`} restaurant={restaurant} delay={i * 0.08} t={t} localePath={localePath} />
                     ))}
                   </div>
                 )}
@@ -234,14 +238,14 @@ export default function Locations() {
 
               <div>
                 <AnimatedSection className="mb-6">
-                  <h2 className="font-display text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white">Canada</h2>
+                  <h2 className="font-display text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white">{t('locations.canada')}</h2>
                 </AnimatedSection>
                 {canadaLocations.length === 0 ? (
-                  <p className="text-neutral-500 dark:text-neutral-400">No Canada locations available yet.</p>
+                  <p className="text-neutral-500 dark:text-neutral-400">{t('locations.noCanada')}</p>
                 ) : (
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {canadaLocations.map((restaurant, i) => (
-                      <LocationCard key={restaurant.id || restaurant.slug || `canada-${i}`} restaurant={restaurant} delay={i * 0.08} />
+                      <LocationCard key={restaurant.id || restaurant.slug || `canada-${i}`} restaurant={restaurant} delay={i * 0.08} t={t} localePath={localePath} />
                     ))}
                   </div>
                 )}

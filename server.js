@@ -792,7 +792,7 @@ function buildCustomerReservationUpdatePayload(input) {
 // =====================================================
 // Email Transporter
 // =====================================================
-const SMTP_HOST = process.env.EMAIL_SMTP_HOST || process.env.EMAIL_HOST || 'mail.bdotsoftware.com';
+const SMTP_HOST = process.env.EMAIL_SMTP_HOST || process.env.EMAIL_HOST || 'smtp.hostinger.com';
 const SMTP_PORT = parseInt(process.env.EMAIL_SMTP_PORT || process.env.EMAIL_PORT || '465', 10);
 
 function createEmailTransporter(user, pass) {
