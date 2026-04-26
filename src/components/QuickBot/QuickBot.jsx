@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ChevronLeft, MessageCircleMore, Sparkles, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   createQuickBotAPI,
   getActions,
@@ -51,15 +52,15 @@ const INITIAL_CONTACT = {
   message: '',
 };
 
-const BOOK_STEPS = [
-  { id: 'location', label: 'Select Location' },
-  { id: 'date', label: 'Date' },
-  { id: 'time', label: 'Time' },
-  { id: 'persons', label: 'Guests' },
-  { id: 'name', label: 'Name' },
-  { id: 'email', label: 'Email' },
-  { id: 'phone', label: 'Phone' },
-  { id: 'special', label: 'Special Requests' },
+const BOOK_STEP_KEYS = [
+  { id: 'location', labelKey: 'quickbot.stepLocation' },
+  { id: 'date', labelKey: 'quickbot.stepDate' },
+  { id: 'time', labelKey: 'quickbot.stepTime' },
+  { id: 'persons', labelKey: 'quickbot.stepGuests' },
+  { id: 'name', labelKey: 'quickbot.stepName' },
+  { id: 'email', labelKey: 'quickbot.stepEmail' },
+  { id: 'phone', labelKey: 'quickbot.stepPhone' },
+  { id: 'special', labelKey: 'quickbot.stepSpecial' },
 ];
 
 function useTypingText(value, speed = 18) {
@@ -100,12 +101,12 @@ function sanitizePhoneInput(value) {
   return normalizePhoneDigits(value).slice(0, 10);
 }
 
-function buildProgressMeta(screen, step) {
+function buildProgressMeta(screen, step, t) {
   if (screen === 'book') {
     return {
       step,
-      total: BOOK_STEPS.length,
-      label: BOOK_STEPS[step]?.label || 'Booking',
+      total: BOOK_STEP_KEYS.length,
+      label: t(BOOK_STEP_KEYS[step]?.labelKey || 'quickbot.booking'),
     };
   }
   return null;
@@ -121,6 +122,7 @@ function filterMenuCategoryMatch(categories, label) {
 }
 
 export default function QuickBot({ config = quickBotConfig }) {
+  const { t } = useTranslation();
   const api = useMemo(() => createQuickBotAPI(config), [config]);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -157,12 +159,12 @@ export default function QuickBot({ config = quickBotConfig }) {
     [menuLocationId, locationOptions]
   );
 
-  const progressMeta = buildProgressMeta(screen, bookStep);
+  const progressMeta = buildProgressMeta(screen, bookStep, t);
   const progress = getStepProgress(progressMeta);
 
   const botMessage = hasReservations
-    ? 'Welcome back! We found your reservations.'
-    : 'Welcome! How can we assist you?';
+    ? t('quickbot.welcomeBack')
+    : t('quickbot.welcomeNew');
   const typingMessage = useTypingText(screen === 'actions' ? botMessage : '', 14);
 
   const shouldHideByRoute = config.hideOnAdminRoutes && window.location.pathname.startsWith('/admin');
@@ -189,7 +191,7 @@ export default function QuickBot({ config = quickBotConfig }) {
         }
       } catch (err) {
         if (!cancelled) {
-          setError(err.message || 'Unable to load quick bot resources.');
+          setError(err.message || t('quickbot.errorLoad'));
         }
       } finally {
         if (!cancelled) {
@@ -251,7 +253,7 @@ export default function QuickBot({ config = quickBotConfig }) {
     event.preventDefault();
     const normalizedPhone = normalizePhoneDigits(identity.phone);
     if (!identity.email || normalizedPhone.length !== 10) {
-      setError('Please enter a valid email and phone number.');
+      setError(t('quickbot.errorEmailPhone'));
       return;
     }
 
@@ -280,7 +282,7 @@ export default function QuickBot({ config = quickBotConfig }) {
 
       pushAndGo('actions');
     } catch (err) {
-      setError(err.message || 'Unable to verify your details.');
+      setError(err.message || t('quickbot.errorVerify'));
     } finally {
       setLoading(false);
     }
@@ -359,13 +361,13 @@ export default function QuickBot({ config = quickBotConfig }) {
     ];
 
     if (!validations[bookStep]) {
-      setError('Please complete this step before continuing.');
+      setError(t('quickbot.errorCompleteStep'));
       return;
     }
 
     setError('');
 
-    if (bookStep === BOOK_STEPS.length - 1) {
+    if (bookStep === BOOK_STEP_KEYS.length - 1) {
       submitBooking();
       return;
     }
@@ -384,12 +386,12 @@ export default function QuickBot({ config = quickBotConfig }) {
         restaurants,
       });
 
-      setSuccessMessage('Your reservation has been confirmed.');
+      setSuccessMessage(t('quickbot.reservationConfirmed'));
       setLookupReservations(await api.findReservations(identity));
       setHasReservations(true);
       pushAndGo('success');
     } catch (err) {
-      setError(err.message || 'Failed to submit reservation.');
+      setError(err.message || t('quickbot.errorSubmitReservation'));
     } finally {
       setLoading(false);
     }
@@ -409,7 +411,7 @@ export default function QuickBot({ config = quickBotConfig }) {
   async function submitReservationUpdate(event) {
     event.preventDefault();
     if (!selectedReservation) {
-      setError('Please select a reservation first.');
+      setError(t('quickbot.errorSelectReservation'));
       return;
     }
 
@@ -424,10 +426,10 @@ export default function QuickBot({ config = quickBotConfig }) {
       });
       const refreshed = await api.findReservations(identity);
       setLookupReservations(refreshed);
-      setSuccessMessage('Your reservation has been updated.');
+      setSuccessMessage(t('quickbot.reservationUpdated'));
       pushAndGo('success');
     } catch (err) {
-      setError(err.message || 'Failed to update reservation.');
+      setError(err.message || t('quickbot.errorUpdateReservation'));
     } finally {
       setLoading(false);
     }
@@ -441,7 +443,7 @@ export default function QuickBot({ config = quickBotConfig }) {
       const results = await api.searchMenu({ location: activeMenuLocation, query: menuSearch });
       setMenuItems(results);
     } catch (err) {
-      setError(err.message || 'Failed to search menu items.');
+      setError(err.message || t('quickbot.errorSearchMenu'));
     } finally {
       setLoading(false);
     }
@@ -468,7 +470,7 @@ export default function QuickBot({ config = quickBotConfig }) {
       });
       setMenuItems(filtered.length ? filtered : results);
     } catch (err) {
-      setError(err.message || 'Failed to fetch category menu.');
+      setError(err.message || t('quickbot.errorFetchCategory'));
     } finally {
       setLoading(false);
     }
@@ -481,10 +483,10 @@ export default function QuickBot({ config = quickBotConfig }) {
       setError('');
       const locationName = locationOptions.find((item) => item.id === catering.event_location)?.name || catering.event_location;
       await api.submitCatering({ ...catering, event_location: locationName });
-      setSuccessMessage('Your catering request has been submitted.');
+      setSuccessMessage(t('quickbot.cateringSubmitted'));
       pushAndGo('success');
     } catch (err) {
-      setError(err.message || 'Failed to submit catering request.');
+      setError(err.message || t('quickbot.errorSubmitCatering'));
     } finally {
       setLoading(false);
     }
@@ -496,10 +498,10 @@ export default function QuickBot({ config = quickBotConfig }) {
       setLoading(true);
       setError('');
       await api.submitContact(contact);
-      setSuccessMessage('Your message has been sent.');
+      setSuccessMessage(t('quickbot.messageSent'));
       pushAndGo('success');
     } catch (err) {
-      setError(err.message || 'Failed to submit contact form.');
+      setError(err.message || t('quickbot.errorSubmitContact'));
     } finally {
       setLoading(false);
     }
@@ -509,13 +511,13 @@ export default function QuickBot({ config = quickBotConfig }) {
     if (bookStep === 0) {
       return (
         <div>
-          <label className="quickbot-label">Location</label>
+          <label className="quickbot-label">{t('quickbot.location')}</label>
           <select
             className="quickbot-select"
             value={book.locationId}
             onChange={(event) => setBook((prev) => ({ ...prev, locationId: event.target.value }))}
           >
-            <option value="">Select location</option>
+            <option value="">{t('quickbot.selectLocation')}</option>
             {locationOptions.map((location) => (
               <option key={location.id} value={location.id}>
                 {location.name}
@@ -529,7 +531,7 @@ export default function QuickBot({ config = quickBotConfig }) {
     if (bookStep === 1) {
       return (
         <div>
-          <label className="quickbot-label">Reservation Date</label>
+          <label className="quickbot-label">{t('quickbot.reservationDate')}</label>
           <input
             className="quickbot-input"
             type="date"
@@ -544,7 +546,7 @@ export default function QuickBot({ config = quickBotConfig }) {
     if (bookStep === 2) {
       return (
         <div>
-          <label className="quickbot-label">Reservation Time</label>
+          <label className="quickbot-label">{t('quickbot.reservationTime')}</label>
           <input
             className="quickbot-input"
             type="time"
@@ -558,7 +560,7 @@ export default function QuickBot({ config = quickBotConfig }) {
     if (bookStep === 3) {
       return (
         <div>
-          <label className="quickbot-label">Number of Guests</label>
+          <label className="quickbot-label">{t('quickbot.numberOfGuests')}</label>
           <input
             className="quickbot-input"
             type="number"
@@ -574,7 +576,7 @@ export default function QuickBot({ config = quickBotConfig }) {
     if (bookStep === 4) {
       return (
         <div>
-          <label className="quickbot-label">Your Name</label>
+          <label className="quickbot-label">{t('quickbot.yourName')}</label>
           <input
             className="quickbot-input"
             value={book.name}
@@ -587,7 +589,7 @@ export default function QuickBot({ config = quickBotConfig }) {
     if (bookStep === 5) {
       return (
         <div>
-          <label className="quickbot-label">Email</label>
+          <label className="quickbot-label">{t('quickbot.email')}</label>
           <input
             className="quickbot-input"
             type="email"
@@ -601,7 +603,7 @@ export default function QuickBot({ config = quickBotConfig }) {
     if (bookStep === 6) {
       return (
         <div>
-          <label className="quickbot-label">Phone</label>
+          <label className="quickbot-label">{t('quickbot.phone')}</label>
           <input
             className="quickbot-input"
               inputMode="numeric"
@@ -616,12 +618,12 @@ export default function QuickBot({ config = quickBotConfig }) {
 
     return (
       <div>
-        <label className="quickbot-label">Special Requests</label>
+        <label className="quickbot-label">{t('quickbot.specialRequests')}</label>
         <textarea
           className="quickbot-textarea"
           value={book.special_requests}
           onChange={(event) => setBook((prev) => ({ ...prev, special_requests: event.target.value }))}
-          placeholder="Allergies, celebrations, seating preferences..."
+          placeholder={t('quickbot.specialRequestsPlaceholder')}
         />
       </div>
     );
@@ -631,9 +633,9 @@ export default function QuickBot({ config = quickBotConfig }) {
     if (screen === 'identify') {
       return (
         <form className="quickbot-form" onSubmit={handleIdentifySubmit}>
-          <div className="quickbot-bubble">Enter your phone and email so we can quickly assist you.</div>
+          <div className="quickbot-bubble">{t('quickbot.identifyBubble')}</div>
           <div>
-            <label className="quickbot-label">Phone Number</label>
+            <label className="quickbot-label">{t('quickbot.phoneNumber')}</label>
             <input
               className="quickbot-input"
               inputMode="numeric"
@@ -645,7 +647,7 @@ export default function QuickBot({ config = quickBotConfig }) {
             />
           </div>
           <div>
-            <label className="quickbot-label">Email Address</label>
+            <label className="quickbot-label">{t('quickbot.emailAddress')}</label>
             <input
               className="quickbot-input"
               type="email"
@@ -655,7 +657,7 @@ export default function QuickBot({ config = quickBotConfig }) {
             />
           </div>
           <button className="quickbot-btn primary" type="submit" disabled={loading}>
-            {loading ? 'Checking...' : 'Continue'}
+            {loading ? t('quickbot.checking') : t('quickbot.continue')}
           </button>
         </form>
       );
@@ -689,7 +691,7 @@ export default function QuickBot({ config = quickBotConfig }) {
     if (screen === 'book') {
       return (
         <form className="quickbot-form" onSubmit={handleBookNext}>
-          <div className="quickbot-bubble">{BOOK_STEPS[bookStep]?.label}</div>
+          <div className="quickbot-bubble">{t(BOOK_STEP_KEYS[bookStep]?.labelKey || 'quickbot.booking')}</div>
           {renderBookingStep()}
           <div className="quickbot-grid two">
             <button
@@ -703,10 +705,10 @@ export default function QuickBot({ config = quickBotConfig }) {
                 }
               }}
             >
-              Back
+              {t('quickbot.back')}
             </button>
             <button type="submit" className="quickbot-btn primary" disabled={loading}>
-              {bookStep === BOOK_STEPS.length - 1 ? (loading ? 'Submitting...' : 'Submit') : 'Next'}
+              {bookStep === BOOK_STEP_KEYS.length - 1 ? (loading ? t('quickbot.submitting') : t('quickbot.submit')) : t('quickbot.next')}
             </button>
           </div>
         </form>
@@ -716,25 +718,25 @@ export default function QuickBot({ config = quickBotConfig }) {
     if (screen === 'view-reservations') {
       return (
         <div className="quickbot-grid">
-          {!lookupReservations.length && <div className="quickbot-empty">No reservations found for this profile.</div>}
+          {!lookupReservations.length && <div className="quickbot-empty">{t('quickbot.noReservationsFound')}</div>}
           {lookupReservations.map((item) => (
             <div className="quickbot-card" key={item.id}>
-              <h4 className="quickbot-card-title">{item.restaurant_name || 'Reservation'}</h4>
+              <h4 className="quickbot-card-title">{item.restaurant_name || t('quickbot.reservation')}</h4>
               <p className="quickbot-meta">
-                Date: {item.date}<br />
-                Time: {item.time}<br />
-                Guests: {item.persons}<br />
-                Status: {item.status}
+                {t('quickbot.date')}: {item.date}<br />
+                {t('quickbot.time')}: {item.time}<br />
+                {t('quickbot.guests')}: {item.persons}<br />
+                {t('quickbot.status')}: {item.status}
               </p>
               <div className="quickbot-grid two">
                 {/* <button className="quickbot-btn secondary" onClick={() => startUpdateReservation(item)}>
                   Update Reservation
                 </button> */}
                 <button className="quickbot-btn secondary" onClick={() => pushAndGo('cancel-fallback')}>
-                  Update Reservation
+                  {t('quickbot.updateReservation')}
                 </button>
                 <button className="quickbot-btn ghost" onClick={() => pushAndGo('cancel-fallback')}>
-                  Cancel Reservation
+                  {t('quickbot.cancelReservation')}
                 </button>
               </div>
             </div>
@@ -746,11 +748,11 @@ export default function QuickBot({ config = quickBotConfig }) {
     if (screen === 'choose-reservation-to-update') {
       return (
         <div className="quickbot-grid">
-          <div className="quickbot-bubble">Select a reservation to update.</div>
-          {!lookupReservations.length && <div className="quickbot-empty">No reservations found for this profile.</div>}
+          <div className="quickbot-bubble">{t('quickbot.selectReservationToUpdate')}</div>
+          {!lookupReservations.length && <div className="quickbot-empty">{t('quickbot.noReservationsFound')}</div>}
           {lookupReservations.map((item) => (
             <button key={item.id} className="quickbot-btn secondary" onClick={() => startUpdateReservation(item)}>
-              {item.date} · {item.time} · {item.persons} guests
+              {item.date} · {item.time} · {item.persons} {t('quickbot.guests')}
             </button>
           ))}
         </div>
@@ -760,9 +762,9 @@ export default function QuickBot({ config = quickBotConfig }) {
     if (screen === 'update-reservation') {
       return (
         <form className="quickbot-form" onSubmit={submitReservationUpdate}>
-          <div className="quickbot-bubble">Update Reservation</div>
+          <div className="quickbot-bubble">{t('quickbot.updateReservation')}</div>
           <div>
-            <label className="quickbot-label">Date</label>
+            <label className="quickbot-label">{t('quickbot.date')}</label>
             <input
               type="date"
               className="quickbot-input"
@@ -772,7 +774,7 @@ export default function QuickBot({ config = quickBotConfig }) {
             />
           </div>
           <div>
-            <label className="quickbot-label">Time</label>
+            <label className="quickbot-label">{t('quickbot.time')}</label>
             <input
               type="time"
               className="quickbot-input"
@@ -781,7 +783,7 @@ export default function QuickBot({ config = quickBotConfig }) {
             />
           </div>
           <div>
-            <label className="quickbot-label">Guests</label>
+            <label className="quickbot-label">{t('quickbot.guests')}</label>
             <input
               type="number"
               min="1"
@@ -792,7 +794,7 @@ export default function QuickBot({ config = quickBotConfig }) {
             />
           </div>
           <div>
-            <label className="quickbot-label">Special Request</label>
+            <label className="quickbot-label">{t('quickbot.specialRequest')}</label>
             <textarea
               className="quickbot-textarea"
               value={reservationUpdate.special_requests}
@@ -800,7 +802,7 @@ export default function QuickBot({ config = quickBotConfig }) {
             />
           </div>
           <button className="quickbot-btn primary" type="submit" disabled={loading}>
-            {loading ? 'Updating...' : 'Save Update'}
+            {loading ? t('quickbot.updating') : t('quickbot.saveUpdate')}
           </button>
         </form>
       );
@@ -810,12 +812,12 @@ export default function QuickBot({ config = quickBotConfig }) {
       return (
         <div className="quickbot-form">
           <form onSubmit={runMenuSearch} className="quickbot-form">
-            <label className="quickbot-label">Search Menu Item</label>
+            <label className="quickbot-label">{t('quickbot.searchMenuItem')}</label>
             <input
               className="quickbot-input"
               value={menuSearch}
               onChange={(event) => setMenuSearch(event.target.value)}
-              placeholder="Type dish name..."
+              placeholder={t('quickbot.typeDishName')}
             />
             <label className="quickbot-label">Location</label>
             <select
@@ -830,7 +832,7 @@ export default function QuickBot({ config = quickBotConfig }) {
               ))}
             </select>
             <button className="quickbot-btn primary" type="submit" disabled={loading}>
-              {loading ? 'Searching...' : 'Search'}
+              {loading ? t('quickbot.searching') : t('quickbot.search')}
             </button>
           </form>
           {!!menuItems.length && (
@@ -843,16 +845,16 @@ export default function QuickBot({ config = quickBotConfig }) {
                       <h4 className="quickbot-card-title">{item.name}</h4>
                       <p className="quickbot-meta">
                         ${item.price.toFixed(2)}<br />
-                        {item.description || 'No description available.'}
+                        {item.description || t('quickbot.noDescription')}
                       </p>
-                      <span className="quickbot-badge">Spice: {item.spice_level || 'medium'}</span>
+                      <span className="quickbot-badge">{t('quickbot.spice')}: {item.spice_level || 'medium'}</span>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
           )}
-          {!loading && !menuItems.length && <div className="quickbot-empty">Search results will appear here.</div>}
+          {!loading && !menuItems.length && <div className="quickbot-empty">{t('quickbot.searchResultsHere')}</div>}
         </div>
       );
     }
@@ -860,7 +862,7 @@ export default function QuickBot({ config = quickBotConfig }) {
     if (screen === 'view-menu') {
       return (
         <div className="quickbot-form">
-          <label className="quickbot-label">Location</label>
+          <label className="quickbot-label">{t('quickbot.location')}</label>
           <select className="quickbot-select" value={menuLocationId} onChange={(event) => setMenuLocationId(event.target.value)}>
             {locationOptions.map((location) => (
               <option key={location.id} value={location.id}>
@@ -886,7 +888,7 @@ export default function QuickBot({ config = quickBotConfig }) {
                   <h4 className="quickbot-card-title">{item.name}</h4>
                   <p className="quickbot-meta">
                     ${item.price.toFixed(2)}<br />
-                    {item.description || 'No description available.'}
+                    {item.description || t('quickbot.noDescription')}
                   </p>
                 </div>
               ))}
@@ -900,7 +902,7 @@ export default function QuickBot({ config = quickBotConfig }) {
       return (
         <form className="quickbot-form" onSubmit={submitCatering}>
           <div>
-            <label className="quickbot-label">Event Type</label>
+            <label className="quickbot-label">{t('quickbot.eventType')}</label>
             <input
               className="quickbot-input"
               value={catering.event_type}
@@ -908,7 +910,7 @@ export default function QuickBot({ config = quickBotConfig }) {
             />
           </div>
           <div>
-            <label className="quickbot-label">Event Date</label>
+            <label className="quickbot-label">{t('quickbot.eventDate')}</label>
             <input
               type="date"
               min={todayISO()}
@@ -918,7 +920,7 @@ export default function QuickBot({ config = quickBotConfig }) {
             />
           </div>
           <div>
-            <label className="quickbot-label">Number of Guests</label>
+            <label className="quickbot-label">{t('quickbot.numberOfGuests')}</label>
             <input
               type="number"
               min="10"
@@ -934,7 +936,7 @@ export default function QuickBot({ config = quickBotConfig }) {
               value={catering.event_location}
               onChange={(event) => setCatering((prev) => ({ ...prev, event_location: event.target.value }))}
             >
-              <option value="">Select location</option>
+              <option value="">{t('quickbot.selectLocation')}</option>
               {locationOptions.map((location) => (
                 <option key={location.id} value={location.id}>
                   {location.name}
@@ -943,7 +945,7 @@ export default function QuickBot({ config = quickBotConfig }) {
             </select>
           </div>
           <div>
-            <label className="quickbot-label">Notes</label>
+            <label className="quickbot-label">{t('quickbot.notes')}</label>
             <textarea
               className="quickbot-textarea"
               value={catering.notes}
@@ -951,7 +953,7 @@ export default function QuickBot({ config = quickBotConfig }) {
             />
           </div>
           <div>
-            <label className="quickbot-label">Name</label>
+            <label className="quickbot-label">{t('quickbot.name')}</label>
             <input
               className="quickbot-input"
               value={catering.name}
@@ -959,7 +961,7 @@ export default function QuickBot({ config = quickBotConfig }) {
             />
           </div>
           <div>
-            <label className="quickbot-label">Email</label>
+            <label className="quickbot-label">{t('quickbot.email')}</label>
             <input
               type="email"
               className="quickbot-input"
@@ -968,7 +970,7 @@ export default function QuickBot({ config = quickBotConfig }) {
             />
           </div>
           <div>
-            <label className="quickbot-label">Phone</label>
+            <label className="quickbot-label">{t('quickbot.phone')}</label>
             <input
               className="quickbot-input"
               inputMode="numeric"
@@ -979,7 +981,7 @@ export default function QuickBot({ config = quickBotConfig }) {
             />
           </div>
           <button className="quickbot-btn primary" type="submit" disabled={loading}>
-            {loading ? 'Submitting...' : 'Submit Catering Request'}
+            {loading ? t('quickbot.submitting') : t('quickbot.submitCateringRequest')}
           </button>
         </form>
       );
@@ -989,7 +991,7 @@ export default function QuickBot({ config = quickBotConfig }) {
       return (
         <form className="quickbot-form" onSubmit={submitContact}>
           <div>
-            <label className="quickbot-label">Name</label>
+            <label className="quickbot-label">{t('quickbot.name')}</label>
             <input
               className="quickbot-input"
               value={contact.name}
@@ -997,7 +999,7 @@ export default function QuickBot({ config = quickBotConfig }) {
             />
           </div>
           <div>
-            <label className="quickbot-label">Email</label>
+            <label className="quickbot-label">{t('quickbot.email')}</label>
             <input
               type="email"
               className="quickbot-input"
@@ -1006,7 +1008,7 @@ export default function QuickBot({ config = quickBotConfig }) {
             />
           </div>
           <div>
-            <label className="quickbot-label">Phone</label>
+            <label className="quickbot-label">{t('quickbot.phone')}</label>
             <input
               className="quickbot-input"
               inputMode="numeric"
@@ -1017,7 +1019,7 @@ export default function QuickBot({ config = quickBotConfig }) {
             />
           </div>
           <div>
-            <label className="quickbot-label">Message</label>
+            <label className="quickbot-label">{t('quickbot.message')}</label>
             <textarea
               className="quickbot-textarea"
               value={contact.message}
@@ -1025,7 +1027,7 @@ export default function QuickBot({ config = quickBotConfig }) {
             />
           </div>
           <button className="quickbot-btn primary" type="submit" disabled={loading}>
-            {loading ? 'Sending...' : 'Send Message'}
+            {loading ? t('quickbot.sending') : t('quickbot.sendMessage')}
           </button>
         </form>
       );
@@ -1034,13 +1036,13 @@ export default function QuickBot({ config = quickBotConfig }) {
     if (screen === 'locations') {
       return (
         <div className="quickbot-grid">
-          {restaurants.length === 0 && <div className="quickbot-empty">No locations available right now.</div>}
+          {restaurants.length === 0 && <div className="quickbot-empty">{t('quickbot.noLocations')}</div>}
           {restaurants.map((location) => (
             <div key={location.id} className="quickbot-card">
               <h4 className="quickbot-card-title">{location.name}</h4>
               <p className="quickbot-meta">
                 {location.address}<br />
-                {location.phone || 'Phone not available'}<br />
+                {location.phone || t('quickbot.phoneNotAvailable')}<br />
                 {location.opening_hours}
               </p>
               <div className="quickbot-grid two">
@@ -1052,7 +1054,7 @@ export default function QuickBot({ config = quickBotConfig }) {
                     pushAndGo('view-menu');
                   }}
                 >
-                  View Menu
+                  {t('quickbot.viewMenu')}
                 </button>
                 <button
                   className="quickbot-btn primary"
@@ -1063,7 +1065,7 @@ export default function QuickBot({ config = quickBotConfig }) {
                     pushAndGo('book');
                   }}
                 >
-                  Book Table
+                  {t('quickbot.bookTable')}
                 </button>
               </div>
             </div>
@@ -1075,7 +1077,7 @@ export default function QuickBot({ config = quickBotConfig }) {
     if (screen === 'call') {
       return (
         <div className="quickbot-grid">
-          <div className="quickbot-bubble">Choose a location to call directly.</div>
+          <div className="quickbot-bubble">{t('quickbot.chooseLocationToCall')}</div>
           {locationOptions.map((location) => (
             <a
               key={location.id}
@@ -1084,7 +1086,7 @@ export default function QuickBot({ config = quickBotConfig }) {
               onClick={(event) => {
                 if (!location.tel) {
                   event.preventDefault();
-                  setError('Phone number is currently unavailable for this location.');
+                  setError(t('quickbot.phoneUnavailable'));
                 }
               }}
             >
@@ -1099,7 +1101,7 @@ export default function QuickBot({ config = quickBotConfig }) {
       return (
         <div className="quickbot-form">
           <div className="quickbot-bubble">
-            Cancellation requires staff confirmation. Please call us and we will process it.
+            {t('quickbot.cancelFallbackMessage')}
             <br />
             {locationOptions.map((location) => (
             <a
@@ -1109,7 +1111,7 @@ export default function QuickBot({ config = quickBotConfig }) {
               onClick={(event) => {
                 if (!location.tel) {
                   event.preventDefault();
-                  setError('Phone number is currently unavailable for this location.');
+                  setError(t('quickbot.phoneUnavailable'));
                 }
               }}
             >
@@ -1126,12 +1128,12 @@ export default function QuickBot({ config = quickBotConfig }) {
                 phone: prev.phone || identity.phone,
                 message:
                   prev.message ||
-                  'Please cancel my reservation. I can confirm details by phone/email if needed.',
+                  t('quickbot.cancelMessage'),
               }));
               pushAndGo('contact');
             }}
           >
-            Continue to Contact Us
+            {t('quickbot.continueToContact')}
           </button>
         </div>
       );
@@ -1140,15 +1142,15 @@ export default function QuickBot({ config = quickBotConfig }) {
     if (screen === 'success') {
       return (
         <div className="quickbot-form">
-          <div className="quickbot-bubble">{successMessage || 'Done successfully.'}</div>
+          <div className="quickbot-bubble">{successMessage || t('quickbot.doneSuccessfully')}</div>
           <button className="quickbot-btn primary" onClick={() => setScreen('actions')}>
-            Back to Actions
+            {t('quickbot.backToActions')}
           </button>
         </div>
       );
     }
 
-    return <div className="quickbot-empty">Select an option to continue.</div>;
+    return <div className="quickbot-empty">{t('quickbot.selectOption')}</div>;
   }
 
   return (
@@ -1166,7 +1168,7 @@ export default function QuickBot({ config = quickBotConfig }) {
           )}
           <div className="quickbot-title-wrap">
             <h3 className="quickbot-title">{config.assistantName || 'Quick Bot'}</h3>
-            <p className="quickbot-subtitle">Fast help for reservations, menu, catering and contact.</p>
+            <p className="quickbot-subtitle">{t('quickbot.subtitle')}</p>
           </div>
           <button className="quickbot-icon-btn" onClick={() => setIsOpen(false)} aria-label="Close">
             <X size={15} />

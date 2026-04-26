@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Search, Filter, ChefHat, Flame, Leaf, ChevronDown, ChevronUp, LayoutGrid, List } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import api from '../api';
+import menuTranslationsFr from '../data/menu_translations_fr.json';
 
 function AnimatedSection({ children, className = '', delay = 0 }) {
   const ref = useRef(null);
@@ -13,19 +15,22 @@ function AnimatedSection({ children, className = '', delay = 0 }) {
   );
 }
 
-const spiceColors = {
-  mild: { bg: 'bg-green-500/10', text: 'text-green-600 dark:text-green-400', label: 'Mild' },
-  medium: { bg: 'bg-yellow-500/10', text: 'text-yellow-600 dark:text-yellow-400', label: 'Medium' },
-  hot: { bg: 'bg-orange-500/10', text: 'text-orange-600 dark:text-orange-400', label: 'Hot' },
-  extra_hot: { bg: 'bg-red-500/10', text: 'text-red-600 dark:text-red-400', label: 'Extra Hot' },
-};
-
 function getItemImageUrl(item) {
   const firstImage = Array.isArray(item.images) ? item.images[0]?.source : null;
   return firstImage || item.image_url || null;
 }
 
 export default function Menu() {
+  const { t, i18n } = useTranslation();
+  const isFrench = i18n.language === 'fr';
+
+  const spiceColors = {
+    mild: { bg: 'bg-green-500/10', text: 'text-green-600 dark:text-green-400', label: t('menu.mild') },
+    medium: { bg: 'bg-yellow-500/10', text: 'text-yellow-600 dark:text-yellow-400', label: t('menu.medium') },
+    hot: { bg: 'bg-orange-500/10', text: 'text-orange-600 dark:text-orange-400', label: t('menu.hot') },
+    extra_hot: { bg: 'bg-red-500/10', text: 'text-red-600 dark:text-red-400', label: t('menu.extraHot') },
+  };
+
   const [categories, setCategories] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
   const [activeCategory, setActiveCategory] = useState(null);
@@ -45,9 +50,26 @@ export default function Menu() {
       .catch(err => { console.error(err); setLoading(false); });
   }, []);
 
+  // Get localized name/description for an item
+  const getLocalizedItem = (item) => {
+    if (!isFrench) return { name: item.name, description: item.description };
+    const frTranslation = menuTranslationsFr.items?.[item.id];
+    return {
+      name: frTranslation?.name || item.name,
+      description: frTranslation?.description || item.description,
+    };
+  };
+
+  // Get localized category name
+  const getLocalizedCategoryName = (cat) => {
+    if (!isFrench) return cat.name;
+    return menuTranslationsFr.categories?.[cat.id]?.name || cat.name;
+  };
+
   const filteredItems = menuItems.filter(item => {
     if (activeCategory && item.category_id !== activeCategory) return false;
-    if (search && !item.name.toLowerCase().includes(search.toLowerCase()) && !item.description?.toLowerCase().includes(search.toLowerCase())) return false;
+    const localized = getLocalizedItem(item);
+    if (search && !localized.name.toLowerCase().includes(search.toLowerCase()) && !localized.description?.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
 
@@ -55,6 +77,7 @@ export default function Menu() {
     .filter(cat => !activeCategory || cat.id === activeCategory)
     .map(cat => ({
       ...cat,
+      localizedName: getLocalizedCategoryName(cat),
       items: filteredItems.filter(item => item.category_id === cat.id),
     }))
     .filter(cat => cat.items.length > 0);
@@ -72,14 +95,13 @@ export default function Menu() {
         <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl" />
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <AnimatedSection>
-            <span className="text-amber-500 dark:text-amber-400 text-sm font-semibold uppercase tracking-wider">Our Menu</span>
+            <span className="text-amber-500 dark:text-amber-400 text-sm font-semibold uppercase tracking-wider">{t('menu.ourMenu')}</span>
             <div className="section-divider !mx-0" />
             <h1 className="font-display text-5xl md:text-6xl font-bold text-neutral-900 dark:text-white mt-4 mb-4">
-              <span className="text-gold-gradient">Menu</span>
+              <span className="text-gold-gradient">{t('menu.menu')}</span>
             </h1>
             <p className="text-neutral-600 dark:text-neutral-400 text-lg max-w-2xl">
-              Discover our carefully curated menu featuring authentic Indian dishes,
-              from classic curries to innovative creations.
+              {t('menu.menuDesc')}
             </p>
           </AnimatedSection>
         </div>
@@ -91,7 +113,7 @@ export default function Menu() {
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-sm font-medium text-neutral-600 dark:text-neutral-300">
               <Filter size={16} className="text-amber-500" />
-              <span>Menu Filters</span>
+              <span>{t('menu.menuFilters')}</span>
             </div>
             <button
               onClick={() => setIsFiltersOpen(!isFiltersOpen)}
@@ -99,7 +121,7 @@ export default function Menu() {
               aria-expanded={isFiltersOpen}
               aria-controls="menu-filters-panel"
             >
-              <span>{isFiltersOpen ? 'Close' : 'Open'}</span>
+              <span>{isFiltersOpen ? t('menu.close') : t('menu.open')}</span>
               {isFiltersOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </button>
           </div>
@@ -110,7 +132,7 @@ export default function Menu() {
                 <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500" />
                 <input
                   type="text"
-                  placeholder="Search dishes..."
+                  placeholder={t('menu.searchDishes')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="input-dark !pl-10"
@@ -127,7 +149,7 @@ export default function Menu() {
                     }`}
                   aria-pressed={viewMode === 'compact'}
                 >
-                  <LayoutGrid size={15} /> Compact
+                  <LayoutGrid size={15} /> {t('menu.compact')}
                 </button>
                 <button
                   type="button"
@@ -138,7 +160,7 @@ export default function Menu() {
                     }`}
                   aria-pressed={viewMode === 'card'}
                 >
-                  <LayoutGrid size={15} /> Card
+                  <LayoutGrid size={15} /> {t('menu.card')}
                 </button>
                 <button
                   type="button"
@@ -149,7 +171,7 @@ export default function Menu() {
                     }`}
                   aria-pressed={viewMode === 'list'}
                 >
-                  <List size={15} /> List
+                  <List size={15} /> {t('menu.list')}
                 </button>
               </div>
 
@@ -160,7 +182,7 @@ export default function Menu() {
                     className={`whitespace-nowrap px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${!activeCategory ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700 hover:text-neutral-900 dark:hover:text-white'
                       }`}
                   >
-                    All
+                    {t('menu.all')}
                   </button>
                   {categories.map(cat => (
                     <button
@@ -169,7 +191,7 @@ export default function Menu() {
                       className={`whitespace-nowrap px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${activeCategory === cat.id ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700 hover:text-neutral-900 dark:hover:text-white'
                         }`}
                     >
-                      {cat.name}
+                      {getLocalizedCategoryName(cat)}
                     </button>
                   ))}
                 </div>
@@ -198,7 +220,7 @@ export default function Menu() {
           ) : groupedItems.length === 0 ? (
             <div className="text-center py-20">
               <ChefHat size={48} className="text-neutral-300 dark:text-neutral-700 mx-auto mb-4" />
-              <p className="text-neutral-500 text-lg">No dishes found matching your filters.</p>
+              <p className="text-neutral-500 text-lg">{t('menu.noDishesFound')}</p>
             </div>
           ) : (
             groupedItems.map((category) => (
@@ -206,35 +228,32 @@ export default function Menu() {
                 <AnimatedSection>
                   <div className="flex items-center gap-4 mb-8">
                     <h2 className="font-display text-2xl md:text-3xl font-bold text-neutral-900 dark:text-white">
-                      {category.name}
+                      {category.localizedName}
                     </h2>
                     <div className="flex-1 h-px bg-neutral-200 dark:bg-neutral-800" />
-                    <span className="text-neutral-400 dark:text-neutral-600 text-sm">{category.items.length} items</span>
+                    <span className="text-neutral-400 dark:text-neutral-600 text-sm">{category.items.length} {t('menu.items')}</span>
                   </div>
                 </AnimatedSection>
 
                 {viewMode === 'compact' ? (
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                     {category.items.map((item, i) => {
-                      const spice = spiceColors[item.spice_level] || spiceColors.medium;
+                      const localized = getLocalizedItem(item);
                       return (
                         <AnimatedSection key={item.id} delay={Math.min(i * 0.03, 0.2)}>
                           <div className="bg-white/80 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-xl p-4 h-full shadow-sm dark:shadow-none">
                             <h3 className="text-neutral-900 dark:text-white font-semibold text-sm leading-tight mb-2 line-clamp-2">
-                              {item.name}
+                              {localized.name}
                             </h3>
                             <p className="text-neutral-500 text-xs mb-3 line-clamp-2 min-h-[2rem]">
-                              {item.description || 'No description available.'}
+                              {localized.description || t('menu.noDescription')}
                             </p>
                             <div className="flex items-center gap-2 flex-wrap">
                               {item.is_vegetarian && (
                                 <span className="inline-flex items-center gap-1 text-[11px] px-2 py-1 bg-green-500/10 text-green-600 dark:text-green-400 rounded-full">
-                                  <Leaf size={10} /> Veg
+                                  <Leaf size={10} /> {t('menu.veg')}
                                 </span>
                               )}
-                              {/* <span className={`inline-flex items-center gap-1 text-[11px] px-2 py-1 ${spice.bg} ${spice.text} rounded-full`}>
-                                <Flame size={10} /> {spice.label}
-                              </span> */}
                             </div>
                           </div>
                         </AnimatedSection>
@@ -244,6 +263,7 @@ export default function Menu() {
                 ) : viewMode === 'card' ? (
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {category.items.map((item, i) => {
+                      const localized = getLocalizedItem(item);
                       const spice = spiceColors[item.spice_level] || spiceColors.medium;
                       const imageUrl = getItemImageUrl(item);
                       const hasImage = Boolean(imageUrl) && !brokenImages[item.id];
@@ -254,7 +274,7 @@ export default function Menu() {
                               {hasImage ? (
                                 <img
                                   src={imageUrl}
-                                  alt={item.name}
+                                  alt={localized.name}
                                   loading="lazy"
                                   referrerPolicy="no-referrer"
                                   className="w-full h-full object-cover"
@@ -265,20 +285,20 @@ export default function Menu() {
                               )}
                               {item.is_featured && (
                                 <span className="absolute top-3 right-3 px-2 py-1 bg-amber-500 text-black text-xs font-bold rounded-full">
-                                  ★ Featured
+                                  {t('menu.featured')}
                                 </span>
                               )}
                             </div>
 
                             <div className="p-6">
                               <div className="flex items-start justify-between mb-2">
-                                <h3 className="text-neutral-900 dark:text-white font-semibold text-lg leading-tight flex-1 mr-3">{item.name}</h3>
+                                <h3 className="text-neutral-900 dark:text-white font-semibold text-lg leading-tight flex-1 mr-3">{localized.name}</h3>
                               </div>
-                              <p className="text-neutral-500 text-sm mb-4 line-clamp-2">{item.description}</p>
+                              <p className="text-neutral-500 text-sm mb-4 line-clamp-2">{localized.description}</p>
                               <div className="flex items-center gap-2 flex-wrap">
                                 {item.is_vegetarian && (
                                   <span className="inline-flex items-center gap-1 text-xs px-2.5 py-1 bg-green-500/10 text-green-600 dark:text-green-400 rounded-full">
-                                    <Leaf size={12} /> Veg
+                                    <Leaf size={12} /> {t('menu.veg')}
                                   </span>
                                 )}
                                 <span className={`inline-flex items-center gap-1 text-xs px-2.5 py-1 ${spice.bg} ${spice.text} rounded-full`}>
@@ -295,6 +315,7 @@ export default function Menu() {
                   <AnimatedSection>
                     <div className="bg-white/85 dark:bg-neutral-900/60 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm dark:shadow-none">
                       {category.items.map((item, i) => {
+                        const localized = getLocalizedItem(item);
                         const imageUrl = getItemImageUrl(item);
                         const hasImage = Boolean(imageUrl) && !brokenImages[item.id];
                         const isLastItem = i === category.items.length - 1;
@@ -308,7 +329,7 @@ export default function Menu() {
                                 {hasImage ? (
                                   <img
                                     src={imageUrl}
-                                    alt={item.name}
+                                    alt={localized.name}
                                     loading="lazy"
                                     referrerPolicy="no-referrer"
                                     className="w-full h-full object-cover"
@@ -321,10 +342,10 @@ export default function Menu() {
 
                               <div className="flex-1 min-w-0">
                                 <div className="border-b border-neutral-200 dark:border-neutral-700 pb-2 mb-3">
-                                  <h3 className="text-neutral-900 dark:text-white font-semibold text-2xl leading-tight">{item.name}</h3>
+                                  <h3 className="text-neutral-900 dark:text-white font-semibold text-2xl leading-tight">{localized.name}</h3>
                                 </div>
                                 <p className="text-neutral-600 dark:text-neutral-300 text-base leading-relaxed">
-                                  {item.description || 'No description available.'}
+                                  {localized.description || t('menu.noDescription')}
                                 </p>
                               </div>
                             </div>

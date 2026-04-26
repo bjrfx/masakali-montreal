@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import { ArrowRight, MapPin, Phone, Users, CalendarDays, ChefHat, Sparkles, Clock, PartyPopper } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import useLocalizedPath from '../utils/useLocalizedPath';
 
 import imgMonterial1 from '../assets/restaurant-images/monterial1.webp';
 import imgMonterial2 from '../assets/restaurant-images/monterial2.webp';
@@ -25,16 +27,9 @@ const heroImages = [
   imgStittsville3,
 ];
 
-const stats = [
-  { icon: MapPin, value: '6', label: 'Locations' },
-  { icon: ChefHat, value: '200+', label: 'Menu Items' },
-  { icon: Users, value: '50K+', label: 'Reviews (Most reviewed restaurant chain in Canada)' },
-  { icon: Sparkles, value: '2026', label: 'Now Open' },
-];
-
 const locationSections = [
   {
-    country: 'Canada',
+    countryKey: 'canada',
     locations: [
       {
         name: 'Masakali Indian Cuisine',
@@ -64,7 +59,7 @@ const locationSections = [
     ],
   },
   {
-    country: 'USA',
+    countryKey: 'usa',
     locations: [
       {
         name: 'Masakali Indian Cuisine',
@@ -136,6 +131,16 @@ function HeroSlideshow() {
 }
 
 export default function Home() {
+  const { t } = useTranslation();
+  const localePath = useLocalizedPath();
+
+  const stats = [
+    { icon: MapPin, value: '6', labelKey: 'statsLocations' },
+    { icon: ChefHat, value: '200+', labelKey: 'statsMenuItems' },
+    { icon: Users, value: '50K+', labelKey: 'statsReviews' },
+    { icon: Sparkles, value: '2026', labelKey: 'statsNowOpen' },
+  ];
+
   return (
     <div className="min-h-screen relative">
       <div className="indian-mandala-tl" />
@@ -158,7 +163,7 @@ export default function Home() {
           >
             <div className="mb-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-full grand-opening-badge text-sm">
               <PartyPopper size={16} />
-              <span>1015 Sherbrooke St · Montreal</span>
+              <span>{t('home.addressBadge')}</span>
               <Sparkles size={14} className="animate-sparkle" />
             </div>
           </motion.div>
@@ -169,20 +174,10 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="font-display text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight"
           >
-            <span className="text-white">Masakali</span>
+            <span className="text-white">{t('home.masakali')}</span>
             <br />
-            <span className="text-gold-gradient">Indian Cuisine</span>
+            <span className="text-gold-gradient">{t('home.indianCuisine')}</span>
           </motion.h1>
-
-          {/* <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-neutral-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed"
-          >
-            Now Open in{' '}
-            <span className="text-amber-400 font-semibold">Cupertino, California</span>.
-          </motion.p> */}
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -191,7 +186,7 @@ export default function Home() {
             className="text-neutral-300 text-base md:text-lg mb-8 flex items-center justify-center gap-2"
           >
             <Phone size={16} className="text-amber-400" />
-            <span>Call us for reservations:</span>
+            <span>{t('home.callForReservations')}</span>
             <a href="tel:+15142286777" className="text-amber-400 font-semibold hover:text-amber-300 transition-colors">
               (514) 228-6777
             </a>
@@ -209,13 +204,13 @@ export default function Home() {
               rel="noopener noreferrer"
               className="btn-gold text-lg !px-10 !py-4"
             >
-              Order Online <ArrowRight size={18} className="ml-2" />
+              {t('home.orderOnline')} <ArrowRight size={18} className="ml-2" />
             </a>
-            <Link to="/reservations" className="btn-gold text-lg !px-10 !py-4">
-              Reserve a Table <ArrowRight size={18} className="ml-2" />
+            <Link to={localePath('/reservations')} className="btn-gold text-lg !px-10 !py-4">
+              {t('home.reserveTable')} <ArrowRight size={18} className="ml-2" />
             </Link>
-            <Link to="/menu" className="btn-outline-gold text-lg !px-10 !py-4">
-              Explore Menu
+            <Link to={localePath('/menu')} className="btn-outline-gold text-lg !px-10 !py-4">
+              {t('home.exploreMenu')}
             </Link>
           </motion.div>
 
@@ -225,7 +220,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.68 }}
             className="text-neutral-400 text-sm md:text-base mt-3"
           >
-            Order online for pickup.
+            {t('home.orderOnlinePickup')}
           </motion.p>
 
           <motion.div
@@ -234,9 +229,6 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.75 }}
             className="mt-4"
           >
-            {/* <Link to="/manage-reservations" className="btn-outline-gold !px-8 !py-3">
-              <Clock size={18} className="mr-2" /> Manage Reservations
-            </Link> */}
           </motion.div>
         </div>
       </section>
@@ -247,9 +239,9 @@ export default function Home() {
             <div className="rounded-2xl border border-amber-500/20 bg-amber-50/50 dark:bg-amber-500/5 px-6 py-6 md:px-10 md:py-8">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                 <div>
-                  <p className="text-amber-600 dark:text-amber-400 text-sm font-semibold uppercase tracking-wider mb-2">Delivery Partners</p>
+                  <p className="text-amber-600 dark:text-amber-400 text-sm font-semibold uppercase tracking-wider mb-2">{t('home.deliveryPartners')}</p>
                   <h2 className="font-display text-2xl md:text-3xl font-bold text-neutral-900 dark:text-white">
-                    We are available on Uber Eats and DoorDash
+                    {t('home.deliveryHeading')}
                   </h2>
                 </div>
 
@@ -275,10 +267,10 @@ export default function Home() {
             {stats.map((stat, i) => {
               const Icon = stat.icon;
               return (
-                <AnimatedSection key={stat.label} delay={i * 0.1} className="text-center">
+                <AnimatedSection key={stat.labelKey} delay={i * 0.1} className="text-center">
                   <Icon size={24} className="text-amber-500 dark:text-amber-400 mx-auto mb-3" />
                   <div className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-white font-display">{stat.value}</div>
-                  <div className="text-neutral-500 text-sm mt-1">{stat.label}</div>
+                  <div className="text-neutral-500 text-sm mt-1">{t(`home.${stat.labelKey}`)}</div>
                 </AnimatedSection>
               );
             })}
@@ -294,20 +286,20 @@ export default function Home() {
           <AnimatedSection className="text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 mb-6">
               <Sparkles size={16} className="text-amber-500" />
-              <span className="text-amber-600 dark:text-amber-400 text-sm font-semibold">Now Open</span>
+              <span className="text-amber-600 dark:text-amber-400 text-sm font-semibold">{t('home.nowOpen')}</span>
             </div>
             <h2 className="font-display text-4xl md:text-5xl font-bold text-neutral-900 dark:text-white mb-4">
-              Montreal, Quebec
+              {t('home.montrealQuebec')}
             </h2>
             <p className="text-neutral-600 dark:text-neutral-400 text-lg mb-8 max-w-2xl mx-auto">
-              Masakali Indian Cuisine is now serving in Montreal.
+              {t('home.montrealServing')}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link to="/reservations" className="btn-gold text-lg !px-10 !py-4">
-                <CalendarDays size={18} className="mr-2" /> Book Your Table
+              <Link to={localePath('/reservations')} className="btn-gold text-lg !px-10 !py-4">
+                <CalendarDays size={18} className="mr-2" /> {t('home.bookYourTable')}
               </Link>
-              <Link to="/menu" className="btn-outline-gold text-lg !px-10 !py-4">
-                Preview Our Menu
+              <Link to={localePath('/menu')} className="btn-outline-gold text-lg !px-10 !py-4">
+                {t('home.previewOurMenu')}
               </Link>
             </div>
           </AnimatedSection>
@@ -317,7 +309,7 @@ export default function Home() {
       <section className="py-16 bg-neutral-50 dark:bg-neutral-950 relative overflow-hidden border-b border-neutral-200 dark:border-neutral-800/50">
         <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #d97706 1px, transparent 0)', backgroundSize: '32px 32px' }} />
         <AnimatedSection className="text-center mb-10">
-          <span className="text-amber-500 dark:text-amber-400 text-sm font-semibold uppercase tracking-wider">Our Brands</span>
+          <span className="text-amber-500 dark:text-amber-400 text-sm font-semibold uppercase tracking-wider">{t('home.ourBrands')}</span>
           <div className="section-divider" />
         </AnimatedSection>
 
@@ -362,23 +354,23 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4">
           <AnimatedSection className="text-center mb-16">
             <h2 className="font-display text-4xl md:text-5xl font-bold text-neutral-900 dark:text-white mt-4">
-              Our <span className="text-gold-gradient">Locations</span>
+              {t('home.ourLocations')} <span className="text-gold-gradient">{t('home.locations')}</span>
             </h2>
           </AnimatedSection>
 
           <div className="space-y-12">
             {locationSections.map((section, sectionIndex) => (
-              <div key={section.country}>
+              <div key={section.countryKey}>
                 <AnimatedSection delay={sectionIndex * 0.1} className="flex items-center gap-4 mb-5">
-                  <h3 className="font-display text-3xl font-bold text-neutral-900 dark:text-white">{section.country}</h3>
+                  <h3 className="font-display text-3xl font-bold text-neutral-900 dark:text-white">{t(`home.${section.countryKey}`)}</h3>
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400">
-                    {section.locations.length} {section.locations.length === 1 ? 'Location' : 'Locations'}
+                    {section.locations.length} {section.locations.length === 1 ? t('home.location') : t('home.locations')}
                   </span>
                 </AnimatedSection>
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {section.locations.map((loc, i) => (
-                    <AnimatedSection key={`${section.country}-${i}`} delay={Math.min(i * 0.05, 0.2)}>
+                    <AnimatedSection key={`${section.countryKey}-${i}`} delay={Math.min(i * 0.05, 0.2)}>
                       <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white/90 dark:bg-neutral-900/70 p-6 shadow-sm dark:shadow-none min-h-[165px]">
                         <div className="flex items-start gap-3">
                           <MapPin size={20} className="text-amber-500 dark:text-amber-400 mt-0.5 flex-shrink-0" />
@@ -403,8 +395,8 @@ export default function Home() {
           </div>
 
           <AnimatedSection className="text-center mt-12">
-            <Link to="/locations" className="btn-outline-gold">
-              View All Locations <ArrowRight size={16} className="ml-2" />
+            <Link to={localePath('/locations')} className="btn-outline-gold">
+              {t('home.viewAllLocations')} <ArrowRight size={16} className="ml-2" />
             </Link>
           </AnimatedSection>
         </div>
@@ -416,24 +408,20 @@ export default function Home() {
         </div>
         <div className="max-w-4xl mx-auto px-4 relative z-10">
           <AnimatedSection className="text-center">
-            <span className="text-amber-500 dark:text-amber-400 text-sm font-semibold uppercase tracking-wider">Reserve Now</span>
+            <span className="text-amber-500 dark:text-amber-400 text-sm font-semibold uppercase tracking-wider">{t('home.reserveNow')}</span>
             <div className="section-divider" />
             <h2 className="font-display text-4xl md:text-5xl font-bold text-neutral-900 dark:text-white mt-4 mb-6">
-              Book Your <span className="text-gold-gradient">Experience</span>
+              {t('home.bookYourExperience')} <span className="text-gold-gradient">{t('home.experience')}</span>
             </h2>
             <p className="text-neutral-600 dark:text-neutral-400 text-lg mb-10 max-w-2xl mx-auto">
-              Reserve your table at any of our locations. Whether it's a romantic dinner,
-              family celebration, or business meeting, we have the perfect setting for you.
+              {t('home.experienceDesc')}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link to="/reservations" className="btn-gold text-lg !px-10 !py-4">
-                <CalendarDays size={20} className="mr-2" /> Reserve a Table
+              <Link to={localePath('/reservations')} className="btn-gold text-lg !px-10 !py-4">
+                <CalendarDays size={20} className="mr-2" /> {t('home.reserveATable')}
               </Link>
-              {/* <Link to="/manage-reservations" className="btn-outline-gold text-lg !px-10 !py-4">
-                <Clock size={20} className="mr-2" /> Manage Reservations
-              </Link> */}
-              <Link to="/catering" className="btn-outline-gold text-lg !px-10 !py-4">
-                <Users size={20} className="mr-2" /> Catering Services
+              <Link to={localePath('/catering')} className="btn-outline-gold text-lg !px-10 !py-4">
+                <Users size={20} className="mr-2" /> {t('home.cateringServices')}
               </Link>
             </div>
           </AnimatedSection>
@@ -444,14 +432,13 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-4 text-center">
           <AnimatedSection>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-4">
-              Planning an Event?
+              {t('home.planningEvent')}
             </h2>
             <p className="text-neutral-600 dark:text-neutral-400 text-lg mb-8">
-              Let Masakali cater your next event with authentic Indian cuisine.
-              From intimate gatherings to grand celebrations.
+              {t('home.planningEventDesc')}
             </p>
-            <Link to="/catering" className="btn-gold text-lg">
-              Explore Catering <ArrowRight size={18} className="ml-2" />
+            <Link to={localePath('/catering')} className="btn-gold text-lg">
+              {t('home.exploreCatering')} <ArrowRight size={18} className="ml-2" />
             </Link>
           </AnimatedSection>
         </div>

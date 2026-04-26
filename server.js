@@ -792,7 +792,7 @@ function buildCustomerReservationUpdatePayload(input) {
 // =====================================================
 // Email Transporter
 // =====================================================
-const SMTP_HOST = process.env.EMAIL_SMTP_HOST || process.env.EMAIL_HOST || 'mail.bdotsoftware.com';
+const SMTP_HOST = process.env.EMAIL_SMTP_HOST || process.env.EMAIL_HOST || 'smtp.hostinger.com';
 const SMTP_PORT = parseInt(process.env.EMAIL_SMTP_PORT || process.env.EMAIL_PORT || '465', 10);
 
 function createEmailTransporter(user, pass) {
@@ -810,10 +810,10 @@ function createEmailTransporter(user, pass) {
   }
 }
 
-const reservationEmailUser = process.env.RESERVATION_EMAIL_USER || 'developer@bdotsoftware.com';
-const reservationEmailPass = process.env.RESERVATION_EMAIL_PASS || 'K143iran';
-const contactEmailUser = process.env.CONTACT_EMAIL_USER || 'developer@bdotsoftware.com';
-const contactEmailPass = process.env.CONTACT_EMAIL_PASS || 'K143iran';
+const reservationEmailUser = process.env.RESERVATION_EMAIL_USER || 'reservations@masakalimontreal.ca';
+const reservationEmailPass = process.env.RESERVATION_EMAIL_PASS || 'Masakali@123';
+const contactEmailUser = process.env.CONTACT_EMAIL_USER || 'info@masakalimontreal.ca';
+const contactEmailPass = process.env.CONTACT_EMAIL_PASS || 'Masakali@123';
 const WEBSITE_BASE_URL = String(
   process.env.WEBSITE_BASE_URL
   || process.env.PUBLIC_SITE_URL

@@ -1,21 +1,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Phone, Mail, Clock, Instagram, Facebook, ArrowUpRight } from 'lucide-react';
+import { Phone, Mail, Instagram, Facebook, ArrowUpRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import useLocalizedPath from '../utils/useLocalizedPath';
 
-const footerLinks = {
-  explore: [
-    { name: 'Home', path: '/' },
-    { name: 'About Us', path: '/about' },
-    { name: 'Our Menu', path: '/menu' },
-    { name: 'Locations', path: '/locations' },
-  ],
-  services: [
-    { name: 'Reserve a Table', path: '/reservations' },
-    { name: 'Catering Services', path: '/catering' },
-    { name: 'Contact Us', path: '/contact' },
-    // { name: 'Admin Portal', path: '/admin/login' },
-  ],
-};
+const exploreLinks = [
+  { key: 'home', path: '/' },
+  { key: 'aboutUs', path: '/about' },
+  { key: 'ourMenu', path: '/menu' },
+  { key: 'locations', path: '/locations' },
+];
+
+const serviceLinks = [
+  { key: 'reserveTable', path: '/reservations' },
+  { key: 'cateringServices', path: '/catering' },
+  { key: 'contactUs', path: '/contact' },
+];
 
 const brands = [
   { name: 'Masakali Ottawa', url: 'https://masakaliottawa.ca' },
@@ -26,6 +26,9 @@ const brands = [
 ];
 
 export default function Footer() {
+  const { t } = useTranslation();
+  const localePath = useLocalizedPath();
+
   return (
     <footer className="bg-neutral-100 dark:bg-neutral-950 border-t border-neutral-200 dark:border-neutral-800/50">
       {/* Main Footer */}
@@ -33,7 +36,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link to="/" className="inline-block mb-6">
+            <Link to={localePath('/')} className="inline-block mb-6">
               <img
                 src="/logo/Masakali-Indian-Cuisine.svg"
                 alt="Masakali"
@@ -43,7 +46,7 @@ export default function Footer() {
               <span className="hidden font-display text-2xl text-gold-gradient font-bold">Masakali</span>
             </Link>
             <p className="text-neutral-500 dark:text-neutral-400 text-sm leading-relaxed mb-6">
-              Premium Indian cuisine across multiple locations. Experience the rich flavors of India, crafted with passion since 2021.
+              {t('footer.brandDesc')}
             </p>
             <div className="flex space-x-3">
               <a href="#" className="w-10 h-10 rounded-full bg-neutral-200 dark:bg-neutral-800 flex items-center justify-center text-neutral-500 dark:text-neutral-400 hover:bg-amber-500/20 hover:text-amber-600 dark:hover:text-amber-400 transition-all">
@@ -57,12 +60,12 @@ export default function Footer() {
 
           {/* Explore */}
           <div>
-            <h3 className="text-amber-600 dark:text-amber-400 font-semibold text-sm uppercase tracking-wider mb-6">Explore</h3>
+            <h3 className="text-amber-600 dark:text-amber-400 font-semibold text-sm uppercase tracking-wider mb-6">{t('footer.explore')}</h3>
             <ul className="space-y-3">
-              {footerLinks.explore.map((link) => (
+              {exploreLinks.map((link) => (
                 <li key={link.path}>
-                  <Link to={link.path} className="text-neutral-500 dark:text-neutral-400 text-sm hover:text-neutral-900 dark:hover:text-white transition-colors">
-                    {link.name}
+                  <Link to={localePath(link.path)} className="text-neutral-500 dark:text-neutral-400 text-sm hover:text-neutral-900 dark:hover:text-white transition-colors">
+                    {t(`footer.${link.key}`)}
                   </Link>
                 </li>
               ))}
@@ -71,12 +74,12 @@ export default function Footer() {
 
           {/* Services */}
           <div>
-            <h3 className="text-amber-600 dark:text-amber-400 font-semibold text-sm uppercase tracking-wider mb-6">Services</h3>
+            <h3 className="text-amber-600 dark:text-amber-400 font-semibold text-sm uppercase tracking-wider mb-6">{t('footer.services')}</h3>
             <ul className="space-y-3">
-              {footerLinks.services.map((link) => (
+              {serviceLinks.map((link) => (
                 <li key={link.path}>
-                  <Link to={link.path} className="text-neutral-500 dark:text-neutral-400 text-sm hover:text-neutral-900 dark:hover:text-white transition-colors">
-                    {link.name}
+                  <Link to={localePath(link.path)} className="text-neutral-500 dark:text-neutral-400 text-sm hover:text-neutral-900 dark:hover:text-white transition-colors">
+                    {t(`footer.${link.key}`)}
                   </Link>
                 </li>
               ))}
@@ -85,7 +88,7 @@ export default function Footer() {
 
           {/* Our Brands */}
           <div>
-            <h3 className="text-amber-600 dark:text-amber-400 font-semibold text-sm uppercase tracking-wider mb-6">Our Brands</h3>
+            <h3 className="text-amber-600 dark:text-amber-400 font-semibold text-sm uppercase tracking-wider mb-6">{t('footer.ourBrands')}</h3>
             <ul className="space-y-3">
               {brands.map((brand) => (
                 <li key={brand.name}>
@@ -103,7 +106,7 @@ export default function Footer() {
             </ul>
 
             <div className="mt-8">
-              <h3 className="text-amber-600 dark:text-amber-400 font-semibold text-sm uppercase tracking-wider mb-4">Contact</h3>
+              <h3 className="text-amber-600 dark:text-amber-400 font-semibold text-sm uppercase tracking-wider mb-4">{t('footer.contactTitle')}</h3>
               <div className="space-y-2">
                 <a href="tel:+15142286777" className="text-neutral-500 dark:text-neutral-400 text-sm hover:text-neutral-900 dark:hover:text-white transition-colors flex items-center gap-2">
                   <Phone size={14} /> (514) 228-6777
@@ -121,10 +124,10 @@ export default function Footer() {
       <div className="border-t border-neutral-200 dark:border-neutral-800/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-neutral-400 dark:text-neutral-500 text-xs">
-            © {new Date().getFullYear()} Masakali Restaurant Group. All rights reserved.
+            © {new Date().getFullYear()} {t('footer.copyright')}
           </p>
           <p className="text-neutral-400 dark:text-neutral-600 text-xs">
-            Est. 2021 · Ottawa · Montreal · California
+            {t('footer.established')}
           </p>
         </div>
       </div>
