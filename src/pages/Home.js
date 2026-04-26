@@ -204,7 +204,7 @@ export default function Home() {
               rel="noopener noreferrer"
               className="btn-gold text-lg !px-10 !py-4"
             >
-              {t('home.orderOnline')} <ArrowRight size={18} className="ml-2" />
+              {t('home.orderOnlinePickup')} <ArrowRight size={18} className="ml-2" />
             </a>
             <Link to={localePath('/reservations')} className="btn-gold text-lg !px-10 !py-4">
               {t('home.reserveTable')} <ArrowRight size={18} className="ml-2" />
@@ -214,14 +214,7 @@ export default function Home() {
             </Link>
           </motion.div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.68 }}
-            className="text-neutral-400 text-sm md:text-base mt-3"
-          >
-            {t('home.orderOnlinePickup')}
-          </motion.p>
+
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
