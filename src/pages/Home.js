@@ -183,9 +183,9 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="text-neutral-300 text-base md:text-lg mb-8 flex items-center justify-center gap-2"
+            className="text-neutral-300 text-sm sm:text-base md:text-lg mb-8 flex flex-wrap items-center justify-center gap-x-2 gap-y-1"
           >
-            <Phone size={16} className="text-amber-400" />
+            <Phone size={16} className="text-amber-400 flex-shrink-0" />
             <span>{t('home.callForReservations')}</span>
             <a href="tel:+15142286777" className="text-amber-400 font-semibold hover:text-amber-300 transition-colors">
               (514) 228-6777
@@ -196,20 +196,20 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 sm:gap-4 px-2"
           >
             <a
               href="https://www.clover.com/online-ordering/masakali-montreal"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-gold text-lg !px-10 !py-4"
+              className="btn-gold text-base sm:text-lg !px-6 sm:!px-10 !py-3 sm:!py-4 w-full sm:w-auto text-center"
             >
               {t('home.orderOnlinePickup')} <ArrowRight size={18} className="ml-2" />
             </a>
-            <Link to={localePath('/reservations')} className="btn-gold text-lg !px-10 !py-4">
+            <Link to={localePath('/reservations')} className="btn-gold text-base sm:text-lg !px-6 sm:!px-10 !py-3 sm:!py-4 w-full sm:w-auto text-center">
               {t('home.reserveTable')} <ArrowRight size={18} className="ml-2" />
             </Link>
-            <Link to={localePath('/menu')} className="btn-outline-gold text-lg !px-10 !py-4">
+            <Link to={localePath('/menu')} className="btn-outline-gold text-base sm:text-lg !px-6 sm:!px-10 !py-3 sm:!py-4 w-full sm:w-auto text-center">
               {t('home.exploreMenu')}
             </Link>
           </motion.div>

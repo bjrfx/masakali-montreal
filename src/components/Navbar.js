@@ -60,32 +60,40 @@ export default function Navbar() {
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-white/90 dark:bg-black/90 backdrop-blur-xl border-b border-neutral-200 dark:border-neutral-800/50 shadow-sm dark:shadow-none' : 'bg-transparent'
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'navbar-scrolled' : 'bg-transparent'
       }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to={localePath('/')} className="flex items-center space-x-3 group">
+          <Link to={localePath('/')} className="flex-shrink-0 flex items-center group">
             <img
               src="/logo/Masakali-Indian-Cuisine.svg"
               alt="Masakali"
-              className="h-28 w-auto transition-transform duration-300 group-hover:scale-105"
+              className="h-24 xl:h-28 w-auto transition-transform duration-300 group-hover:scale-105"
               onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }}
             />
             <span className="hidden font-display text-xl text-gold-gradient font-bold">Masakali</span>
           </Link>
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20">
+
+          {/* Location Badge — visible on sm+ but hidden below xl when desktop nav is hidden */}
+          <div className="hidden sm:flex xl:hidden items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20">
             <MapPin size={12} className="text-amber-500" />
             <span className="location-badge">{t('navbar.montreal')}</span>
           </div>
 
-          {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center space-x-1">
+          {/* Desktop Nav — xl breakpoint (1280px) for French text accommodation */}
+          <div className="hidden xl:flex items-center gap-0.5">
+            {/* Location Badge inline with nav links */}
+            <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 mr-1">
+              <MapPin size={12} className="text-amber-500" />
+              <span className="location-badge">{t('navbar.montreal')}</span>
+            </div>
+
             {navLinkKeys.map((link) => (
               <Link
                 key={link.path}
                 to={localePath(link.path)}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${isActive(link.path)
+                className={`nav-link-desktop ${isActive(link.path)
                     ? 'text-amber-600 dark:text-amber-400 bg-amber-400/10'
                     : 'text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/5'
                   }`}
@@ -96,27 +104,27 @@ export default function Navbar() {
             {/* Language Toggle */}
             <button
               onClick={switchLanguage}
-              className="ml-1 flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-300 text-neutral-600 dark:text-neutral-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-400/10"
+              className="ml-0.5 flex items-center gap-1.5 px-2.5 py-2 text-xs font-medium rounded-lg transition-all duration-300 text-neutral-600 dark:text-neutral-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-400/10"
               aria-label="Switch language"
             >
-              <Globe size={16} />
+              <Globe size={15} />
               <span className="font-semibold">{currentLang === 'fr' ? 'EN' : 'FR'}</span>
             </button>
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="theme-toggle ml-1 text-neutral-500 dark:text-neutral-400 hover:text-amber-600 dark:hover:text-amber-400"
+              className="theme-toggle ml-0.5 text-neutral-500 dark:text-neutral-400 hover:text-amber-600 dark:hover:text-amber-400"
               aria-label="Toggle theme"
             >
-              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
             </button>
-            <Link to={localePath('/reservations')} className="ml-4 btn-gold text-sm !px-6 !py-2.5">
+            <Link to={localePath('/reservations')} className="ml-2 btn-gold text-xs !px-5 !py-2 whitespace-nowrap">
               {t('navbar.reserveTable')}
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="lg:hidden flex items-center gap-2">
+          {/* Mobile/Tablet Menu Button — visible below xl */}
+          <div className="xl:hidden flex items-center gap-2">
             {/* Mobile Language Toggle */}
             <button
               onClick={switchLanguage}
@@ -150,7 +158,7 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-white/95 dark:bg-black/95 backdrop-blur-xl border-b border-neutral-200 dark:border-neutral-800"
+            className="xl:hidden mobile-menu-panel"
           >
             <div className="px-4 py-6 space-y-1">
               {navLinkKeys.map((link) => (
