@@ -295,3 +295,46 @@ body {
 .location-badge {
   @apply text-xs font-medium text-amber-600 dark:text-amber-400/80 tracking-wide;
 }
+
+/* ===== Navbar Cross-Browser Styles ===== */
+
+/* Scrolled navbar — explicit webkit prefixes for Brave/Safari */
+.navbar-scrolled {
+  background: rgba(255, 255, 255, 0.9);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid #e5e5e5;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.dark .navbar-scrolled {
+  background: rgba(0, 0, 0, 0.9);
+  border-bottom-color: rgba(38, 38, 38, 0.5);
+  box-shadow: none;
+}
+
+/* Desktop nav links — compact sizing for French accommodation */
+.nav-link-desktop {
+  @apply px-3 py-2 text-xs font-medium rounded-lg transition-all duration-300 whitespace-nowrap;
+}
+@media (min-width: 1400px) {
+  .nav-link-desktop {
+    @apply px-4 text-sm;
+  }
+}
+
+/* Mobile menu panel — explicit webkit prefixes */
+.mobile-menu-panel {
+  background: rgba(255, 255, 255, 0.95);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid #e5e5e5;
+}
+.dark .mobile-menu-panel {
+  background: rgba(0, 0, 0, 0.95);
+  border-bottom-color: #262626;
+}
+
+/* Hero safe area — ensures content clears the fixed navbar */
+.hero-safe-area {
+  padding-top: 5rem; /* h-20 navbar height */
+}
