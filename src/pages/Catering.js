@@ -97,8 +97,8 @@ export default function Catering() {
         </div>
       </section>
 
-      {/* Packages */}
-      <section className="py-16 bg-neutral-50 dark:bg-neutral-950 bg-section-indian relative overflow-hidden bg-indian-border-bottom">
+      {/* Catering Packages */}
+      {/* <section className="py-16 bg-neutral-50 dark:bg-neutral-950 bg-section-indian relative overflow-hidden bg-indian-border-bottom">
         <div className="max-w-7xl mx-auto px-4">
           <AnimatedSection className="text-center mb-12">
             <h2 className="font-display text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white">{t('catering.cateringPackages')} <span className="text-gold-gradient">{t('catering.packages')}</span></h2>
@@ -120,7 +120,7 @@ export default function Catering() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Form */}
       <section id="catering-form" className="py-16 bg-neutral-50 dark:bg-dark-950 bg-indian-jali relative overflow-hidden">

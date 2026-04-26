@@ -179,6 +179,10 @@ export default function Locations() {
   const canadaLocations = restaurants.filter((restaurant) => {
     const country = (restaurant.country || '').toLowerCase();
     return country.includes('canada');
+  }).sort((a, b) => {
+    if (a.slug === 'montreal') return -1;
+    if (b.slug === 'montreal') return 1;
+    return 0;
   });
 
   return (
@@ -223,21 +227,6 @@ export default function Locations() {
             <div className="space-y-12">
               <div>
                 <AnimatedSection className="mb-6">
-                  <h2 className="font-display text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white">{t('locations.usa')}</h2>
-                </AnimatedSection>
-                {usaLocations.length === 0 ? (
-                  <p className="text-neutral-500 dark:text-neutral-400">{t('locations.noUSA')}</p>
-                ) : (
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {usaLocations.map((restaurant, i) => (
-                      <LocationCard key={restaurant.id || restaurant.slug || `usa-${i}`} restaurant={restaurant} delay={i * 0.08} t={t} localePath={localePath} />
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <AnimatedSection className="mb-6">
                   <h2 className="font-display text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white">{t('locations.canada')}</h2>
                 </AnimatedSection>
                 {canadaLocations.length === 0 ? (
@@ -246,6 +235,21 @@ export default function Locations() {
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {canadaLocations.map((restaurant, i) => (
                       <LocationCard key={restaurant.id || restaurant.slug || `canada-${i}`} restaurant={restaurant} delay={i * 0.08} t={t} localePath={localePath} />
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <AnimatedSection className="mb-6">
+                  <h2 className="font-display text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white">{t('locations.usa')}</h2>
+                </AnimatedSection>
+                {usaLocations.length === 0 ? (
+                  <p className="text-neutral-500 dark:text-neutral-400">{t('locations.noUSA')}</p>
+                ) : (
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {usaLocations.map((restaurant, i) => (
+                      <LocationCard key={restaurant.id || restaurant.slug || `usa-${i}`} restaurant={restaurant} delay={i * 0.08} t={t} localePath={localePath} />
                     ))}
                   </div>
                 )}
