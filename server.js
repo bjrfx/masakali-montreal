@@ -724,8 +724,7 @@ function normalizeEmail(value) {
 function normalizeReservationPhone(value) {
   const digits = String(value || '').replace(/\D/g, '');
   if (!digits) return '';
-  if (digits.length === 10) return `1${digits}`;
-  if (digits.length === 11 && digits.startsWith('1')) return digits;
+  if (digits.length === 11 && digits.startsWith('1')) return digits.slice(1);
   return digits;
 }
 
@@ -935,22 +934,32 @@ function buildReservationCustomerEmailHtml({ title, intro, reservation, restaura
   `;
 }
 
-function buildReservationAdminEmailHtml({ title, reservation, restaurantName, details }) {
-  const detailLines = details
-    .map((line) => `<li style="margin:0 0 6px 0;">${escapeHtml(line)}</li>`)
+function buildReservationAdminEmailHtml({ title, reservation, restaurantName }) {
+  const formattedDate = formatReservationDate(reservation.date);
+
+  const rows = [
+    ['Name', reservation.name],
+    ['Email', reservation.email || 'N/A'],
+    ['Date', formattedDate || reservation.date || 'N/A'],
+    ['Time', reservation.time || 'N/A'],
+    ['Phone', reservation.phone || 'N/A'],
+    ['Guests', reservation.persons],
+    ['Restaurant', restaurantName],
+  ]
+    .map(
+      ([label, value]) =>
+        `<tr>
+          <td style="padding:8px 10px;border:1px solid #e5e7eb;background:#f9fafb;color:#111827;font-size:14px;font-weight:600;width:170px;">${escapeHtml(label)}</td>
+          <td style="padding:8px 10px;border:1px solid #e5e7eb;color:#111827;font-size:14px;">${escapeHtml(value)}</td>
+        </tr>`
+    )
     .join('');
 
   return `
     <div style="background:#f3f4f6;padding:20px 12px;font-family:Verdana, Geneva, Tahoma, sans-serif;">
       <div style="max-width:640px;margin:0 auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:20px;">
-        <img src="${escapeHtml(EMAIL_LOGO_URL)}" alt="Masakali Indian Cuisine" style="display:block;width:150px;max-width:100%;height:auto;" />
-        <h2 style="margin:14px 0 12px 0;color:#111827;font-size:20px;">${escapeHtml(title)}</h2>
-        ${reservationInfoBlockHtml(reservation, restaurantName)}
-        <p style="margin:0 0 8px 0;color:#111827;font-size:14px;"><strong>Quick Summary:</strong></p>
-        <ul style="margin:0;padding-left:20px;color:#111827;font-size:14px;line-height:1.5;">
-          ${detailLines}
-        </ul>
-        ${brandFooterHtml()}
+        <h2 style="margin:0 0 16px 0;color:#111827;font-size:20px;">${escapeHtml(title)}</h2>
+        <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;">${rows}</table>
       </div>
     </div>
   `;
@@ -1067,11 +1076,6 @@ If you need to change, update, or edit your reservation, visit: ${MANAGE_RESERVA
           title: adminReservationLabel,
           reservation,
           restaurantName,
-          details: [
-            `Guest Email: ${reservation.email || 'N/A'}`,
-            `Guest Phone: ${reservation.phone || 'N/A'}`,
-            `Manage Reservations: ${MANAGE_RESERVATIONS_URL}`,
-          ],
         }),
         text: `New reservation:\nConfirmation Code: ${reservation.confirmation_code}\nName: ${reservation.name}\nEmail: ${reservation.email || 'N/A'}\nDate: ${formattedDate}\nTime: ${reservation.time}\nPhone: ${reservation.phone || 'N/A'}\nBranch: ${restaurantName}\nGuests: ${reservation.persons}`,
       });
@@ -1131,12 +1135,6 @@ Need to change, update, or edit again? Visit: ${MANAGE_RESERVATIONS_URL}`,
           title: `Reservation Updated - ${updatedReservation.confirmation_code}`,
           reservation: updatedReservation,
           restaurantName,
-          details: [
-            `Guest Email: ${updatedReservation.email || 'N/A'}`,
-            `Guest Phone: ${updatedReservation.phone || 'N/A'}`,
-            `Previous: ${oldDetails}`,
-            `Updated: ${newDetails}`,
-          ],
         }),
         text: `Reservation updated:\nCode: ${updatedReservation.confirmation_code}\nName: ${updatedReservation.name}\nEmail: ${updatedReservation.email}\nPhone: ${updatedReservation.phone}\nBranch: ${restaurant?.name || 'Masakali Montreal'}\nPrevious: ${oldDetails}\nUpdated: ${newDetails}`,
       });
