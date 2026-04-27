@@ -18,7 +18,7 @@ function AnimatedSection({ children, className = '', delay = 0 }) {
 
 const timeSlots = [
   '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
-  '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30',
+  '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00',
 ];
 
 function formatDateOnly(value) {
@@ -258,7 +258,7 @@ export default function Reservations() {
                     <div>
                       <label className="block text-neutral-500 dark:text-neutral-400 text-sm mb-2">{t('reservations.numberOfGuests')} *</label>
                       <select name="persons" value={form.persons} onChange={handleChange} className="select-dark" required>
-                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(n => (
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map(n => (
                           <option key={n} value={n}>{n} {n === 1 ? t('reservations.guest') : t('reservations.guests')}</option>
                         ))}
                       </select>
