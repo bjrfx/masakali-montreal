@@ -1,4 +1,730 @@
 {
-  "categories": {},
-  "items": {}
+  "categories": {
+    "JZJ5F7WNRJC4E": {
+      "name": "Combos de Currys d'Agneau"
+    },
+    "B8M9KPZV3CWVE": {
+      "name": "Entrées non-Végétariennes"
+    },
+    "2PJDRFST8NDPY": {
+      "name": "Tandoor-Végétarien"
+    },
+    "ZDA5MVCRJ76RT": {
+      "name": "Riz"
+    },
+    "M8SD8EC4G989J": {
+      "name": "Tandoor non-Végétarien"
+    },
+    "CNTGT8E8FEEY6": {
+      "name": "Spéciaux Sauce au Beurre"
+    },
+    "M7V38DN91GWKG": {
+      "name": "Combos de Currys Végétariens"
+    },
+    "0C1TQZ674JJFJ": {
+      "name": "Riz Végétalien"
+    },
+    "9QH7M714N7R1R": {
+      "name": "Ailes - Style Indien"
+    },
+    "6K3AX0FY38E5M": {
+      "name": "Sodas"
+    },
+    "KWJ15MEXZ3KD0": {
+      "name": "Divers"
+    },
+    "VV5FYJGPPG4KW": {
+      "name": "Entrées Végétaliennes"
+    },
+    "ASPEQ8RHY4E1J": {
+      "name": "Pré-Entrées"
+    },
+    "ZDVD8J9QXVZQ6": {
+      "name": "Biryani Spécial"
+    },
+    "Y4CGJ56F67DFC": {
+      "name": "Boissons Spéciales"
+    },
+    "VFRJFTN0JPTGC": {
+      "name": "Combos Biryani"
+    },
+    "EWC21SHMCZ1NT": {
+      "name": "Entrées Végétariennes"
+    },
+    "7BAMZYC48SMHG": {
+      "name": "Desserts"
+    },
+    "TKEJN2DFAJXV2": {
+      "name": "Naans"
+    },
+    "7N91GWW4VY6B4": {
+      "name": "Hakka (Style Rue Indien, Régulier, Schezwan)"
+    },
+    "6QRXM3D65A37R": {
+      "name": "Currys Végétariens"
+    },
+    "TRAPV7HS73FB6": {
+      "name": "Roti"
+    },
+    "5GF067CK54MC0": {
+      "name": "Combos de Curry de Poulet"
+    },
+    "VEJRHQ3Z9P0M0": {
+      "name": "Hakka Végétalien"
+    },
+    "EQKSVFK7EHAVA": {
+      "name": "Currys non-Végétariens"
+    },
+    "EH4A6G3DVQB02": {
+      "name": "Currys Végétaliens"
+    },
+    "7JK2DK3WAZPT6": {
+      "name": "Suppléments"
+    },
+    "AVEYGPMC7QFT6": {
+      "name": "Alcool"
+    }
+  },
+  "items": {
+    "F34KV1PNSNFKM": {
+      "name": "Laccha Parata",
+      "description": ""
+    },
+    "X78E6FADFHZ9P": {
+      "name": "V-Riz Frit Végétarien - Style Rue",
+      "description": ""
+    },
+    "2B9KC85ZWCZAT": {
+      "name": "V-Riz aux Herbes et à l'Ail",
+      "description": "Riz basmati parfumé infusé aux herbes fraîches et à l'ail, créant un plat de riz savoureux et aromatique qui accompagne une grande variété de mets.\n"
+    },
+    "KN7BE6SB640PR": {
+      "name": "V-Riz aux Herbes",
+      "description": "Riz basmati cuit avec un mélange d'herbes fraîches comme la coriandre et la menthe, offrant un plat de riz parfumé et savoureux qui s'harmonise magnifiquement avec les currys.\n"
+    },
+    "4F2F6JPN9M78T": {
+      "name": "V-Kashmiri Pulao",
+      "description": "Riz basmati parfumé cuit avec des fruits séchés, des noix et un mélange subtil d'épices, offrant un plat de riz légèrement sucré et aromatique.\n"
+    },
+    "EVXB8200J9WJP": {
+      "name": "V-Pulao aux Petits Pois",
+      "description": "Riz basmati cuit avec des petits pois et des épices aromatiques, offrant un plat doux, parfumé et réconfortant qui s'accompagne parfaitement de currys et de sauces.\n"
+    },
+    "3Z7QXCBGFQSM2": {
+      "name": "V-Riz Jeera",
+      "description": "Riz basmati parfumé cuit avec des graines de cumin, offrant une saveur subtile et noisettée qui complète une grande variété de plats.\n"
+    },
+    "VGH2D7T6EJ5XC": {
+      "name": "V-Riz Nature",
+      "description": "Riz basmati cuit à la vapeur, léger, moelleux et aromatique, constituant la base parfaite pour tout curry ou plat.\n"
+    },
+    "PYNWGHE6PNBA2": {
+      "name": "V-Okra Masala",
+      "description": "Okra cuit avec des oignons, des tomates et un mélange d'épices, offrant un plat tendre et savoureux avec une touche d'acidité et un goût doux et terreux.\n"
+    },
+    "QKM2BDASRA042": {
+      "name": "V-Curry Légumes Mélangés",
+      "description": "Un mélange de légumes de saison mijotés dans une sauce épicée à base de tomates, d'oignons et d'épices aromatiques, offrant un plat végétarien coloré, copieux et savoureux.\n"
+    },
+    "WY8YKD1QQRNT6": {
+      "name": "V-Channa Saag",
+      "description": "Pois chiches cuits avec des épinards en purée dans un mélange d'épices, offrant un plat copieux et nutritif avec une saveur douce et terreuse et une texture riche.\n"
+    },
+    "KKXP0KGFXHB92": {
+      "name": "V- Aloo Matar",
+      "description": "Un curry classique de pommes de terre et de petits pois mijotés dans une sauce à base de tomates acidulée, assaisonnée au cumin et au garam masala, offrant une expérience réconfortante, simple et savoureuse.\n"
+    },
+    "EWTH6JCXZPYG8": {
+      "name": "V-Aloo Gobi",
+      "description": "Pommes de terre et chou-fleur cuits dans une sauce épicée infusée au curcuma, offrant un plat réconfortant et doux aux saveurs terreuses et à l'arôme parfumé.\n"
+    },
+    "SSVSMAKVW0YSA": {
+      "name": "V-Channa Masala",
+      "description": "Pois chiches cuits dans une sauce épicée et acidulée avec des oignons, des tomates et un mélange d'épices aromatiques, offrant un plat copieux et savoureux à la texture riche et aux saveurs profondes.\n"
+    },
+    "6B93H5S08R6BC": {
+      "name": "V-Dal Tadka",
+      "description": "Lentilles jaunes cuites avec des oignons, des tomates et relevées au cumin, à l'ail et au ghee, offrant un curry savoureux et réconfortant, à la fois aromatique et riche en goût.\n"
+    },
+    "7TTS3RREXAQYR": {
+      "name": "V-Nouilles Hakka Végétariennes Schezwan",
+      "description": "Nouilles sautées mélangées à des légumes croquants, de la sauce soja et des épices aromatiques, offrant un plat savoureux et satisfaisant avec un parfait équilibre de textures et de saveurs.\n"
+    },
+    "N2HXVJ3MAPJ72": {
+      "name": "V-Riz Frit Végétarien Hakka",
+      "description": "Riz parfumé sauté avec un mélange de légumes, de la sauce soja et des épices, offrant un plat savoureux et aromatique, parfait en plat principal ou en accompagnement.\n"
+    },
+    "MW9HYGE499WCG": {
+      "name": "V-Chilli Gobi",
+      "description": "Chou-fleur enrobé d'une sauce au piment ardente avec des poivrons, des oignons et une touche de sauce soja, créant un plat épicé, acidulé et savoureux avec un fini croustillant.\n"
+    },
+    "AWVERZMCQTN08": {
+      "name": "V-Brocoli à l'Ail et aux Piments",
+      "description": "Fleurons de brocoli frais sautés avec de l'ail émincé, des piments verts et un mélange d'épices, offrant un plat végétarien audacieux, épicé et savoureux avec un croquant satisfaisant.\n"
+    },
+    "4D89T7RQGA048": {
+      "name": "V-Gobi Manchuria",
+      "description": "Fleurons de chou-fleur enrobés de pâte, frits et mélangés dans une sauce indo-chinoise épicée et acidulée à base de soja, de vinaigre et d'épices aromatiques, créant une bouchée satisfaisante au croquant délicieux.\n"
+    },
+    "F72N4K01A1W1E": {
+      "name": "V-Maïs Croustillant Masala",
+      "description": "Grains de maïs croustillants enrobés d'un mélange alléchant d'épices, d'herbes et de masala, frits à la perfection pour une explosion de saveurs croustillantes à chaque bouchée.\n"
+    },
+    "BK7RMSWFQ1ZSY": {
+      "name": "V-Maïs Croustillant",
+      "description": "Un délicieux plat de tendres grains de maïs frits jusqu'à ce qu'ils soient dorés et croustillants, mélangés à un assaisonnement savoureux d'ail, d'épices et d'herbes fraîches, parfait comme amuse-gueule ou entrée.\n"
+    },
+    "5ZQ31BDQ89MZC": {
+      "name": "V-Aloo Samosa avec Curry Chana",
+      "description": "Chaussons dorés garnis d'un mélange parfumé de pommes de terre épicées, de petits pois et d'épices aromatiques, frits à la perfection, puis servis avec un généreux curry de pois chiches mijoté dans une sauce tomate-oignon acidulée.\n"
+    },
+    "0HZVSYJ7QHEQE": {
+      "name": "V-Pakora aux Oignons avec Sauce Tamarin",
+      "description": "Beignets d'oignons croustillants, délicatement épicés au cumin et à la coriandre, frits jusqu'à ce qu'ils soient dorés, servis avec un chutney à la menthe rafraîchissant et un chutney au tamarin sucré pour une collation colorée et savoureuse.\n"
+    },
+    "MHV603J5RFNXY": {
+      "name": "V-Masala Papad avec Sauce Tamarin",
+      "description": "Papadum croustillant garni d'un mélange coloré d'oignons finement hachés, de tomates et de piments verts, assaisonné de chaat masala et de coriandre fraîche, servi avec des chutneys au tamarin sucré et à la menthe.\n"
+    },
+    "153J2N30ZSBNW": {
+      "name": "Salade d'Oignons aux Piments",
+      "description": "Une salade fraîche d'oignons émincés, de piments verts et de jus de citron, offrant un accompagnement acidulé et épicé pour équilibrer la richesse des currys et des viandes.\n"
+    },
+    "BTYYMNEYDGRGP": {
+      "name": "Chutney à la Menthe",
+      "description": "Un chutney acidulé et rafraîchissant préparé avec de la menthe fraîche, de la coriandre et des épices.\n"
+    },
+    "11ZWTQE9ZKMAW": {
+      "name": "Raitha",
+      "description": "Un accompagnement à base de yaourt aromatisé au concombre et aux herbes, offrant un condiment frais et crémeux pour accompagner les currys épicés et les biryanis.\n"
+    },
+    "WYVEK1SBCZVD0": {
+      "name": "Lait aux Amandes (Badam)",
+      "description": "Une boisson riche à base de lait aromatisée aux amandes, au safran et à la cardamome.\n"
+    },
+    "SXT9T0GAYPQMW": {
+      "name": "Lassi à la Mangue",
+      "description": "Le favori de nos FANS – boisson crémeuse et sucrée à base de yaourt aromatisée aux mangues mûres, offrant une texture riche et veloutée et une douceur fruitée et rafraîchissante.\n"
+    },
+    "1RVPDH9Q9A6V4": {
+      "name": "Lassi Masala",
+      "description": "Une boisson acidulée à base de yaourt épicée au cumin, au gingembre et au piment, offrant une boisson savoureuse et rafraîchissante qui accompagne parfaitement les plats épicés.\n"
+    },
+    "7HTE1CGZCME8T": {
+      "name": "Lait à la Rose",
+      "description": "Une boisson rafraîchissante préparée avec du lait, du sirop de rose et du sucre, offrant une saveur parfumée et légèrement sucrée, à la fois rafraîchissante et satisfaisante.\n"
+    },
+    "NEFAH9YBQZVPA": {
+      "name": "Lassi Sucré",
+      "description": "Une boisson douce et sucrée à base de yaourt offrant une boisson fraîche et crémeuse après un repas savoureux.\n"
+    },
+    "837D0WVP197RE": {
+      "name": "Lassi Salé",
+      "description": "Une boisson rafraîchissante à base de yaourt avec une pincée de sel et d'épices, offrant une boisson fraîche, acidulée et savoureuse parfaite pour équilibrer les plats épicés.\n"
+    },
+    "CMTQ8GVDENA5J": {
+      "name": "Boost",
+      "description": "Une boisson énergisante populaire préparée avec du malt et des épices, offrant un goût rafraîchissant et légèrement sucré."
+    },
+    "7H1BMFTQ700S4": {
+      "name": "Bière au Gingembre",
+      "description": "Boisson douce et pétillante au délicat arôme de gingembre.\n"
+    },
+    "GX3GE36AP8N3W": {
+      "name": "Sprite",
+      "description": "Soda citron-lime limpide au goût frais et net.\n"
+    },
+    "00K06A9HHBPME": {
+      "name": "Coca Léger",
+      "description": "Version légère et sans sucre du cola classique.\n"
+    },
+    "XA8FBST2W1X0W": {
+      "name": "Coca-Cola",
+      "description": "Cola classique à la saveur riche et caramélisée avec une effervescence douce.\n"
+    },
+    "PEP5R9SJ8VYN6": {
+      "name": "Limca",
+      "description": "Soda citron-lime pétillant au goût vif et légèrement salé.\n"
+    },
+    "YC97E1WGHWZMT": {
+      "name": "Fanta",
+      "description": "Soda à l'orange vif et agrumé, au goût sucré et rafraîchissant.\n"
+    },
+    "YCS57WNYZ2PDY": {
+      "name": "Thums Up",
+      "description": "Cola indien audacieux et pétillant avec une note épicée distinctive.\n"
+    },
+    "VWMET4D0V5DHC": {
+      "name": "Délice à l'Abricot",
+      "description": "Un dessert sucré composé de couches d'abricots, de sucre et de ghee, offrant une saveur fruitée et riche avec une texture douce qui fond dans la bouche.\n"
+    },
+    "XRNE1BD34368G": {
+      "name": "Halwa au Pain",
+      "description": "Un dessert indien traditionnel préparé avec des tranches de pain cuites dans du ghee, du lait et du sucre.\n"
+    },
+    "S613CER2FE74A": {
+      "name": "Rasmalai",
+      "description": "Boulettes de lait douces et spongieuses imbibées de crème sucrée.\n"
+    },
+    "EX439FRVZR548": {
+      "name": "Gajar Ka Halwa",
+      "description": "Un dessert riche et sucré préparé avec des carottes râpées, du lait, du ghee et des noix, offrant un plat crémeux et réconfortant. Un classique indien.\n"
+    },
+    "5CXF3SDYFSG1Y": {
+      "name": "Gulab Jamun",
+      "description": "Boulettes de pâte frites douces et spongieuses imbibées de sirop sucré aromatisé à l'eau de rose et à la cardamome.\n"
+    },
+    "MA9JV25BPKBJ8": {
+      "name": "Riz aux Herbes et à l'Ail",
+      "description": "Riz basmati parfumé infusé aux herbes fraîches et à l'ail, créant un plat de riz savoureux et aromatique qui accompagne une grande variété de mets.\n"
+    },
+    "RH1HD9JYMW21W": {
+      "name": "Riz aux Herbes",
+      "description": "Riz basmati cuit avec un mélange d'herbes fraîches comme la coriandre et la menthe, offrant un plat de riz parfumé et savoureux qui s'harmonise magnifiquement avec les currys.\n"
+    },
+    "PJHV3KPYQG6GJ": {
+      "name": "Kashmiri Pulao",
+      "description": "Riz basmati parfumé cuit avec des fruits séchés, des noix et un mélange subtil d'épices, offrant un plat de riz légèrement sucré et aromatique.\n"
+    },
+    "JYA8G0KCBYMTM": {
+      "name": "Pulao aux Petits Pois",
+      "description": "Riz basmati cuit avec des petits pois et des épices aromatiques, offrant un plat doux, parfumé et réconfortant qui s'accompagne parfaitement de currys et de sauces.\n"
+    },
+    "30Y33ZSAAQY58": {
+      "name": "Riz Jeera",
+      "description": "Riz basmati parfumé cuit avec des graines de cumin, offrant une saveur subtile et noisettée qui complète une grande variété de plats.\n"
+    },
+    "4DA03R19FZTNJ": {
+      "name": "Riz Basmati Cuit à la Vapeur",
+      "description": "Riz basmati cuit à la vapeur, léger, moelleux et aromatique, constituant la base parfaite pour tout curry ou plat.\n"
+    },
+    "9140BM3Z4ZFS8": {
+      "name": "Naan Kashmiri",
+      "description": "Naan moelleux garni de fruits séchés et de noix, offrant une saveur subtilement sucrée et aromatique, idéal pour accompagner des plats salés.\n"
+    },
+    "NWAMWAEB31YK8": {
+      "name": "Naan au Fromage Frais",
+      "description": "Naan moelleux fourré d'une garniture de fromage crémeuse et riche, offrant une bouchée douce et gourmande qui fond dans la bouche.\n"
+    },
+    "X5TD5KB1SXXTY": {
+      "name": "Naan à l'Ail et au Methi",
+      "description": "Naan moelleux infusé à l'ail et aux feuilles de fenugrec, créant une saveur savoureuse et légèrement amère qui s'harmonise magnifiquement avec les currys riches.\n"
+    },
+    "2RQ77QWCFTZR0": {
+      "name": "Naan aux Herbes et à l'Ail",
+      "description": "Un naan savoureux infusé à l'ail et aux herbes aromatiques, offrant un goût herbacé et savoureux qui complète tout curry ou plat grillé.\n"
+    },
+    "CQZ2DFT9A7NR0": {
+      "name": "Naan aux Oignons et Piments",
+      "description": "Naan doux et moelleux infusé d'oignons finement hachés et de piments verts, cuit au tandoor pour une note savoureuse et légèrement épicée.\n"
+    },
+    "8QY5S23KEKHME": {
+      "name": "Naan à l'Ail et au Chili",
+      "description": "Naan doux à la saveur robuste d'ail et à la touche épicée du chili, parfait pour ceux qui aiment un peu de chaleur avec leur repas.\n"
+    },
+    "8BXAJP2DW6BRP": {
+      "name": "Naan au Piment",
+      "description": "Naan moelleux badigeonné de beurre, offrant une texture riche et douce et une légère richesse gourmande qui accompagne tous les plats.\n"
+    },
+    "YFRV33PVM1KQJ": {
+      "name": "Naan au Kalonji",
+      "description": "Naan doux garni de graines de kalonji, ajoutant une saveur subtile rappelant l'oignon et un léger croquant, parfait pour accompagner les currys.\n"
+    },
+    "3TYECCR8CCR6T": {
+      "name": "Naan à l'Ail",
+      "description": "Naan doux infusé à l'ail et aux herbes, cuit au tandoor pour une version parfumée et savoureuse du naan traditionnel.\n"
+    },
+    "8WGSM72P8K3AT": {
+      "name": "Naan au Beurre",
+      "description": "Naan moelleux badigeonné de beurre, offrant une texture riche et douce et une légère richesse gourmande. Généreusement beurré.\n"
+    },
+    "RAWCJXQNVR5KR": {
+      "name": "Naan Nature",
+      "description": "Pain naan classique, doux et moelleux, parfait pour accompagner votre curry préféré ou tout plat à base de curry.\n"
+    },
+    "SRPCT8FY90R64": {
+      "name": "Roti aux Oignons et Piments",
+      "description": "Pain plat de blé complet épicé aux oignons, piments verts et herbes — cuit au tandoor pour une bouchée audacieuse et savoureuse.\n"
+    },
+    "2DBD2XXVWYV9Y": {
+      "name": "Roti Tandoori au Beurre",
+      "description": "Roti tandoori doux badigeonné de beurre, offrant une saveur riche et beurrée et une texture chaude et légèrement croustillante, parfaite pour tremper dans les currys.\n"
+    },
+    "K09AH3H892KG0": {
+      "name": "Roti Tandoori Nature",
+      "description": "Pain plat doux et légèrement croustillant cuit dans un tandoor traditionnel, offrant une texture chaude et moelleuse avec un arôme fumé.\n"
+    },
+    "DVJ9755HE2G2G": {
+      "name": "Paneer Lababdar",
+      "description": "Paneer cuit dans une riche sauce crémeuse aux tomates et aux noix de cajou, épicé au garam masala et nappé de crème."
+    },
+    "ZZ70BB73XGSRA": {
+      "name": "Malai Kofta",
+      "description": "Boulettes de pommes de terre et de paneer frites cuites dans une riche sauce tomate crémeuse, offrant un curry réconfortant et gourmand à la texture veloutée et aux épices délicates.\n"
+    },
+    "JW92GG8QQ9532": {
+      "name": "Methi Chaman",
+      "description": "Paneer et feuilles de fenugrec cuits dans une sauce crémeuse légèrement épicée, offrant un mélange unique de saveurs avec une légère amertume du fenugrec et une texture lisse.\n"
+    },
+    "G3YMG3ERM29BA": {
+      "name": "Kadai Paneer",
+      "description": "Cubes de paneer cuits dans une sauce épicée et acidulée avec des poivrons, des oignons et le masala Kadai, offrant un plat végétarien audacieux, aromatique et savoureux.\n"
+    },
+    "JRWSPMSV6RTYT": {
+      "name": "Navarathna Korma",
+      "description": "Un mélange de légumes, de noix et de fruits cuits dans une sauce riche et crémeuse à base de noix de cajou, de yaourt et d'épices aromatiques, offrant un curry doux et gourmand.\n"
+    },
+    "PDP97GSY9GVGT": {
+      "name": "Matar Paneer",
+      "description": "Cubes de paneer et petits pois cuits dans une sauce à base de tomates épicée, offrant un curry équilibré et savoureux avec un mélange de textures et de saveurs profondes et aromatiques.\n"
+    },
+    "YWYQNP01MQV7E": {
+      "name": "Shahi Paneer",
+      "description": "Paneer cuit dans une sauce crémeuse et luxueuse à base de noix de cajou, d'amandes et d'épices aromatiques, créant un plat riche et royal, gourmand et savoureux.\n"
+    },
+    "TP9BV7287X7CP": {
+      "name": " Palak Paneer",
+      "description": "Cubes de paneer cuits dans une sauce aux épinards riche et épicée à la texture crémeuse, offrant un curry nutritif et savoureux.\n"
+    },
+    "ARPKH8HDFZ9HT": {
+      "name": "Okra Masala",
+      "description": "Okra cuit avec des oignons, des tomates et un mélange d'épices, offrant un plat tendre et savoureux avec une touche d'acidité et un goût doux et terreux.\n"
+    },
+    "3EAPTKC9J8AYW": {
+      "name": "Curry Légumes Mélangés",
+      "description": "Un mélange de légumes de saison mijotés dans une sauce épicée à base de tomates, d'oignons et d'épices aromatiques, offrant un plat végétarien coloré, copieux et savoureux.\n"
+    },
+    "6386QVXQ004P4": {
+      "name": "Paneer Butter Masala",
+      "description": "Cubes de paneer cuits dans une sauce crémeuse à base de tomates avec du beurre, de la crème et des épices, créant un curry riche, lisse et gourmand avec une chaleur douce.\n"
+    },
+    "XM1Y4QVE2B41Y": {
+      "name": "Channa Saag",
+      "description": "Pois chiches cuits avec des épinards en purée dans un mélange d'épices, offrant un plat copieux et nutritif.\n"
+    },
+    "D9MKVAK928Q0R": {
+      "name": " Curry Aloo et Petits Pois",
+      "description": "Un curry classique de pommes de terre et de petits pois mijotés dans une sauce à base de tomates acidulée, assaisonnée au cumin et au garam masala.\n"
+    },
+    "FSR5BET27VERJ": {
+      "name": "Aloo Gobi",
+      "description": "Pommes de terre et chou-fleur cuits dans une sauce épicée infusée au curcuma.\n"
+    },
+    "YWXMTFXX9RCVC": {
+      "name": "Channa Masala",
+      "description": "Pois chiches cuits dans une sauce épicée et acidulée avec des oignons, des tomates et un mélange d'épices aromatiques."
+    },
+    "VTRP207FZEFJT": {
+      "name": "Dal Makhani ",
+      "description": "Lentilles noires et haricots rouges mijotés longuement dans une sauce crémeuse à base de tomates, délicatement épicés au garam masala."
+    },
+    "D6WME2N5Y6DVR": {
+      "name": "Dal Tadka",
+      "description": "Lentilles jaunes cuites avec des oignons, des tomates et relevées au cumin, à l'ail et au ghee, offrant un curry savoureux et réconfortant, à la fois aromatique et riche en goût.\n"
+    },
+    "CM6G2RAA0445E": {
+      "name": "Curry de Poisson Malabar",
+      "description": "Poisson frais cuit dans une sauce au lait de coco acidulée et épicée avec du tamarin et des feuilles de curry, offrant un plat côtier relevé et savoureux."
+    },
+    "5PGB0YM5MG2MW": {
+      "name": "Korma d'Agneau",
+      "description": "Agneau cuit dans un curry crémeux et aromatique à base de yaourt, de noix de cajou et d'épices parfumées, offrant une texture riche, douce et veloutée.\n"
+    },
+    "AFV7GEFEYCB16": {
+      "name": "Kadai d'Agneau",
+      "description": "Viande d'agneau cuite dans un curry épicé et acidulé avec des poivrons, des tomates et l'aromatique masala Kadai, offrant un plat copieux et savoureux."
+    },
+    "YX92RA63QEJK8": {
+      "name": "Curry d'Agneau du Sud de l'Inde",
+      "description": "Tendre viande d'agneau mijotée dans un riche curry épicé du Sud de l'Inde préparé avec de la noix de coco, des feuilles de curry et du tamarin.\n"
+    },
+    "89EFH8PNVDPGP": {
+      "name": "Saag de Poulet",
+      "description": "Poulet cuit dans un curry épicé et parfumé avec des épinards en purée et une touche de crème, offrant un plat copieux et savoureux.\n"
+    },
+    "K60SX7EGQW2HW": {
+      "name": " Korma de Poulet",
+      "description": "Poulet mijoté lentement dans un mélange parfumé de yaourt, de crème, de noix de cajou et d'épices aromatiques, créant un curry riche, doux et velouté.\n"
+    },
+    "PQGGGQV4E3XHP": {
+      "name": "Poulet Methi Malai",
+      "description": "Poulet cuit dans une sauce crémeuse avec des feuilles de fenugrec et des épices aromatiques, offrant un parfait équilibre entre richesse, légère amertume du methi et texture lisse.\n"
+    },
+    "4YXSYANJHWQYY": {
+      "name": "Poulet Lababdar",
+      "description": "Tendres morceaux de poulet cuits dans une sauce lisse et crémeuse à base de tomates, d'oignons et de noix de cajou.\n"
+    },
+    "01K8E0Q9DWS86": {
+      "name": "Chicken Vindaloo",
+      "description": "Un curry goan épicé et acidulé préparé avec du poulet mariné, du vinaigre et des piments rouges ardents, créant un plat audacieux, acidulé et épicé.\n"
+    },
+    "E8WQRPCXE0N7T": {
+      "name": "Kadai de Poulet",
+      "description": "Poulet cuit dans une sauce acidulée et épicée avec des poivrons, des oignons et un mélange spécial de masala Kadai."
+    },
+    "82TMGT05JV4YE": {
+      "name": "Chicken Tikka Masala",
+      "description": "Morceaux de poulet grillés mijotés dans une sauce crémeuse à base de tomates, assaisonnés au garam masala et aux épices aromatiques.\n"
+    },
+    "ZZ0QVWPF2EM78": {
+      "name": "Poulet au Beurre (Butter Chicken)",
+      "description": "Poulet cuit dans une sauce tomate crémeuse et beurrée avec un mélange subtil d'épices, offrant une saveur riche, lisse et gourmande qui est à la fois réconfortante et satisfaisante.\n"
+    },
+    "FHGPDH1A5559P": {
+      "name": "Curry de Poulet du Sud de l'Inde",
+      "description": "Tendre poulet mijoté dans un curry épicé et acidulé du Sud de l'Inde avec du lait de coco, du tamarin, des feuilles de curry et un mélange d'épices aromatiques.\n"
+    },
+    "GPVTZH3FS7HC0": {
+      "name": "Biryani Keema d'Agneau",
+      "description": "Tendre agneau haché cuit dans des épices robustes et du ghee, superposé avec du riz infusé au safran, des petits pois et des oignons caramélisés, mijoté lentement pour créer un délice riche et savoureux.\n"
+    },
+    "B180BNFT7KJ6Y": {
+      "name": "Biryani Keema de Poulet",
+      "description": "Riz basmati parfumé superposé sur un poulet haché épicé cuit avec des petits pois, des épices entières et du ghee, puis cuit à la vapeur lentement pour un biryani copieux, aromatique et profondément savoureux.\n"
+    },
+    "SF7CKN7ZPKS92": {
+      "name": "Biryani de Poulet Spécial Masakali",
+      "description": "Notre biryani signature avec du succulent poulet, du riz teinté au safran, des oignons caramélisés et un mélange secret d'épices, mijoté lentement pour offrir une expérience inoubliable et aromatique.\n"
+    },
+    "QG552NT04BGJ0": {
+      "name": "Biryani de Poulet au Piment",
+      "description": "Riz basmati aromatique mélangé à des morceaux de poulet au piment épicé, enrobés de sauce acidulée, superposés avec des herbes fraîches, puis cuits à la vapeur pour imprégner chaque grain de saveurs audacieuses et ardentes.\n"
+    },
+    "HQB556ZZCKM0G": {
+      "name": "Biryani Chicken 65",
+      "description": "Riz basmati superposé sur de savoureux morceaux de Chicken 65 ardents, infusés de pâte de piment, de yaourt et d'épices entières, cuit à la vapeur lentement pour marier chaleur, croquant et arôme à chaque bouchée.\n"
+    },
+    "P37AYVYG607K6": {
+      "name": "Biryani Poulet au Beurre",
+      "description": "Riz basmati parfumé superposé avec du succulent poulet au beurre mijoté dans une sauce crémeuse aux tomates et aux noix de cajou, cuit avec du ghee et des épices pour un repas en pot unique décadent et richement savoureux.\n"
+    },
+    "H4F602Q3K438W": {
+      "name": "Biryani de Poulet Frit",
+      "description": "Morceaux de poulet frit croustillants nichés dans un riz infusé au safran, superposés d'oignons caramélisés, d'épices entières et de ghee, créant un contraste de textures riche et un biryani gourmand.\n"
+    },
+    "MKVNT5BFS0R3M": {
+      "name": "Biryani de Paneer au Piment",
+      "description": "Riz basmati superposé avec du paneer poivré enrobé de sauce au piment, infusé d'épices aromatiques et de coriandre fraîche, puis cuit à la vapeur pour offrir une variante de biryani épicée et colorée.\n"
+    },
+    "7S66R5Q8Y0GVM": {
+      "name": "Biryani Paneer 65",
+      "description": "Cubes de paneer épicés marinés dans un mélange de yaourt acidulé, superposés avec du riz parfumé et des épices à biryani, mijotés lentement pour une variante alléchante et végétarienne d'un classique.\n"
+    },
+    "EK7S674Y8PN6A": {
+      "name": "Biryani Végétarien",
+      "description": "Riz basmati moelleux cuit avec un mélange de légumes, d'épices aromatiques, de safran et d'herbes fraîches, superposé et cuit à la vapeur pour créer une spécialité végétarienne colorée et savoureuse.\n"
+    },
+    "M0AYEQB24J2QM": {
+      "name": "Biryani de Poulet Dum",
+      "description": "Riz basmati aromatique superposé avec du tendre poulet mariné, du safran, du ghee et des épices entières, mijoté lentement dans une marmite 'dum' scellée pour un festin parfumé et succulent en pot unique.\n"
+    },
+    "GPKZGE0X9FW6P": {
+      "name": "Riz Frit Hakka",
+      "description": "Riz sauté avec des légumes et de la sauce soja, offrant un riz frit copieux et savoureux rempli de délicieuses épices asiatiques.\n"
+    },
+    "49YS50E70YR5Y": {
+      "name": "Nouilles Hakka",
+      "description": "Nouilles sautées avec des légumes et un mélange de sauce soja et d'épices, créant un plat savoureux et satisfaisant."
+    },
+    "DTYG7C2CY3NZJ": {
+      "name": "Frites à la Sauce au Beurre",
+      "description": "Frites fraîches nappées de sauce au beurre (végétarienne) pour un délicieux plat fusion. (Style poutine)"
+    },
+    "8XFB12M3BPCT4": {
+      "name": "Frites au Poulet au Beurre",
+      "description": "Frites dorées garnies de succulent poulet au beurre, nappées d'une sauce crémeuse aux tomates veloutée, parsemées de coriandre fraîche et d'oignons finement hachés pour une version décadente et réconfortante des frites classiques.\n"
+    },
+    "Q6BC63WB4GAZT": {
+      "name": "Nachos au Poulet au Beurre",
+      "description": "Croustilles de tortilla croustillantes superposées de tendre poulet au beurre, de fromage fondu, d'oignons frais, de coriandre et d'un filet de sauce tomate crémeuse pour une collation fusion aux saveurs irrésistibles.\n"
+    },
+    "SYGYWN3YZ3NZW": {
+      "name": "Ailes Épicées Cajun",
+      "description": "Ailes de poulet assaisonnées d'un mélange d'épices cajun audacieux et fumé, cuites au four ou frites à la perfection croustillante, offrant une touche savoureuse et épicée avec un soupçon de chaleur et d'herbes aromatiques.\n"
+    },
+    "2R4EJXKGCGVX0": {
+      "name": "Ailes Miel-Ail",
+      "description": "Ailes de poulet croustillantes glacées d'une sauce sucrée-salée au miel et à l'ail, créant un parfait équilibre de douceur, d'umami et d'une touche d'épice à chaque bouchée.\n"
+    },
+    "5KE7V8M3WSFEG": {
+      "name": "Ailes 65",
+      "description": "Ailes de poulet croustillantes marinées dans un mélange ardent d'épices, frites jusqu'à ce qu'elles soient dorées, et enrobées d'une sauce acidulée avec des feuilles de curry.\n"
+    },
+    "JTMPNX2S6R9H0": {
+      "name": "Ailes à la Sauce au Beurre",
+      "description": "Juteuses ailes de poulet enrobées d'une riche sauce crémeuse au beurre, infusée d'épices aromatiques et mijotée pour créer une sauce lisse et gourmande qui complète parfaitement les ailes croustillantes.\n"
+    },
+    "PH3G44KKH3M2M": {
+      "name": "Grand Plateau Masakali",
+      "description": "Notre plateau le plus populaire et généreux — un délicieux mélange de tikkas de poulet, de kebab d'agneau, de poulet tandoori et de poisson tandoori. Parfait pour partager en groupe de trois personnes ou plus.\n"
+    },
+    "MN34K5K7EQKT6": {
+      "name": "Poisson Tandoori",
+      "description": "Filets de poisson marinés dans un mélange d'épices, de yaourt et de jus de citron, cuits au tandoor pour une texture fumée et tendre, servis avec un chutney acidulé pour une expérience de fruits de mer savoureuse.\n"
+    },
+    "1BYX6YHB76WK6": {
+      "name": "Seekh Kabab d'Agneau",
+      "description": "Agneau haché mélangé à des épices aromatiques, des herbes et une touche de ghee, embroché et grillé à la perfection, offrant un kabab juteux et savoureux avec une finition fumée.\n"
+    },
+    "YTK1PYFVQ4D10": {
+      "name": "Chicken Tikka",
+      "description": "Morceaux de poulet marinés dans un mélange de yaourt épicé, grillés jusqu'à ce qu'ils soient fumés et tendres, offrant un plat classique et savoureux.\n"
+    },
+    "ZQHSEJCCVFSDR": {
+      "name": "Kabab de Poulet Doré",
+      "description": "Tendres morceaux de poulet marinés dans un mélange d'épices, cuits au tandoor offrant une bouchée délicieuse et savoureuse avec un parfait équilibre de saveurs et de textures.\n"
+    },
+    "18W0JVPDDEXDM": {
+      "name": "Chicken Tikka Malai",
+      "description": "Morceaux de poulet marinés dans un mélange crémeux de yaourt, de crème et d'épices, puis grillés à la perfection, offrant une expérience riche et juteuse.\n"
+    },
+    "6A3Y2BF9WQYXC": {
+      "name": "Chicken Tikka Hariyali",
+      "description": "Cubes de paneer marinés dans une pâte verte fraîche infusée aux herbes, grillés jusqu'à ce qu'ils soient légèrement carbonisés et savoureux, offrant un goût vif, aromatique et légèrement acidulé avec une finition fumée.\n"
+    },
+    "5FPVCF82KNKAR": {
+      "name": "Poulet Afghani",
+      "description": "Tendres morceaux de poulet marinés dans une riche pâte de yaourt, épicés aux herbes subtiles et cuits au tandoor pour créer un plat crémeux, aromatique et tendre.\n"
+    },
+    "QDD6YN84Q9XPP": {
+      "name": "Poulet Tandoori",
+      "description": "Morceaux de poulet marinés infusés d'un mélange de yaourt, d'épices et d'herbes, grillés dans un tandoor traditionnel pour une expérience fumée, juteuse et savoureuse avec un extérieur croustillant.\n"
+    },
+    "EQ2DP18T3R8FJ": {
+      "name": "Plateau Végétarien",
+      "description": "Savourez un mélange savoureux de Paneer assorti, de Brocoli Malai et de Soya Chaap Tandoori — un favori de la maison et parfait pour partager.\n"
+    },
+    "H529D0YWSJZM0": {
+      "name": "Plateau de Paneer",
+      "description": "Cubes de paneer assortis et doux marinés dans du yaourt, des épices et des herbes, grillés à la perfection avec un arôme fumé, servis avec un chutney acidulé pour une entrée savoureuse et satisfaisante.\n"
+    },
+    "BPMZXKWYG1NW2": {
+      "name": "Kebab de Paneer Doré",
+      "description": "Cubes de paneer croustillants dorés, marinés dans un mélange d'épices et cuits au tandoor jusqu'à ce qu'ils soient parfaitement croustillants."
+    },
+    "684M0D1ZRWE8W": {
+      "name": "Paneer Tikka Malai",
+      "description": "Cubes de paneer marinés dans un mélange riche et crémeux de yaourt et d'épices, grillés à la perfection, offrant une expérience douce qui fond dans la bouche.\n"
+    },
+    "GQ28PXJZ2E504": {
+      "name": "Brocoli Malai",
+      "description": "Fleurons de brocoli marinés dans une sauce malai lisse et crémeuse, grillés à la perfection jusqu'à obtenir un extérieur doré et fumé."
+    },
+    "5PS97YG955QZ2": {
+      "name": "Paneer Hariyali",
+      "description": "Cubes de paneer marinés dans une pâte verte fraîche infusée aux herbes, grillés jusqu'à ce qu'ils soient légèrement carbonisés et savoureux, offrant un goût vif, aromatique et légèrement acidulé avec une finition fumée.\n"
+    },
+    "TK9EHJME5S8FW": {
+      "name": "Soya Chap Tandoori",
+      "description": "Morceaux de soya chap marinés grillés dans un tandoor traditionnel, leur conférant une saveur fumée et un extérieur croustillant, parfaitement épicés et servis avec un chutney à la menthe rafraîchissant.\n"
+    },
+    "WAJP2E5VVW4M4": {
+      "name": "Soya Chap Malai",
+      "description": "Morceaux de soya chap marinés dans une sauce malai crémeuse et épicée, grillés jusqu'à ce qu'ils soient tendres et fumés, offrant une bouchée riche et succulente avec une touche d'épice et de douceur.\n"
+    },
+    "A238V6XQX9YM2": {
+      "name": "Paneer Tikka",
+      "description": "Paneer doux mariné dans du yaourt, des épices et des herbes, grillé à la perfection avec un arôme fumé - notre favori végétarien.\n"
+    },
+    "495NXS67FXF04": {
+      "name": "Poisson Apollo",
+      "description": "Filets de poisson enrobés d'un riche mélange d'épices, frits à la perfection dorée, puis glacés d'une sauce acidulée et épicée au gingembre, à l'ail et au soja."
+    },
+    "PJ8HN7CWT2SEJ": {
+      "name": "Poisson 65",
+      "description": "Poisson feuilleté mariné dans un mélange audacieux d'épices du Sud de l'Inde, frit jusqu'à ce qu'il soit croustillant, puis enrobé d'une sauce au piment ardente avec des feuilles de curry et de la moutarde pour un régal savoureux et épicé.\n"
+    },
+    "PFW0DA3YDK3TY": {
+      "name": "Pakora de Poisson",
+      "description": "Tendres morceaux de poisson marinés dans une pâte épicée à la farine de pois chiches, frits jusqu'à obtenir un brun doré croustillant.\n"
+    },
+    "HDM0Z1D503290": {
+      "name": "Rôti de Mouton au Ghee",
+      "description": "Tendres morceaux de mouton marinés dans un mélange audacieux de piments rouges, d'épices torréfiées et de ghee, mijotés lentement jusqu'à être succulents, offrant une spécialité côtière ardente, aromatique et gourmande.\n"
+    },
+    "GA61NAB0SMB6Y": {
+      "name": "Poulet Majestic",
+      "description": "Succulent poulet cuit dans une riche sauce crémeuse aux tomates et aux noix de cajou rehaussée de subtiles épices indiennes, fini d'un filet de crème et de coriandre fraîche pour une saveur royale et gourmande.\n"
+    },
+    "A14VG5WBZ594P": {
+      "name": "Poulet au Piment",
+      "description": "Morceaux de poulet marinés dans une sauce au piment épicée, sautés avec des oignons verts et des poivrons, donnant un favori indo-chinois ardent, acidulé et savoureux.\n"
+    },
+    "D4V1WBVJRE9XA": {
+      "name": "Chicken Sukka",
+      "description": "Poulet désossé mijoté dans un mélange d'épices sèches, de noix de coco râpée et de feuilles de curry. Spécialité légèrement ardente du Sud de l'Inde.\n"
+    },
+    "ZAW6R4X4S9Q0T": {
+      "name": "Poulet Manchuria",
+      "description": "Tendres morceaux de poulet enrobés d'une pâte savoureuse, frits au wok et glacés d'une sauce Manchurienne épicée-sucrée au gingembre, à l'ail, au soja et au piment.\n"
+    },
+    "7HA4VA6DESMHE": {
+      "name": "Poisson au Piment",
+      "description": "Filets de poisson croustillants enrobés d'une pâte légère, mélangés dans une sauce indo-chinoise épicée au piment et à l'ail avec des poivrons colorés et des oignons."
+    },
+    "SD0J8X342E4CC": {
+      "name": "Pakora de Poulet.",
+      "description": "Morceaux de poulet désossés marinés dans des épices aromatiques et de la farine de pois chiches, frits à la perfection dorée, offrant un extérieur croustillant et un intérieur juteux, servis avec un chutney au tamarin acidulé.\n"
+    },
+    "YZ4GN88D0F0RR": {
+      "name": "Chicken 65",
+      "description": "Tendres morceaux de poulet en bouchées marinés dans des épices vives du Sud de l'Inde, frits jusqu'à ce qu'ils soient croustillants, puis enrobés d'une sauce au piment ardente avec des feuilles de curry.\n"
+    },
+    "13CFC0043HCDY": {
+      "name": "Lollipops de Poulet Masala",
+      "description": "Pilons de poulet marinés dans des épices masala acidulées et du yaourt, grillés jusqu'à ce qu'ils soient légèrement carbonisés et juteux, puis enrobés d'un mélange d'épices sèches parfumées, servis chauds avec un chutney à la menthe rafraîchissant.\n"
+    },
+    "ATF5DD0YYJ3PW": {
+      "name": "Pakora de Paneer",
+      "description": "Cubes de paneer doux trempés dans une pâte assaisonnée à la farine de pois chiches, frits jusqu'à ce qu'ils soient dorés et croustillants, et servis avec un chutney à la menthe acidulé pour une collation délicieusement croustillante.\n"
+    },
+    "20AQP1T5NC63W": {
+      "name": "Paneer au Piment",
+      "description": "Cubes de paneer sautés avec des poivrons, des oignons et une sauce au piment acidulée, créant un plat qui équilibre les notes épicées, sucrées et savoureuses.\n"
+    },
+    "7NWECRBVE3YVJ": {
+      "name": "Paneer 65",
+      "description": "Cubes de paneer doux marinés dans un mélange épicé de gingembre, d'ail et de yaourt, frits à la perfection croustillante et enrobés de sauce 65."
+    },
+    "7MA7RJ0JKTVAP": {
+      "name": "Chilli Gobi",
+      "description": "Chou-fleur enrobé d'une sauce au piment ardente avec des poivrons, des oignons et une touche de sauce soja, créant un plat épicé et acidulé avec un fini croustillant.\n"
+    },
+    "D2K5XENMM00Y0": {
+      "name": "Gobi 65",
+      "description": "Fleurons de chou-fleur marinés dans un riche mélange d'épices, frits jusqu'à ce qu'ils soient dorés, et servis avec une pincée de feuilles de curry et de piments.\n"
+    },
+    "B971S7BWBZAQJ": {
+      "name": "Brocoli à l'Ail et aux Piments",
+      "description": "Fleurons de brocoli frais sautés avec de l'ail émincé, des piments verts et un mélange d'épices, offrant un plat végétarien audacieux, épicé et savoureux avec un croquant satisfaisant.\n"
+    },
+    "WJAWQE97HZAER": {
+      "name": "Galette Végétarienne",
+      "description": "Galette croustillante dorée maison aux légumes écrasés, légèrement épicée et poêlée à la perfection."
+    },
+    "83D4ZK4V4S1S0": {
+      "name": "Gobi Manchuria",
+      "description": "Favori INCONTOURNABLE. Fleurons de chou-fleur enrobés de pâte, frits et mélangés dans une sauce indo-chinoise épicée et acidulée à base de soja, de vinaigre et d'un mélange d'épices aromatiques."
+    },
+    "2FMSRKZTA5Y2A": {
+      "name": "Maïs Croustillant Masala",
+      "description": "Grains de maïs croustillants enrobés d'un mélange alléchant d'épices, d'herbes et de masala, frits à la perfection et mélangés avec du gingembre, de l'ail et des oignons hachés. Garnis de coriandre !!\n"
+    },
+    "ZB0Y1PEZXBJ0W": {
+      "name": "Maïs Croustillant",
+      "description": "Un délicieux plat de tendres grains de maïs frits jusqu'à ce qu'ils soient dorés et croustillants, mélangés à un assaisonnement savoureux d'ail, d'épices et d'herbes fraîches, parfait comme amuse-gueule ou entrée.\n"
+    },
+    "VJ7XESX4VSZ8G": {
+      "name": "Aloo Tikki avec Curry Chana",
+      "description": "Galettes de pommes de terre légèrement épicées mélangées à des petits pois, des herbes et des épices aromatiques, frites jusqu'à ce qu'elles soient dorées et croustillantes, puis accompagnées d'un curry de pois chiches acidulé."
+    },
+    "3J3HSPHAX6GDW": {
+      "name": "Aloo Samosa avec Curry Chana",
+      "description": "Chaussons dorés garnis d'un mélange de pommes de terre épicées, de petits pois et d'épices aromatiques, frits à la perfection, puis servis avec un généreux curry de pois chiches.\n"
+    },
+    "SAFHZMFZ1ZD0W": {
+      "name": "Pakora aux Oignons avec Chutneys",
+      "description": "Beignets d'oignons croustillants, délicatement épicés au cumin et à la coriandre, frits jusqu'à ce qu'ils soient dorés. Servis avec des chutneys à la Menthe et au Tamarin."
+    }
+  }
 }
