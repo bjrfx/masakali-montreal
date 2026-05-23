@@ -21,8 +21,10 @@ import AdminCateringManagement from './pages/admin/CateringManagement';
 import AdminContactManagement from './pages/admin/ContactManagement';
 import AdminHomepageContentManagement from './pages/admin/HomepageContentManagement';
 import AdminNotificationEmailSettings from './pages/admin/NotificationEmailSettings';
+import AdminHiringBannerManagement from './pages/admin/HiringBannerManagement';
 import AdminLayout from './components/AdminLayout';
 import ScrollToTop from './components/ScrollToTop';
+import HiringBanner from './components/HiringBanner';
 import QuickBot from './components/QuickBot/QuickBot';
 
 /**
@@ -50,6 +52,7 @@ function LanguageSync({ children, lang }) {
 function PublicLayout({ children }) {
   return (
     <>
+      <HiringBanner />
       <Navbar />
       {children}
       <Footer />
@@ -207,6 +210,13 @@ function App() {
             <ProtectedRoute>
               <AdminLayout admin={admin} onLogout={handleLogout}>
                 <AdminAnalytics token={adminToken} />
+              </AdminLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/hiring" element={
+            <ProtectedRoute>
+              <AdminLayout admin={admin} onLogout={handleLogout}>
+                <AdminHiringBannerManagement token={adminToken} />
               </AdminLayout>
             </ProtectedRoute>
           } />
