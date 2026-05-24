@@ -138,6 +138,10 @@
     "emailNotificationDesc": "Recevez des courriels de confirmation et de rappel.",
     "needHelp": "Besoin d'aide ?",
     "needHelpDesc": "Écrivez à masakalimontreal@gmail.com pour obtenir de l'aide.",
+    "pausedTitle": "Réservations suspendues pour la journée",
+    "pausedDescription": "Nous n'acceptons pas les réservations en ligne pour le moment. Veuillez revenir plus tard ou nous contacter directement pour effectuer une réservation.",
+    "phoneLabel": "Téléphone",
+    "emailLabel": "Courriel",
     "yourNamePlaceholder": "Votre nom complet",
     "emailPlaceholder": "votre@courriel.com",
     "phonePlaceholder": "4373761995"

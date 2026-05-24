@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { CalendarDays, Clock, Users, MapPin, Check, Loader2, ArrowRight, Phone, Mail, MessageSquare } from 'lucide-react';
+import { CalendarDays, Clock, Users, MapPin, Check, Loader2, ArrowRight, Phone, Mail, MessageSquare, PauseCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import api from '../api';
 import { gtagEvent, trackGoogleAdsConversion } from '../utils/gtag';
@@ -38,6 +38,8 @@ export default function Reservations() {
   const [submitted, setSubmitted] = useState(false);
   const [confirmation, setConfirmation] = useState(null);
   const [error, setError] = useState('');
+  const [dateClosed, setDateClosed] = useState(false);
+  const [reservationsPaused, setReservationsPaused] = useState(false);
 
   useEffect(() => {
     api.getRestaurants()
@@ -49,6 +51,10 @@ export default function Reservations() {
         ));
         setRestaurants(montrealOnly);
       })
+      .catch(console.error);
+
+    api.getReservationSettings()
+      .then((data) => setReservationsPaused(Boolean(data.reservations_paused)))
       .catch(console.error);
   }, []);
 
@@ -71,7 +77,32 @@ export default function Reservations() {
     setError('');
   };
 
-  const handleSubmit = async (e) => {
+  
+  useEffect(() => {
+    const canCheck = form.restaurant_id && form.date;
+    if (!canCheck) {
+      setDateClosed(false);
+      return;
+    }
+    let cancelled = false;
+    api.getReservationAvailability({
+      restaurant_id: form.restaurant_id,
+      date: form.date,
+      time: form.time || '19:00',
+    })
+      .then((result) => {
+        if (cancelled) return;
+        const closed = !result?.available;
+        setDateClosed(closed);
+        if (closed) setError('Reservations are closed for the selected day/service period.');
+      })
+      .catch(() => {
+        if (!cancelled) setDateClosed(false);
+      });
+    return () => { cancelled = true; };
+  }, [form.restaurant_id, form.date, form.time]);
+
+const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.phone || !form.date || !form.time || !form.restaurant_id) {
       setError(t('common.required'));
@@ -80,6 +111,10 @@ export default function Reservations() {
 
     if (!/^\d{10}$/.test(form.phone)) {
       setError(t('common.phone10Digits'));
+      return;
+    }
+    if (dateClosed) {
+      setError('Reservations are closed for the selected day/service period.');
       return;
     }
 
@@ -153,6 +188,31 @@ export default function Reservations() {
         <div className="indian-vine-left" />
         <div className="indian-vine-right" />
         <div className="max-w-4xl mx-auto px-4">
+          {reservationsPaused ? (
+            <AnimatedSection>
+              <div className="bg-white dark:bg-neutral-900 border border-red-500/20 rounded-2xl p-10 text-center shadow-sm dark:shadow-none">
+                <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <PauseCircle size={40} className="text-red-500 dark:text-red-400" />
+                </div>
+                <h2 className="font-display text-3xl font-bold text-neutral-900 dark:text-white mb-4">
+                  {t('reservations.pausedTitle')}
+                </h2>
+                <p className="text-neutral-600 dark:text-neutral-400 text-lg mb-6 max-w-lg mx-auto">
+                  {t('reservations.pausedDescription')}
+                </p>
+                <div className="bg-neutral-50 dark:bg-neutral-800/50 rounded-xl p-6 max-w-md mx-auto space-y-3">
+                  <div className="flex items-center justify-center gap-2 text-neutral-600 dark:text-neutral-300">
+                    <Phone size={16} className="text-amber-500" />
+                    <span className="text-sm">{t('reservations.phoneLabel')}: <a href="tel:5143030513" className="text-amber-500 dark:text-amber-400 font-semibold hover:underline">(514) 303-0513</a></span>
+                  </div>
+                  <div className="flex items-center justify-center gap-2 text-neutral-600 dark:text-neutral-300">
+                    <Mail size={16} className="text-amber-500" />
+                    <span className="text-sm">{t('reservations.emailLabel')}: <a href="mailto:contact@masakalimontreal.ca" className="text-amber-500 dark:text-amber-400 font-semibold hover:underline">contact@masakalimontreal.ca</a></span>
+                  </div>
+                </div>
+              </div>
+            </AnimatedSection>
+          ) : (
           <AnimatePresence mode="wait">
             {submitted ? (
               <motion.div
@@ -219,6 +279,11 @@ export default function Reservations() {
                       {error}
                     </div>
                   )}
+                  {!error && dateClosed && (
+                    <div className="mb-6 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg text-amber-600 dark:text-amber-400 text-sm">
+                      Reservations are closed for the selected day/service period.
+                    </div>
+                  )}
 
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
@@ -270,7 +335,7 @@ export default function Reservations() {
                   </div>
 
                   <div className="mt-8 flex flex-col sm:flex-row items-center gap-4">
-                    <button type="submit" disabled={submitting} className="btn-gold w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed">
+                    <button type="submit" disabled={submitting || dateClosed} className="btn-gold w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed">
                       {submitting ? (
                         <><Loader2 size={18} className="mr-2 animate-spin" /> {t('reservations.booking')}</>
                       ) : (
@@ -285,6 +350,7 @@ export default function Reservations() {
               </motion.div>
             )}
           </AnimatePresence>
+          )}
 
           {/* Info cards */}
           <div className="grid sm:grid-cols-3 gap-6 mt-12">

@@ -21,16 +21,14 @@ import AdminCateringManagement from './pages/admin/CateringManagement';
 import AdminContactManagement from './pages/admin/ContactManagement';
 import AdminHomepageContentManagement from './pages/admin/HomepageContentManagement';
 import AdminNotificationEmailSettings from './pages/admin/NotificationEmailSettings';
+import AdminReservationSettings from './pages/admin/ReservationSettings';
 import AdminHiringBannerManagement from './pages/admin/HiringBannerManagement';
+import AdminSmartCalendar from './pages/admin/SmartCalendar';
 import AdminLayout from './components/AdminLayout';
 import ScrollToTop from './components/ScrollToTop';
 import HiringBanner from './components/HiringBanner';
 import QuickBot from './components/QuickBot/QuickBot';
 
-/**
- * Wrapper that syncs the URL language prefix with i18next
- * and updates the document's lang attribute + meta tags.
- */
 function LanguageSync({ children, lang }) {
   const { i18n } = useTranslation();
 
@@ -46,9 +44,6 @@ function LanguageSync({ children, lang }) {
   return children;
 }
 
-/**
- * Renders the public page layout (Navbar + Page + Footer)
- */
 function PublicLayout({ children }) {
   return (
     <>
@@ -60,9 +55,6 @@ function PublicLayout({ children }) {
   );
 }
 
-/**
- * 404 page component
- */
 function NotFoundPage() {
   const { t, i18n } = useTranslation();
   const homeLink = i18n.language === 'fr' ? '/fr' : '/';
@@ -116,24 +108,12 @@ function App() {
     return children;
   };
 
-  /**
-   * Build the public routes for a given language prefix.
-   * prefix = "" for English, "fr" for French.
-   */
-  const publicRoutes = (prefix) => {
-    const base = prefix ? `/${prefix}` : '';
-    return (
-      <Route path={base || '/'} element={<LanguageSync><PublicLayout><Home /></PublicLayout></LanguageSync>}>
-      </Route>
-    );
-  };
-
   return (
     <ThemeProvider>
       <Router>
         <ScrollToTop />
         <Routes>
-          {/* ===== English public routes ===== */}
+          {/* English Public Routes */}
           <Route path="/" element={<LanguageSync><PublicLayout><Home /></PublicLayout></LanguageSync>} />
           <Route path="/about" element={<LanguageSync><PublicLayout><About /></PublicLayout></LanguageSync>} />
           <Route path="/menu" element={<LanguageSync><PublicLayout><Menu /></PublicLayout></LanguageSync>} />
@@ -143,7 +123,7 @@ function App() {
           <Route path="/catering" element={<LanguageSync><PublicLayout><Catering /></PublicLayout></LanguageSync>} />
           <Route path="/contact" element={<LanguageSync><PublicLayout><Contact /></PublicLayout></LanguageSync>} />
 
-          {/* ===== French public routes (/fr prefix) ===== */}
+          {/* French Public Routes */}
           <Route path="/fr" element={<LanguageSync lang="fr"><PublicLayout><Home /></PublicLayout></LanguageSync>} />
           <Route path="/fr/about" element={<LanguageSync lang="fr"><PublicLayout><About /></PublicLayout></LanguageSync>} />
           <Route path="/fr/menu" element={<LanguageSync lang="fr"><PublicLayout><Menu /></PublicLayout></LanguageSync>} />
@@ -153,7 +133,7 @@ function App() {
           <Route path="/fr/catering" element={<LanguageSync lang="fr"><PublicLayout><Catering /></PublicLayout></LanguageSync>} />
           <Route path="/fr/contact" element={<LanguageSync lang="fr"><PublicLayout><Contact /></PublicLayout></LanguageSync>} />
 
-          {/* Admin Routes (English only) */}
+          {/* Admin Routes */}
           <Route path="/admin/login" element={
             adminToken ? <Navigate to="/admin" replace /> : <AdminLogin onLogin={handleLogin} />
           } />
@@ -206,6 +186,13 @@ function App() {
               </AdminLayout>
             </ProtectedRoute>
           } />
+          <Route path="/admin/reservation-settings" element={
+            <ProtectedRoute>
+              <AdminLayout admin={admin} onLogout={handleLogout}>
+                <AdminReservationSettings token={adminToken} />
+              </AdminLayout>
+            </ProtectedRoute>
+          } />
           <Route path="/admin/analytics" element={
             <ProtectedRoute>
               <AdminLayout admin={admin} onLogout={handleLogout}>
@@ -217,6 +204,13 @@ function App() {
             <ProtectedRoute>
               <AdminLayout admin={admin} onLogout={handleLogout}>
                 <AdminHiringBannerManagement token={adminToken} />
+              </AdminLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/smart-calendar" element={
+            <ProtectedRoute>
+              <AdminLayout admin={admin} onLogout={handleLogout}>
+                <AdminSmartCalendar token={adminToken} />
               </AdminLayout>
             </ProtectedRoute>
           } />

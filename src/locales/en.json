@@ -138,6 +138,10 @@
     "emailNotificationDesc": "Receive confirmation and reminder emails.",
     "needHelp": "Need Help?",
     "needHelpDesc": "Email masakalimontreal@gmail.com for assistance.",
+    "pausedTitle": "Reservations Paused for the Day",
+    "pausedDescription": "We are not accepting online reservations at this time. Please check back later or contact us directly to make a reservation.",
+    "phoneLabel": "Phone",
+    "emailLabel": "Email",
     "yourNamePlaceholder": "Your full name",
     "emailPlaceholder": "your@email.com",
     "phonePlaceholder": "4373761995"
