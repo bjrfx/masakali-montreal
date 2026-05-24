@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { io } from 'socket.io-client';
-import { CalendarDays, ChevronLeft, ChevronRight, Lock, Unlock, Save } from 'lucide-react';
+import { CalendarDays, ChevronLeft, ChevronRight, Lock, Unlock, Save, Info } from 'lucide-react';
 import api from '../../api';
 
 const SITE_KEY = 'montreal';
@@ -46,6 +46,24 @@ function occupancyColor(pct) {
   if (pct >= 60) return 'bg-amber-500/25 border-amber-500/40';
   if (pct >= 1) return 'bg-sky-500/20 border-sky-500/35';
   return 'bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800';
+}
+
+function InfoHint({ label, children }) {
+  return (
+    <span className="relative inline-flex items-center group">
+      <button
+        type="button"
+        aria-label={label}
+        title={label}
+        className="inline-flex items-center justify-center w-4 h-4 rounded-full border border-neutral-300 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 hover:border-neutral-500 transition-colors"
+      >
+        <Info size={10} />
+      </button>
+      <span className="pointer-events-none absolute left-1/2 top-full z-[130] mt-2 hidden -translate-x-1/2 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 py-2 text-[11px] font-normal text-neutral-600 dark:text-neutral-300 shadow-xl w-72 group-hover:block group-focus-within:block">
+        {children}
+      </span>
+    </span>
+  );
 }
 
 export default function SmartCalendar() {
@@ -376,19 +394,37 @@ export default function SmartCalendar() {
       </AnimatePresence>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Smart Reservation Calendar (Beta v1)</h1>
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Smart Reservation Calendar</h1>
           <p className="text-neutral-500 text-sm mt-1">Live occupancy, blockouts, and request activity in one control center.</p>
         </div>
         <div />
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-6 gap-3">
-        <div className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-3"><p className="text-[11px] text-neutral-500">Month Reservations</p><p className="text-xl font-semibold">{monthKpis.reservations}</p></div>
-        <div className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-3"><p className="text-[11px] text-neutral-500">Expected Covers</p><p className="text-xl font-semibold">{monthKpis.covers}</p></div>
-        <div className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-3"><p className="text-[11px] text-neutral-500">Contact Requests</p><p className="text-xl font-semibold">{monthKpis.contacts}</p></div>
-        <div className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-3"><p className="text-[11px] text-neutral-500">Catering Requests</p><p className="text-xl font-semibold">{monthKpis.catering}</p></div>
-        <div className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-3"><p className="text-[11px] text-neutral-500">Peak Occupancy</p><p className="text-xl font-semibold">{Math.round(monthKpis.maxOcc)}%</p></div>
-        <div className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-3"><p className="text-[11px] text-neutral-500">Busiest Day</p><p className="text-sm font-semibold">{monthKpis.busiestDate} ({monthKpis.busiestReservations})</p></div>
+        <div className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-3">
+          <p className="text-[11px] text-neutral-500 inline-flex items-center gap-1">Month Reservations <InfoHint label="Month Reservations info">Total reservation entries in the currently selected month.</InfoHint></p>
+          <p className="text-xl font-semibold">{monthKpis.reservations}</p>
+        </div>
+        <div className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-3">
+          <p className="text-[11px] text-neutral-500 inline-flex items-center gap-1">Expected Covers <InfoHint label="Expected Covers info">Total expected guests (sum of party size) for reservations in this month.</InfoHint></p>
+          <p className="text-xl font-semibold">{monthKpis.covers}</p>
+        </div>
+        <div className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-3">
+          <p className="text-[11px] text-neutral-500 inline-flex items-center gap-1">Contact Requests <InfoHint label="Contact Requests info">Number of contact form submissions in this month.</InfoHint></p>
+          <p className="text-xl font-semibold">{monthKpis.contacts}</p>
+        </div>
+        <div className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-3">
+          <p className="text-[11px] text-neutral-500 inline-flex items-center gap-1">Catering Requests <InfoHint label="Catering Requests info">Number of catering form submissions in this month.</InfoHint></p>
+          <p className="text-xl font-semibold">{monthKpis.catering}</p>
+        </div>
+        <div className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-3">
+          <p className="text-[11px] text-neutral-500 inline-flex items-center gap-1">Peak Occupancy <InfoHint label="Peak Occupancy info">Highest occupancy reached by any day in this month based on covers vs configured capacity.</InfoHint></p>
+          <p className="text-xl font-semibold">{Math.round(monthKpis.maxOcc)}%</p>
+        </div>
+        <div className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-3">
+          <p className="text-[11px] text-neutral-500 inline-flex items-center gap-1">Busiest Day <InfoHint label="Busiest Day info">Date with the highest reservation count in the selected month.</InfoHint></p>
+          <p className="text-sm font-semibold">{monthKpis.busiestDate} ({monthKpis.busiestReservations})</p>
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-4 gap-4">
@@ -416,7 +452,12 @@ export default function SmartCalendar() {
 
       <div className="grid lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4">
-          <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100 mb-3">Weekly Reservation Growth</p>
+          <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100 mb-3 inline-flex items-center gap-1">
+            Weekly Reservation Growth
+            <InfoHint label="Weekly Reservation Growth info">
+              Weekly reservation count trend for the selected month. Longer bars indicate more bookings in that week.
+            </InfoHint>
+          </p>
           <div className="space-y-2">
             {monthInsights.weeklyTrend.length ? monthInsights.weeklyTrend.map((w) => (
               <div key={w.week} className="flex items-center gap-2">
@@ -446,9 +487,15 @@ export default function SmartCalendar() {
         <div className="lg:col-span-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-visible">
           <div className="p-4 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
             <button className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800" onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))}><ChevronLeft size={18} /></button>
-            <button onClick={() => setMonthPanelOpen(true)} className="font-semibold text-neutral-900 dark:text-white px-2 py-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800">
-              {viewDate.toLocaleString('en-US', { month: 'long', year: 'numeric' })}
-            </button>
+            <div className="inline-flex items-center gap-2">
+              <button onClick={() => setMonthPanelOpen(true)} className="font-semibold text-neutral-900 dark:text-white px-2 py-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                {viewDate.toLocaleString('en-US', { month: 'long', year: 'numeric' })}
+              </button>
+              <InfoHint label="Calendar legend info">
+                Heatmap colors: light blue = low occupancy, amber = medium occupancy, red = high/full occupancy.{"\n"}
+                R = Reservations, C = Contact requests, Cat = Catering requests, Occ = Occupancy percentage.
+              </InfoHint>
+            </div>
             <button className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800" onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))}><ChevronRight size={18} /></button>
           </div>
           <div className="grid grid-cols-7 text-xs font-medium text-neutral-500 px-3 pt-3">
@@ -543,7 +590,18 @@ export default function SmartCalendar() {
 
         <div className="space-y-4">
           <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4">
-            <h3 className="font-semibold text-neutral-900 dark:text-white mb-3">Capacity Settings</h3>
+            <h3 className="font-semibold text-neutral-900 dark:text-white mb-2 inline-flex items-center gap-1">
+              Capacity Settings
+              <InfoHint label="Capacity Settings info">
+                Configure service capacity per location and period.{"\n"}
+                Left numeric field = total seats available.{"\n"}
+                Right numeric field = average table duration in minutes.{"\n"}
+                ON/OFF toggle enables or disables that lunch/dinner capacity row.
+              </InfoHint>
+            </h3>
+            <p className="text-[11px] text-neutral-500 mb-3">
+              Per row: left field = seats, right field = average stay (minutes), toggle = active/inactive.
+            </p>
             <div className="space-y-2 max-h-64 overflow-auto pr-1">
               {capacity.map((row, idx) => (
                 <div key={`${row.restaurant_id}-${row.service_period}`} className="grid grid-cols-12 gap-2 items-center text-xs">
@@ -572,7 +630,12 @@ export default function SmartCalendar() {
           </div>
 
           <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4">
-            <h3 className="font-semibold text-neutral-900 dark:text-white mb-3">Live Notifications</h3>
+            <h3 className="font-semibold text-neutral-900 dark:text-white mb-3 inline-flex items-center gap-1">
+              Live Notifications
+              <InfoHint label="Live Notifications info">
+                Real-time activity feed from admin actions and incoming forms, including reservation created/updated/cancelled, contact requests, catering requests, blockout updates, and related system alerts.
+              </InfoHint>
+            </h3>
             <div className="space-y-2 max-h-72 overflow-auto">
               {notifications.map((n) => (
                 <div key={n.id} className={`p-2 rounded-lg border text-xs ${n.is_read ? 'border-neutral-200 dark:border-neutral-700' : 'border-amber-400/50 bg-amber-500/10'}`}>
@@ -585,7 +648,12 @@ export default function SmartCalendar() {
           </div>
 
           <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4">
-            <h3 className="font-semibold text-neutral-900 dark:text-white mb-3">Hover Preview</h3>
+            <h3 className="font-semibold text-neutral-900 dark:text-white mb-3 inline-flex items-center gap-1">
+              Hover Preview
+              <InfoHint label="Hover Preview info">
+                Hover over any calendar day to quickly view totals, occupancy, and largest parties without opening the day drawer.
+              </InfoHint>
+            </h3>
             {hoveredDateKey && hoveredSummary ? (
               <div className="text-xs text-neutral-600 dark:text-neutral-300 space-y-1">
                 <p className="font-semibold text-neutral-800 dark:text-neutral-100">{hoveredDateKey}</p>
