@@ -394,7 +394,7 @@ export default function SmartCalendar() {
       </AnimatePresence>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Smart Reservation Calendar</h1>
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Smart Reservation Calendar (Beta v1)</h1>
           <p className="text-neutral-500 text-sm mt-1">Live occupancy, blockouts, and request activity in one control center.</p>
         </div>
         <div />
