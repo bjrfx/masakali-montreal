@@ -1,9 +1,37 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronRight, Upload, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import api from '../api';
 
+const knownBannerTexts = [
+  'JOIN OUR TEAM: NOW HIRING ✨ Masakali Montreal Now Open! ✨',
+  'JOIN OUR TEAM: NOW HIRING @Masakali Montreal',
+];
+
+function normalizeCopy(value) {
+  return String(value || '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function translateHiringApiError(message, t) {
+  const normalized = normalizeCopy(message);
+  const mapped = {
+    'Only PDF, DOC, or DOCX files are allowed': 'hiringBanner.errors.resumeType',
+    'Only PDF, DOC, and DOCX files are allowed': 'hiringBanner.errors.resumeType',
+    'Resume must be under 5MB': 'hiringBanner.errors.resumeSize',
+    'Full name, phone number, and email are required': 'hiringBanner.errors.requiredFields',
+    'Please provide a valid email address': 'hiringBanner.errors.emailInvalid',
+    'Please provide a valid phone number': 'hiringBanner.errors.phoneInvalid',
+    'Failed to submit application': 'hiringBanner.errors.submitFailed',
+  };
+
+  return mapped[normalized] ? t(mapped[normalized]) : (message || t('hiringBanner.errors.generic'));
+}
+
 export default function HiringBanner() {
+  const { t } = useTranslation();
   const [banner, setBanner] = useState(null);
   const [dismissed, setDismissed] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -14,6 +42,13 @@ export default function HiringBanner() {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const fileInputRef = useRef(null);
+
+  const localizedBannerText = banner && knownBannerTexts.includes(normalizeCopy(banner.banner_text))
+    ? t('hiringBanner.bannerText')
+    : banner?.banner_text;
+  const localizedBannerCta = banner && normalizeCopy(banner.cta_text) === 'Apply Now'
+    ? t('hiringBanner.applyNow')
+    : banner?.cta_text;
 
   useEffect(() => {
     // Check if banner was previously dismissed in this session
@@ -61,24 +96,24 @@ export default function HiringBanner() {
 
   const validateForm = () => {
     const errs = {};
-    if (!formData.full_name.trim()) errs.full_name = 'Full name is required';
+    if (!formData.full_name.trim()) errs.full_name = t('hiringBanner.errors.fullNameRequired');
     if (!formData.phone_number.trim()) {
-      errs.phone_number = 'Phone number is required';
+      errs.phone_number = t('hiringBanner.errors.phoneRequired');
     } else {
       const digits = formData.phone_number.replace(/\D/g, '');
-      if (digits.length < 7 || digits.length > 15) errs.phone_number = 'Enter a valid phone number';
+      if (digits.length < 7 || digits.length > 15) errs.phone_number = t('hiringBanner.errors.phoneInvalid');
     }
     if (!formData.email.trim()) {
-      errs.email = 'Email is required';
+      errs.email = t('hiringBanner.errors.emailRequired');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      errs.email = 'Enter a valid email address';
+      errs.email = t('hiringBanner.errors.emailInvalid');
     }
     if (resumeFile) {
       const ext = resumeFile.name.split('.').pop().toLowerCase();
       if (!['pdf', 'doc', 'docx'].includes(ext)) {
-        errs.resume = 'Only PDF, DOC, or DOCX files are allowed';
+        errs.resume = t('hiringBanner.errors.resumeType');
       } else if (resumeFile.size > 5 * 1024 * 1024) {
-        errs.resume = 'Resume must be under 5MB';
+        errs.resume = t('hiringBanner.errors.resumeSize');
       }
     }
     setErrors(errs);
@@ -110,7 +145,7 @@ export default function HiringBanner() {
         setSubmitted(false);
       }, 3000);
     } catch (err) {
-      setSubmitError(err.message || 'Something went wrong. Please try again.');
+      setSubmitError(translateHiringApiError(err.message, t));
     } finally {
       setSubmitting(false);
     }
@@ -139,22 +174,22 @@ export default function HiringBanner() {
             className="hiring-banner"
             onClick={handleBannerClick}
             role="banner"
-            aria-label="Now Hiring Banner"
+            aria-label={t('hiringBanner.aria.banner')}
           >
             <div className="hiring-banner-inner">
               <div className="hiring-banner-content">
                 <span className="hiring-banner-text">
-                  {banner.banner_text}
+                  {localizedBannerText}
                 </span>
                 <span className="hiring-banner-cta">
-                  {banner.cta_text || 'Apply Now'}
+                  {localizedBannerCta || t('hiringBanner.applyNow')}
                   <ChevronRight size={14} className="inline-block ml-1" />
                 </span>
               </div>
               <button
                 className="hiring-banner-close"
                 onClick={handleDismiss}
-                aria-label="Dismiss hiring banner"
+                aria-label={t('hiringBanner.aria.dismissBanner')}
               >
                 <X size={16} />
               </button>
@@ -187,13 +222,13 @@ export default function HiringBanner() {
               {/* Modal Header */}
               <div className="hiring-modal-header">
                 <div>
-                  <h2 className="hiring-modal-title">Join Our Team</h2>
-                  <p className="hiring-modal-subtitle">Masakali Indian Cuisine – Montreal, QC</p>
+                  <h2 className="hiring-modal-title">{t('hiringBanner.modal.title')}</h2>
+                  <p className="hiring-modal-subtitle">{t('hiringBanner.modal.subtitle')}</p>
                 </div>
                 <button
                   className="hiring-modal-close"
                   onClick={() => !submitting && setShowModal(false)}
-                  aria-label="Close application form"
+                  aria-label={t('hiringBanner.aria.closeForm')}
                 >
                   <X size={20} />
                 </button>
@@ -209,8 +244,8 @@ export default function HiringBanner() {
                   <div className="hiring-success-icon">
                     <CheckCircle size={48} />
                   </div>
-                  <h3>Application Submitted!</h3>
-                  <p>Thank you for your interest in joining Masakali. We'll review your application and get back to you soon.</p>
+                  <h3>{t('hiringBanner.success.title')}</h3>
+                  <p>{t('hiringBanner.success.description')}</p>
                 </motion.div>
               ) : (
                 /* Form */
@@ -225,13 +260,13 @@ export default function HiringBanner() {
                   {/* Full Name */}
                   <div className="hiring-form-group">
                     <label htmlFor="hiring-name" className="hiring-form-label">
-                      Full Name <span className="hiring-required">*</span>
+                      {t('hiringBanner.form.fullName')} <span className="hiring-required">*</span>
                     </label>
                     <input
                       id="hiring-name"
                       type="text"
                       className={`hiring-form-input ${errors.full_name ? 'hiring-input-error' : ''}`}
-                      placeholder="Enter your full name"
+                      placeholder={t('hiringBanner.form.fullNamePlaceholder')}
                       value={formData.full_name}
                       onChange={(e) => {
                         setFormData({ ...formData, full_name: e.target.value });
@@ -245,7 +280,7 @@ export default function HiringBanner() {
                   {/* Phone Number */}
                   <div className="hiring-form-group">
                     <label htmlFor="hiring-phone" className="hiring-form-label">
-                      Phone Number <span className="hiring-required">*</span>
+                      {t('hiringBanner.form.phoneNumber')} <span className="hiring-required">*</span>
                     </label>
                     <input
                       id="hiring-phone"
@@ -265,13 +300,13 @@ export default function HiringBanner() {
                   {/* Email */}
                   <div className="hiring-form-group">
                     <label htmlFor="hiring-email" className="hiring-form-label">
-                      Email Address <span className="hiring-required">*</span>
+                      {t('hiringBanner.form.emailAddress')} <span className="hiring-required">*</span>
                     </label>
                     <input
                       id="hiring-email"
                       type="email"
                       className={`hiring-form-input ${errors.email ? 'hiring-input-error' : ''}`}
-                      placeholder="your.email@example.com"
+                      placeholder={t('hiringBanner.form.emailPlaceholder')}
                       value={formData.email}
                       onChange={(e) => {
                         setFormData({ ...formData, email: e.target.value });
@@ -285,7 +320,7 @@ export default function HiringBanner() {
                   {/* Resume Upload */}
                   <div className="hiring-form-group">
                     <label htmlFor="hiring-resume" className="hiring-form-label">
-                      Resume <span className="hiring-optional">(optional)</span>
+                      {t('hiringBanner.form.resume')} <span className="hiring-optional">({t('hiringBanner.form.optional')})</span>
                     </label>
                     <div
                       className={`hiring-file-upload ${errors.resume ? 'hiring-input-error' : ''}`}
@@ -295,7 +330,7 @@ export default function HiringBanner() {
                       {resumeFile ? (
                         <span className="hiring-file-name">{resumeFile.name}</span>
                       ) : (
-                        <span className="hiring-file-placeholder">Click to upload PDF, DOC, or DOCX (max 5MB)</span>
+                        <span className="hiring-file-placeholder">{t('hiringBanner.form.resumePlaceholder')}</span>
                       )}
                     </div>
                     <input
@@ -318,7 +353,7 @@ export default function HiringBanner() {
                       onClick={() => setShowModal(false)}
                       disabled={submitting}
                     >
-                      Cancel
+                      {t('hiringBanner.form.cancel')}
                     </button>
                     <button
                       type="submit"
@@ -328,10 +363,10 @@ export default function HiringBanner() {
                       {submitting ? (
                         <>
                           <Loader2 size={16} className="animate-spin" />
-                          <span>Submitting...</span>
+                          <span>{t('hiringBanner.form.submitting')}</span>
                         </>
                       ) : (
-                        'Submit Application'
+                        t('hiringBanner.form.submit')
                       )}
                     </button>
                   </div>

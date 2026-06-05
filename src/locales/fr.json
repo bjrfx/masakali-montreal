@@ -407,6 +407,59 @@
     "returnHome": "Retour à l'accueil",
     "error": "Erreur"
   },
+  "onlineOrderPopup": {
+    "badge": "Promotion commandes à emporter",
+    "title": "Commandez en ligne d’avance, sans attente ni appel",
+    "description": "Vous pouvez maintenant passer vos commandes pour emporter en ligne avec un paiement sécurisé et des options de ramassage planifiées.\n\nÉvitez les tracas des appels ou du paiement sur place.\n\nProfitez d’un dessert gratuit ou d’une boisson gazeuse de votre choix avec chaque commande en ligne pour emporter de plus de 50 $ pendant une durée limitée au mois de juin.",
+    "ctaText": "Commencer votre commande en ligne",
+    "pickupOnly": "Ramassage seulement",
+    "minimumOrder": "Minimum de 50 $",
+    "bonus": "Dessert ou boisson gazeuse",
+    "notNow": "Pas maintenant",
+    "close": "Fermer la promotion de commande en ligne"
+  },
+  "hiringBanner": {
+    "bannerText": "REJOIGNEZ NOTRE ÉQUIPE : NOUS EMBAUCHONS @Masakali Montréal",
+    "applyNow": "Postuler maintenant",
+    "aria": {
+      "banner": "Bannière de recrutement",
+      "dismissBanner": "Fermer la bannière de recrutement",
+      "closeForm": "Fermer le formulaire de candidature"
+    },
+    "modal": {
+      "title": "Rejoignez notre équipe",
+      "subtitle": "Masakali Cuisine Indienne – Montréal, QC"
+    },
+    "success": {
+      "title": "Candidature envoyée !",
+      "description": "Merci pour votre intérêt envers Masakali. Nous examinerons votre candidature et vous répondrons bientôt."
+    },
+    "form": {
+      "fullName": "Nom complet",
+      "fullNamePlaceholder": "Entrez votre nom complet",
+      "phoneNumber": "Numéro de téléphone",
+      "emailAddress": "Adresse courriel",
+      "emailPlaceholder": "votre.courriel@exemple.com",
+      "resume": "CV",
+      "optional": "facultatif",
+      "resumePlaceholder": "Cliquez pour téléverser un PDF, DOC ou DOCX (max. 5 Mo)",
+      "cancel": "Annuler",
+      "submit": "Envoyer la candidature",
+      "submitting": "Envoi en cours..."
+    },
+    "errors": {
+      "fullNameRequired": "Le nom complet est requis",
+      "phoneRequired": "Le numéro de téléphone est requis",
+      "phoneInvalid": "Entrez un numéro de téléphone valide",
+      "emailRequired": "L’adresse courriel est requise",
+      "emailInvalid": "Entrez une adresse courriel valide",
+      "resumeType": "Seuls les fichiers PDF, DOC ou DOCX sont autorisés",
+      "resumeSize": "Le CV doit faire moins de 5 Mo",
+      "requiredFields": "Le nom complet, le numéro de téléphone et l’adresse courriel sont requis",
+      "submitFailed": "Échec de l’envoi de la candidature",
+      "generic": "Une erreur s’est produite. Veuillez réessayer."
+    }
+  },
   "seo": {
     "homeTitle": "Masakali Cuisine Indienne | Restauration indienne de qualité à Montréal",
     "homeDesc": "Masakali Cuisine Indienne — expérience culinaire indienne de qualité à Montréal. Réservez votre table, explorez notre menu et commandez un service de traiteur.",

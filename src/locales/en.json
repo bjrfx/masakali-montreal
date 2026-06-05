@@ -407,6 +407,59 @@
     "returnHome": "Return Home",
     "error": "Error"
   },
+  "onlineOrderPopup": {
+    "badge": "Online Pickup Promotion",
+    "title": "Order Ahead Online — No Waiting, No Calling",
+    "description": "You can now place your pickup orders online with secure payment and scheduled pickup options.\n\nSkip the hassle of calling or paying in person.\n\nEnjoy a complimentary dessert or pop of your choice with every online pickup order over $50 for a limited time during the month of June.",
+    "ctaText": "Start Your Online Order",
+    "pickupOnly": "Pickup only",
+    "minimumOrder": "$50 minimum",
+    "bonus": "Dessert or pop",
+    "notNow": "Not now",
+    "close": "Close online ordering promotion"
+  },
+  "hiringBanner": {
+    "bannerText": "JOIN OUR TEAM: NOW HIRING @Masakali Montreal",
+    "applyNow": "Apply Now",
+    "aria": {
+      "banner": "Now hiring banner",
+      "dismissBanner": "Dismiss hiring banner",
+      "closeForm": "Close application form"
+    },
+    "modal": {
+      "title": "Join Our Team",
+      "subtitle": "Masakali Indian Cuisine – Montreal, QC"
+    },
+    "success": {
+      "title": "Application Submitted!",
+      "description": "Thank you for your interest in joining Masakali. We'll review your application and get back to you soon."
+    },
+    "form": {
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Enter your full name",
+      "phoneNumber": "Phone Number",
+      "emailAddress": "Email Address",
+      "emailPlaceholder": "your.email@example.com",
+      "resume": "Resume",
+      "optional": "optional",
+      "resumePlaceholder": "Click to upload PDF, DOC, or DOCX (max 5MB)",
+      "cancel": "Cancel",
+      "submit": "Submit Application",
+      "submitting": "Submitting..."
+    },
+    "errors": {
+      "fullNameRequired": "Full name is required",
+      "phoneRequired": "Phone number is required",
+      "phoneInvalid": "Enter a valid phone number",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Enter a valid email address",
+      "resumeType": "Only PDF, DOC, or DOCX files are allowed",
+      "resumeSize": "Resume must be under 5MB",
+      "requiredFields": "Full name, phone number, and email are required",
+      "submitFailed": "Failed to submit application",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
   "seo": {
     "homeTitle": "Masakali Indian Cuisine | Premium Indian Dining in Montreal",
     "homeDesc": "Masakali Indian Cuisine - Premium Indian dining experience in Montreal. Reserve your table, explore our menu, and order catering.",

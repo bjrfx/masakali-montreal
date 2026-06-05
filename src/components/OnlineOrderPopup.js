@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CalendarClock, Gift, ShoppingBag, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import api from '../api';
 
 const defaultSettings = {
@@ -13,6 +14,24 @@ Skip the hassle of calling or paying in person.
 Enjoy a complimentary dessert or pop of your choice with every online pickup order over $50 for a limited time during the month of June.`,
   cta_text: 'Start Your Online Order',
 };
+
+const frenchDefaultSettings = {
+  title: 'Commandez en ligne d’avance, sans attente ni appel',
+  description: `Vous pouvez maintenant passer vos commandes pour emporter en ligne avec un paiement sécurisé et des options de ramassage planifiées.
+
+Évitez les tracas des appels ou du paiement sur place.
+
+Profitez d’un dessert gratuit ou d’une boisson gazeuse de votre choix avec chaque commande en ligne pour emporter de plus de 50 $ pendant une durée limitée au mois de juin.`,
+  cta_text: 'Commencer votre commande en ligne',
+};
+
+function normalizeCopy(value) {
+  return String(value || '')
+    .replace(/\r\n/g, '\n')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
 
 function normalizeSettings(settings) {
   return {
@@ -30,6 +49,7 @@ export default function OnlineOrderPopup({
   onStartOrder,
   storageKey = 'masakali_online_order_popup_seen_v1',
 }) {
+  const { t } = useTranslation();
   const [settings, setSettings] = useState(defaultSettings);
   const [visible, setVisible] = useState(false);
 
@@ -57,12 +77,46 @@ export default function OnlineOrderPopup({
     };
   }, [storageKey]);
 
+  const localizedSettings = useMemo(() => {
+    const localizedDefaults = {
+      title: t('onlineOrderPopup.title'),
+      description: t('onlineOrderPopup.description'),
+      cta_text: t('onlineOrderPopup.ctaText'),
+    };
+
+    const titleCandidates = new Set([
+      normalizeCopy(defaultSettings.title),
+      normalizeCopy(frenchDefaultSettings.title),
+    ]);
+    const descriptionCandidates = new Set([
+      normalizeCopy(defaultSettings.description),
+      normalizeCopy(frenchDefaultSettings.description),
+    ]);
+    const ctaCandidates = new Set([
+      normalizeCopy(defaultSettings.cta_text),
+      normalizeCopy(frenchDefaultSettings.cta_text),
+    ]);
+
+    return {
+      ...settings,
+      title: titleCandidates.has(normalizeCopy(settings.title))
+        ? localizedDefaults.title
+        : settings.title,
+      description: descriptionCandidates.has(normalizeCopy(settings.description))
+        ? localizedDefaults.description
+        : settings.description,
+      cta_text: ctaCandidates.has(normalizeCopy(settings.cta_text))
+        ? localizedDefaults.cta_text
+        : settings.cta_text,
+    };
+  }, [settings, t]);
+
   const paragraphs = useMemo(() => {
-    return String(settings.description || '')
+    return String(localizedSettings.description || '')
       .split(/\n\s*\n/)
       .map((paragraph) => paragraph.trim())
       .filter(Boolean);
-  }, [settings.description]);
+  }, [localizedSettings.description]);
 
   const markSeen = () => {
     window.localStorage.setItem(storageKey, '1');
@@ -101,7 +155,7 @@ export default function OnlineOrderPopup({
             <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-500 via-orange-400 to-amber-500" />
             <button
               type="button"
-              aria-label="Close online ordering promotion"
+              aria-label={t('onlineOrderPopup.close')}
               onClick={markSeen}
               className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 text-neutral-500 transition-colors hover:border-amber-500 hover:text-amber-600 dark:border-neutral-800 dark:text-neutral-400 dark:hover:text-amber-400"
             >
@@ -114,10 +168,10 @@ export default function OnlineOrderPopup({
               </div>
 
               <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">
-                Online Pickup Promotion
+                {t('onlineOrderPopup.badge')}
               </p>
               <h2 className="font-display pr-8 text-2xl font-bold leading-tight text-neutral-950 dark:text-white sm:text-3xl">
-                {settings.title}
+                {localizedSettings.title}
               </h2>
 
               <div className="mt-4 space-y-3 text-sm leading-6 text-neutral-600 dark:text-neutral-300 sm:text-base">
@@ -129,15 +183,15 @@ export default function OnlineOrderPopup({
               <div className="mt-5 grid gap-2 text-xs font-medium text-neutral-600 dark:text-neutral-300 sm:grid-cols-3">
                 <div className="flex items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 dark:border-neutral-800 dark:bg-neutral-900">
                   <CalendarClock size={15} className="text-amber-600 dark:text-amber-400" />
-                  <span>Pickup only</span>
+                  <span>{t('onlineOrderPopup.pickupOnly')}</span>
                 </div>
                 <div className="flex items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 dark:border-neutral-800 dark:bg-neutral-900">
                   <ShoppingBag size={15} className="text-amber-600 dark:text-amber-400" />
-                  <span>$50 minimum</span>
+                  <span>{t('onlineOrderPopup.minimumOrder')}</span>
                 </div>
                 <div className="flex items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 dark:border-neutral-800 dark:bg-neutral-900">
                   <Gift size={15} className="text-amber-600 dark:text-amber-400" />
-                  <span>Dessert or pop</span>
+                  <span>{t('onlineOrderPopup.bonus')}</span>
                 </div>
               </div>
 
@@ -147,14 +201,14 @@ export default function OnlineOrderPopup({
                   onClick={handleStartOrder}
                   className="btn-gold w-full justify-center text-base"
                 >
-                  {settings.cta_text}
+                  {localizedSettings.cta_text}
                 </button>
                 <button
                   type="button"
                   onClick={markSeen}
                   className="w-full rounded-lg border border-neutral-300 px-5 py-3 text-sm font-semibold text-neutral-600 transition-colors hover:border-neutral-400 hover:text-neutral-900 dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-neutral-500 dark:hover:text-white sm:w-auto"
                 >
-                  Not now
+                  {t('onlineOrderPopup.notNow')}
                 </button>
               </div>
             </div>
