@@ -108,11 +108,20 @@ export const api = {
     method: 'PUT',
     body: JSON.stringify({ reservations_paused: paused }),
   }),
-  toggleReservationTimeRestriction: (enabled, paused = false) => apiCall('/admin/reservation-settings/pause', {
+  toggleReservationTimeRestriction: (enabled, paused = false, warningEnabled = false) => apiCall('/admin/reservation-settings/pause', {
     method: 'PUT',
     body: JSON.stringify({
       reservations_paused: paused,
       time_restriction_enabled: enabled,
+      reservation_time_warning_enabled: enabled ? false : warningEnabled,
+    }),
+  }),
+  toggleReservationTimeWarning: (enabled, paused = false, restrictionEnabled = false) => apiCall('/admin/reservation-settings/pause', {
+    method: 'PUT',
+    body: JSON.stringify({
+      reservations_paused: paused,
+      time_restriction_enabled: enabled ? false : restrictionEnabled,
+      reservation_time_warning_enabled: enabled,
     }),
   }),
   // Legacy Tuesday toggle endpoints (kept for compatibility)
