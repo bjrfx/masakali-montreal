@@ -418,7 +418,7 @@ export default function Home() {
               <Link to={localePath('/reservations')} className="btn-gold text-lg !px-10 !py-4">
                 <CalendarDays size={20} className="mr-2" /> {t('home.reserveATable')}
               </Link>
-              <Link to={localePath('/catering')} className="btn-outline-gold text-lg !px-10 !py-4">
+              <Link to={localePath('/catering-by-tray')} className="btn-outline-gold text-lg !px-10 !py-4">
                 <Users size={20} className="mr-2" /> {t('home.cateringServices')}
               </Link>
             </div>
@@ -435,7 +435,7 @@ export default function Home() {
             <p className="text-neutral-600 dark:text-neutral-400 text-lg mb-8">
               {t('home.planningEventDesc')}
             </p>
-            <Link to={localePath('/catering')} className="btn-gold text-lg">
+            <Link to={localePath('/catering-by-tray')} className="btn-gold text-lg">
               {t('home.exploreCatering')} <ArrowRight size={18} className="ml-2" />
             </Link>
           </AnimatedSection>

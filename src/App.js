@@ -11,6 +11,7 @@ import Locations from './pages/Locations';
 import Reservations from './pages/Reservations';
 import ManageReservations from './pages/ManageReservations';
 import Catering from './pages/Catering';
+import CateringByTray from './pages/CateringByTray';
 import Contact from './pages/Contact';
 import AdminLogin from './pages/admin/Login';
 import AdminDashboard from './pages/admin/Dashboard';
@@ -18,6 +19,7 @@ import AdminMenuManagement from './pages/admin/MenuManagement';
 import AdminReservations from './pages/admin/ReservationManagement';
 import AdminAnalytics from './pages/admin/Analytics';
 import AdminCateringManagement from './pages/admin/CateringManagement';
+import AdminCateringByTrayManagement from './pages/admin/CateringByTrayManagement';
 import AdminContactManagement from './pages/admin/ContactManagement';
 import AdminHomepageContentManagement from './pages/admin/HomepageContentManagement';
 import AdminNotificationEmailSettings from './pages/admin/NotificationEmailSettings';
@@ -123,6 +125,8 @@ function App() {
           <Route path="/reservations" element={<LanguageSync><PublicLayout><Reservations /></PublicLayout></LanguageSync>} />
           <Route path="/manage-reservations" element={<LanguageSync><PublicLayout><ManageReservations /></PublicLayout></LanguageSync>} />
           <Route path="/catering" element={<LanguageSync><PublicLayout><Catering /></PublicLayout></LanguageSync>} />
+          <Route path="/catering-by-tray" element={<LanguageSync><PublicLayout><CateringByTray /></PublicLayout></LanguageSync>} />
+          <Route path="/cateringbytray" element={<Navigate to="/catering-by-tray" replace />} />
           <Route path="/contact" element={<LanguageSync><PublicLayout><Contact /></PublicLayout></LanguageSync>} />
 
           {/* French Public Routes */}
@@ -133,6 +137,8 @@ function App() {
           <Route path="/fr/reservations" element={<LanguageSync lang="fr"><PublicLayout><Reservations /></PublicLayout></LanguageSync>} />
           <Route path="/fr/manage-reservations" element={<LanguageSync lang="fr"><PublicLayout><ManageReservations /></PublicLayout></LanguageSync>} />
           <Route path="/fr/catering" element={<LanguageSync lang="fr"><PublicLayout><Catering /></PublicLayout></LanguageSync>} />
+          <Route path="/fr/catering-by-tray" element={<LanguageSync lang="fr"><PublicLayout><CateringByTray /></PublicLayout></LanguageSync>} />
+          <Route path="/fr/cateringbytray" element={<Navigate to="/fr/catering-by-tray" replace />} />
           <Route path="/fr/contact" element={<LanguageSync lang="fr"><PublicLayout><Contact /></PublicLayout></LanguageSync>} />
 
           {/* Admin Routes */}
@@ -185,6 +191,13 @@ function App() {
             <ProtectedRoute>
               <AdminLayout admin={admin} onLogout={handleLogout}>
                 <AdminCateringManagement token={adminToken} />
+              </AdminLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/catering-by-tray" element={
+            <ProtectedRoute>
+              <AdminLayout admin={admin} onLogout={handleLogout}>
+                <AdminCateringByTrayManagement token={adminToken} />
               </AdminLayout>
             </ProtectedRoute>
           } />

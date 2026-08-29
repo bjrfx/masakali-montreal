@@ -12,7 +12,7 @@ const navLinkKeys = [
   { key: 'menu', path: '/menu' },
   { key: 'locations', path: '/locations' },
   { key: 'reservations', path: '/reservations' },
-  { key: 'catering', path: '/catering' },
+  { key: 'catering', path: '/catering-by-tray' },
   { key: 'contact', path: '/contact' },
 ];
 
