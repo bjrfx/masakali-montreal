@@ -12,6 +12,7 @@ import Reservations from './pages/Reservations';
 import ManageReservations from './pages/ManageReservations';
 import Catering from './pages/Catering';
 import CateringByTray from './pages/CateringByTray';
+import CateringByTrayOrderSummary from './pages/CateringByTrayOrderSummary';
 import Contact from './pages/Contact';
 import AdminLogin from './pages/admin/Login';
 import AdminDashboard from './pages/admin/Dashboard';
@@ -126,6 +127,7 @@ function App() {
           <Route path="/manage-reservations" element={<LanguageSync><PublicLayout><ManageReservations /></PublicLayout></LanguageSync>} />
           <Route path="/catering" element={<LanguageSync><PublicLayout><Catering /></PublicLayout></LanguageSync>} />
           <Route path="/catering-by-tray" element={<LanguageSync><PublicLayout><CateringByTray /></PublicLayout></LanguageSync>} />
+          <Route path="/catering-by-tray/order-summary/:id" element={<LanguageSync><PublicLayout><CateringByTrayOrderSummary /></PublicLayout></LanguageSync>} />
           <Route path="/cateringbytray" element={<Navigate to="/catering-by-tray" replace />} />
           <Route path="/contact" element={<LanguageSync><PublicLayout><Contact /></PublicLayout></LanguageSync>} />
 
@@ -138,6 +140,7 @@ function App() {
           <Route path="/fr/manage-reservations" element={<LanguageSync lang="fr"><PublicLayout><ManageReservations /></PublicLayout></LanguageSync>} />
           <Route path="/fr/catering" element={<LanguageSync lang="fr"><PublicLayout><Catering /></PublicLayout></LanguageSync>} />
           <Route path="/fr/catering-by-tray" element={<LanguageSync lang="fr"><PublicLayout><CateringByTray /></PublicLayout></LanguageSync>} />
+          <Route path="/fr/catering-by-tray/order-summary/:id" element={<LanguageSync lang="fr"><PublicLayout><CateringByTrayOrderSummary /></PublicLayout></LanguageSync>} />
           <Route path="/fr/cateringbytray" element={<Navigate to="/fr/catering-by-tray" replace />} />
           <Route path="/fr/contact" element={<LanguageSync lang="fr"><PublicLayout><Contact /></PublicLayout></LanguageSync>} />
 
