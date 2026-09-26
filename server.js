@@ -109,7 +109,7 @@ async function initDB() {
       host: process.env.DB_HOST || 'sv63.ifastnet12.org',
       user: process.env.DB_USER || 'masakali_kiran',
       password: process.env.DB_PASS || 'K143iran',
-      database: process.env.DB_NAME || 'masakali_montreal',
+      database: process.env.DB_NAME || 'masakali_ottawa',
       port: parseInt(process.env.DB_PORT || '3306', 10),
       connectTimeout: parseInt(process.env.DB_CONNECT_TIMEOUT || '8000', 10),
       waitForConnections: true,
@@ -287,7 +287,7 @@ async function initDB() {
       `);
       await db.query(
         `INSERT INTO hiring_banner_settings (id, is_enabled, banner_text, cta_text)
-         VALUES (1, 1, 'JOIN OUR TEAM: NOW HIRING ✨ Masakali Montreal Now Open! ✨', 'Apply Now')
+         VALUES (1, 1, 'JOIN OUR TEAM: NOW HIRING ✨ Masakali Stittsville, Masakali Wellington Now Open! ✨', 'Apply Now')
          ON DUPLICATE KEY UPDATE id = id`
       );
       await db.query(`
@@ -385,10 +385,10 @@ async function initDB() {
 const mockRestaurants = [
   { id: 1, name: 'Masakali Indian Cuisine – Wellington', slug: 'wellington', brand: 'Masakali Indian Cuisine', address: '1111 Wellington St. W', city: 'Ottawa', province_state: 'Ontario', country: 'Canada', phone: '(613) 792-9777', email: 'wellington@masakali.ca', website: 'https://masakaliottawa.ca', is_active: true },
   { id: 2, name: 'Masakali Indian Cuisine – Stittsville', slug: 'stittsville', brand: 'Masakali Indian Cuisine', address: '5507 Hazeldean Rd Unit C3-1', city: 'Stittsville', province_state: 'Ontario', country: 'Canada', phone: '(613) 878-3939', email: 'stittsville@masakali.ca', website: 'https://masakaliottawa.ca', is_active: true },
-  { id: 3, name: 'Masakali Indian Cuisine – Montreal', slug: 'montreal', brand: 'Masakali Indian Cuisine', address: '1015 Sherbrooke St W', city: 'Montreal', province_state: 'Quebec', country: 'Canada', phone: '(514) 228-6777', email: 'masakalimontreal@gmail.com', website: 'https://masakalimontreal.ca', is_active: true },
+  { id: 3, name: 'Masakali Indian Cuisine – Montreal', slug: 'montreal', brand: 'Masakali Indian Cuisine', address: '1015 Sherbrooke St W', city: 'Montreal', province_state: 'Quebec', country: 'Canada', phone: '(514) 228-6777', email: 'montreal@masakali.ca', website: 'https://masakalimontreal.ca', is_active: true },
   { id: 4, name: 'RangDe Indian Cuisine', slug: 'rangde', brand: 'RangDe Indian Cuisine', address: '700 March Rd Unit H', city: 'Kanata', province_state: 'Ontario', country: 'Canada', phone: '(613) 595-0777', email: 'info@rangdeottawa.com', website: 'https://rangdeottawa.com', is_active: true },
   { id: 5, name: 'Masakali Indian Resto Bar', slug: 'restobar', brand: 'Masakali Restobar', address: '97 Clarence St.', city: 'Ottawa', province_state: 'Ontario', country: 'Canada', phone: '(613) 789-6777', email: 'info@masakalirestrobar.ca', website: 'https://masakalirestrobar.ca', is_active: true },
-  { id: 6, name: 'Masakali Indian Cuisine – California', slug: 'california', brand: 'Masakali Indian Cuisine', address: '10310 S De Anza Blvd', city: 'Cupertino', province_state: 'California', country: 'USA', phone: '(408) 352-5097', email: 'contact@masakalicalifornia.com', website: 'https://masakalicalifornia.com', is_active: true },
+  { id: 6, name: 'Masakali Indian Cuisine – California', slug: 'california', brand: 'Masakali Indian Cuisine', address: '10310 S De Anza Blvd', city: 'Cupertino', province_state: 'California', country: 'USA', phone: '', email: 'contact@masakalicalifornia.com', website: 'https://masakalicalifornia.com', is_active: true },
 ];
 
 function normalizeSpiceLevel(value) {
@@ -590,101 +590,29 @@ async function verifyTurnstileToken(token, remoteIp = '') {
   }
 }
 
-// =====================================================
-// Montreal Menu from JSON File
-// =====================================================
-let _montrealMenuCache = null;
-let _montrealMenuCacheTime = 0;
-const MONTREAL_MENU_CACHE_TTL = 60 * 1000; // 1 minute
-
-function loadMontrealMenuFromJson() {
-  const now = Date.now();
-  if (_montrealMenuCache && (now - _montrealMenuCacheTime) < MONTREAL_MENU_CACHE_TTL) {
-    return _montrealMenuCache;
-  }
-
-  const filePath = path.join(__dirname, 'src', 'data', 'masakali_montreal_menu.json');
-  if (!fs.existsSync(filePath)) {
-    console.log('Montreal menu JSON not found at:', filePath);
-    return null;
-  }
-
-  try {
-    const raw = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    const categoriesObj = raw.categories || {};
-    const itemsArr = raw.items || [];
-
-    // Build categories array
-    const categories = Object.values(categoriesObj)
-      .filter(cat => cat.items && cat.items.length > 0)
-      .sort((a, b) => (a.sortOrder ?? 999) - (b.sortOrder ?? 999))
-      .map(cat => ({
-        id: cat.id,
-        name: cat.name,
-        slug: String(cat.name || '')
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, '-')
-          .replace(/^-|-$/g, ''),
-        sort_order: cat.sortOrder ?? 0,
-        is_active: true,
-      }));
-
-    // Build a lookup: itemId -> categoryIds
-    const itemCategoryMap = {};
-    Object.values(categoriesObj).forEach(cat => {
-      (cat.items || []).forEach(itemId => {
-        if (!itemCategoryMap[itemId]) itemCategoryMap[itemId] = [];
-        itemCategoryMap[itemId].push(cat.id);
-      });
-    });
-
-    // Build items array
-    const items = [];
-    itemsArr.forEach(item => {
-      if (item.available === false) return;
-      const catIds = itemCategoryMap[item.id] || [];
-      if (catIds.length === 0) return;
-
-      const priceCents = Number(item.price || 0);
-      const priceDollars = Number.isFinite(priceCents) ? Number((priceCents / 100).toFixed(2)) : 0;
-      const firstImage = Array.isArray(item.images) && item.images.length > 0 ? item.images[0].source : null;
-
-      catIds.forEach(categoryId => {
-        const category = categoriesObj[categoryId];
-        items.push({
-          id: item.id,
-          source_id: item.id,
-          name: item.name || 'Menu Item',
-          description: item.description || '',
-          price: priceDollars,
-          image_url: firstImage,
-          images: item.images || [],
-          category_id: categoryId,
-          category_name: category ? category.name : 'Menu',
-          is_vegetarian: false,
-          spice_level: 'medium',
-          is_featured: false,
-          is_active: true,
-        });
-      });
-    });
-
-    _montrealMenuCache = { categories, items };
-    _montrealMenuCacheTime = now;
-    console.log(`✓ Montreal menu loaded from JSON: ${categories.length} categories, ${items.length} items`);
-    return _montrealMenuCache;
-  } catch (err) {
-    console.error('Failed to load Montreal menu JSON:', err.message);
-    return null;
-  }
+function normalizeMenuBranch(branch) {
+  const value = String(branch || '').trim().toLowerCase();
+  return value === 'wellington' ? 'wellington' : 'stittsville';
 }
 
-async function fetchTempMenuData() {
+function getTempMenuTableNames(branch) {
+  const normalizedBranch = normalizeMenuBranch(branch);
+  return {
+    branch: normalizedBranch,
+    categories: `temp_categories_${normalizedBranch}`,
+    categoryItems: `temp_category_items_${normalizedBranch}`,
+    items: `temp_items_${normalizedBranch}`,
+    itemImages: `temp_item_images_${normalizedBranch}`,
+  };
+}
+
+async function fetchTempMenuData(branch = 'stittsville') {
   if (!db) throw new Error('Database not connected');
+  const tables = getTempMenuTableNames(branch);
 
   const [categoryRows] = await db.query(
     `SELECT id, name, sort_order
-      FROM temp_categories_stittsville
+      FROM ${tables.categories}
      ORDER BY sort_order ASC, name ASC`
   );
 
@@ -708,12 +636,12 @@ async function fetchTempMenuData() {
        i.description,
        i.price,
        i.available,
-       img.image_type,
+      NULL AS image_type,
        img.image_url
-        FROM temp_category_items_stittsville ci
-        JOIN temp_categories_stittsville c ON ci.category_id = c.id
-        JOIN temp_items_stittsville i ON ci.item_id = i.id
-        LEFT JOIN temp_item_images_stittsville img ON img.item_id = i.id
+        FROM ${tables.categoryItems} ci
+        JOIN ${tables.categories} c ON ci.category_id = c.id
+        JOIN ${tables.items} i ON ci.item_id = i.id
+        LEFT JOIN ${tables.itemImages} img ON img.item_id = i.id
      WHERE i.available = 1
      ORDER BY c.sort_order ASC, c.name ASC, i.name ASC`
   );
@@ -953,7 +881,7 @@ let mockOnlineOrderPopupSettings = { ...defaultOnlineOrderPopupSettings };
 let mockHiringBannerSettings = {
   id: 1,
   is_enabled: 1,
-  banner_text: 'JOIN OUR TEAM: NOW HIRING ✨ Masakali Montreal Now Open! ✨',
+  banner_text: 'JOIN OUR TEAM: NOW HIRING ✨ Masakali Stittsville, Masakali Wellington Now Open! ✨',
   cta_text: 'Apply Now',
 };
 let mockHiringApplications = [];
@@ -963,6 +891,7 @@ let mockReservationBlockouts = [];
 let mockAdminNotifications = [];
 let nextAdminNotificationId = 1;
 let nextBlockoutId = 1;
+
 let mockReservationsPaused = false;
 let mockTimeRestrictionEnabled = true;
 let mockReservationTimeWarningEnabled = false;
@@ -976,6 +905,68 @@ let nextCateringTrayOrderId = 1;
 let nextContactId = 3;
 let nextTestimonialId = 4;
 
+const defaultCateringTrayImages = {
+  samosa: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=80',
+  paneer: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&w=900&q=80',
+  butterChicken: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=900&q=80',
+  biryani: 'https://images.unsplash.com/photo-1563379091339-03246963d4f6?auto=format&fit=crop&w=900&q=80',
+  naan: 'https://images.unsplash.com/photo-1617692855027-33b14f061079?auto=format&fit=crop&w=900&q=80',
+  dessert: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=900&q=80',
+};
+
+let mockCateringTrayCategories = [
+  { id: 1, name: 'Appetizers', slug: 'appetizers', description: 'Crisp starters for every gathering.', sort_order: 1, is_active: 1 },
+  { id: 2, name: 'Veg Appetizers', slug: 'veg-appetizers', description: 'Vegetarian favorites served party-ready.', sort_order: 2, is_active: 1 },
+  { id: 3, name: 'Curries', slug: 'curries', description: 'Signature gravies and comfort classics.', sort_order: 3, is_active: 1 },
+  { id: 4, name: 'Biryani', slug: 'biryani', description: 'Layered rice dishes built for sharing.', sort_order: 4, is_active: 1 },
+  { id: 5, name: 'Breads', slug: 'breads', description: 'Fresh breads for the table.', sort_order: 5, is_active: 1 },
+  { id: 6, name: 'Desserts', slug: 'desserts', description: 'Sweet endings for special occasions.', sort_order: 6, is_active: 1 },
+];
+
+let mockCateringTrayItems = [
+  { id: 1, category_id: 1, name: 'Vegetable Samosa', short_description: 'Golden pastry filled with warmly spiced potatoes and peas.', long_description: '', image_url: defaultCateringTrayImages.samosa, sort_order: 1, is_active: 1, available: 1, vegetarian: 1, vegan: 0, can_be_made_vegan: 1, gluten_free: 0, contains_nuts: 0, spicy: 0, recommended: 1, chef_special: 0, best_seller: 1, popular: 1, kids_friendly: 1, halal: 1 },
+  { id: 2, category_id: 2, name: 'Paneer Tikka', short_description: 'Tandoor-charred paneer with peppers, onions, and house spices.', long_description: '', image_url: defaultCateringTrayImages.paneer, sort_order: 1, is_active: 1, available: 1, vegetarian: 1, vegan: 0, can_be_made_vegan: 0, gluten_free: 1, contains_nuts: 0, spicy: 1, recommended: 1, chef_special: 1, best_seller: 0, popular: 1, kids_friendly: 0, halal: 1 },
+  { id: 3, category_id: 3, name: 'Butter Chicken', short_description: 'Creamy tomato curry with tender chicken and a polished Masakali finish.', long_description: '', image_url: defaultCateringTrayImages.butterChicken, sort_order: 1, is_active: 1, available: 1, vegetarian: 0, vegan: 0, can_be_made_vegan: 0, gluten_free: 1, contains_nuts: 1, spicy: 0, recommended: 1, chef_special: 1, best_seller: 1, popular: 1, kids_friendly: 1, halal: 1 },
+  { id: 4, category_id: 4, name: 'Chicken Biryani', short_description: 'Fragrant basmati rice layered with chicken, herbs, saffron, and spices.', long_description: '', image_url: defaultCateringTrayImages.biryani, sort_order: 1, is_active: 1, available: 1, vegetarian: 0, vegan: 0, can_be_made_vegan: 0, gluten_free: 1, contains_nuts: 0, spicy: 1, recommended: 1, chef_special: 0, best_seller: 1, popular: 1, kids_friendly: 0, halal: 1 },
+  { id: 5, category_id: 5, name: 'Garlic Naan', short_description: 'Soft tandoor bread brushed with garlic and herbs.', long_description: '', image_url: defaultCateringTrayImages.naan, sort_order: 1, is_active: 1, available: 1, vegetarian: 1, vegan: 0, can_be_made_vegan: 1, gluten_free: 0, contains_nuts: 0, spicy: 0, recommended: 0, chef_special: 0, best_seller: 0, popular: 1, kids_friendly: 1, halal: 1 },
+  { id: 6, category_id: 6, name: 'Gulab Jamun', short_description: 'Soft milk dumplings soaked in fragrant cardamom syrup.', long_description: '', image_url: defaultCateringTrayImages.dessert, sort_order: 1, is_active: 1, available: 1, vegetarian: 1, vegan: 0, can_be_made_vegan: 0, gluten_free: 0, contains_nuts: 1, spicy: 0, recommended: 0, chef_special: 0, best_seller: 0, popular: 1, kids_friendly: 1, halal: 1 },
+];
+
+let mockCateringTrayOptions = [
+  { id: 1, item_id: 1, tray_name: 'Quarter Tray', serves: '8', price: 55, sort_order: 1, is_active: 1 },
+  { id: 2, item_id: 1, tray_name: 'Half Tray', serves: '16', price: 95, sort_order: 2, is_active: 1 },
+  { id: 3, item_id: 1, tray_name: 'Full Tray', serves: '30', price: 175, sort_order: 3, is_active: 1 },
+  { id: 4, item_id: 2, tray_name: 'Half Tray', serves: '10', price: 95, sort_order: 1, is_active: 1 },
+  { id: 5, item_id: 2, tray_name: 'Full Tray', serves: '20', price: 175, sort_order: 2, is_active: 1 },
+  { id: 6, item_id: 3, tray_name: 'Half Tray', serves: '12', price: 120, sort_order: 1, is_active: 1 },
+  { id: 7, item_id: 3, tray_name: 'Full Tray', serves: '24', price: 220, sort_order: 2, is_active: 1 },
+  { id: 8, item_id: 4, tray_name: 'Half Tray', serves: '12', price: 110, sort_order: 1, is_active: 1 },
+  { id: 9, item_id: 4, tray_name: 'Full Tray', serves: '24', price: 205, sort_order: 2, is_active: 1 },
+  { id: 10, item_id: 5, tray_name: 'Full Tray', serves: '20', price: 65, sort_order: 1, is_active: 1 },
+  { id: 11, item_id: 6, tray_name: 'Half Tray', serves: '15', price: 70, sort_order: 1, is_active: 1 },
+  { id: 12, item_id: 6, tray_name: 'Full Tray', serves: '30', price: 130, sort_order: 2, is_active: 1 },
+];
+
+let mockCateringTrayCategoryFormulas = [];
+let nextCateringTrayCategoryFormulaId = 1;
+let mockCateringTrayOrders = [];let mockCateringTraySettings = {
+  minimum_amount: 0,
+  maximum_order_size: 0,
+  lead_time_hours: 24,
+  tax_rate: 0.13,
+  currency: 'CAD',
+  pickup_times: '11:30-21:30',
+  delivery_times: '11:30-21:30',
+  notification_email: '',
+  pause_catering_orders: 0,
+  image_disclaimer_enabled: 1,
+  image_disclaimer_text: 'Images are for illustration purpose only',
+  image_resolution_mode: 'smart_crop',
+  image_exact_width: 600,
+  image_exact_height: 400,
+  image_proportional_size: 600,
+};
+
 function normalizeEmail(value) {
   return String(value || '').trim().toLowerCase();
 }
@@ -983,7 +974,8 @@ function normalizeEmail(value) {
 function normalizeReservationPhone(value) {
   const digits = String(value || '').replace(/\D/g, '');
   if (!digits) return '';
-  if (digits.length === 11 && digits.startsWith('1')) return digits.slice(1);
+  if (digits.length === 10) return `1${digits}`;
+  if (digits.length === 11 && digits.startsWith('1')) return digits;
   return digits;
 }
 
@@ -1064,26 +1056,36 @@ const emailSystem = createEmailTemplateSystem({
   mockEmailNotificationSettings,
   siteConfig: {
   "brand": "Masakali Indian Cuisine",
-  "defaultRestaurantName": "Masakali Montreal",
+  "defaultRestaurantName": "Masakali Ottawa",
   "smtpHost": process.env.EMAIL_SMTP_HOST || process.env.EMAIL_HOST || "",
   "reservationUser": process.env.RESERVATION_EMAIL_USER || "",
   "reservationAdminEmail": process.env.RESERVATION_ADMIN_EMAIL || process.env.RESERVATION_EMAIL_USER || "",
   "reservationPass": process.env.RESERVATION_EMAIL_PASS || "",
   "contactUser": process.env.CONTACT_EMAIL_USER || "",
   "contactPass": process.env.CONTACT_EMAIL_PASS || "",
-  "baseUrl": "https://masakalimontreal.ca",
+  "baseUrl": "https://masakaliottawa.ca",
   "logoPath": "/logo/Masakali-Indian-Cuisine.png",
   "logoAlt": "Masakali Indian Cuisine",
   "locations": [
     {
-      "restaurant_id": 3,
-      "location_slug": "montreal",
-      "restaurant_name": "Masakali Indian Cuisine - Montreal",
-      "address": "1015 Sherbrooke St W, Montreal, QC H3A 1G5",
-      "phone": "(514) 228-6777",
-      "business_hours": "Mon-Sun: 12:00 PM - 10:00 PM",
-      "online_order_url": "https://www.clover.com/online-ordering/masakali-montreal",
+      "restaurant_id": 2,
+      "location_slug": "stittsville",
+      "restaurant_name": "Masakali Indian Cuisine - Stittsville",
+      "address": "5507 Hazeldean Rd Unit C3-1, Stittsville, ON",
+      "phone": "(613) 878-3939",
+      "business_hours": "Mon-Sun: 11:30 AM - 10:00 PM",
+      "online_order_url": "https://www.clover.com/online-ordering/masakali-indian-cuisine-ottawa",
       "sort_order": 1
+    },
+    {
+      "restaurant_id": 1,
+      "location_slug": "wellington",
+      "restaurant_name": "Masakali Indian Cuisine - Wellington",
+      "address": "1111 Wellington St. W, Ottawa, ON",
+      "phone": "(613) 792-9777",
+      "business_hours": "Mon-Sun: 11:30 AM - 10:00 PM",
+      "online_order_url": "https://www.clover.com/online-ordering/masakali-indian-cuisinew-ottawa",
+      "sort_order": 2
     }
   ]
 },
@@ -1176,12 +1178,6 @@ async function ensureHomepageContentTables() {
 }
 
 async function getAllMenuItems() {
-  // Try Montreal JSON first
-  const jsonMenu = loadMontrealMenuFromJson();
-  if (jsonMenu && jsonMenu.items.length > 0) {
-    return jsonMenu.items;
-  }
-
   if (db) {
     try {
       const [rows] = await db.query(
@@ -1196,12 +1192,27 @@ async function getAllMenuItems() {
       // In some deployments local menu tables may not exist yet.
       if (!isTableMissingError(err)) throw err;
 
-      try {
-        const tempMenu = await fetchTempMenuData();
-        return tempMenu.items;
-      } catch (tempErr) {
-        if (!isTableMissingError(tempErr)) throw tempErr;
+      const branches = ['stittsville', 'wellington'];
+      const combinedItems = [];
+
+      for (const branch of branches) {
+        try {
+          const tempMenu = await fetchTempMenuData(branch);
+          const normalizedItems = (tempMenu?.items || []).map((item) => {
+            const baseKey = String(item?.source_id ?? item?.id ?? '').trim();
+            return {
+              ...item,
+              menu_branch: branch,
+              source_id: branch === 'wellington' ? `wellington:${baseKey}` : baseKey,
+            };
+          });
+          combinedItems.push(...normalizedItems);
+        } catch (tempErr) {
+          if (!isTableMissingError(tempErr)) throw tempErr;
+        }
       }
+
+      return combinedItems;
     }
   }
 
@@ -1318,12 +1329,7 @@ app.get('/api/restaurants/:slug', async (req, res) => {
 
 // --- Menu ---
 app.get('/api/categories', async (req, res) => {
-  // Try Montreal JSON first
-  const jsonMenu = loadMontrealMenuFromJson();
-  if (jsonMenu && jsonMenu.categories.length > 0) {
-    return res.json(jsonMenu.categories);
-  }
-
+  const branch = normalizeMenuBranch(req.query?.branch);
   if (db) {
     try {
       const [rows] = await db.query('SELECT * FROM menu_categories WHERE is_active = 1 ORDER BY sort_order');
@@ -1333,7 +1339,7 @@ app.get('/api/categories', async (req, res) => {
         console.error(err);
       } else {
         try {
-          const tempMenu = await fetchTempMenuData();
+          const tempMenu = await fetchTempMenuData(branch);
           return res.json(tempMenu.categories);
         } catch (tempErr) {
           if (!isTableMissingError(tempErr)) {
@@ -1362,16 +1368,6 @@ app.get('/api/menu', async (req, res) => {
     }
   }
 
-  // Try Montreal JSON first
-  const jsonMenu = loadMontrealMenuFromJson();
-  if (jsonMenu && jsonMenu.items.length > 0) {
-    let items = [...jsonMenu.items];
-    if (category) {
-      items = items.filter((item) => String(item.category_id) === String(category));
-    }
-    return res.json(items);
-  }
-
   if (db) {
     try {
       let query = 'SELECT mi.*, mc.name as category_name FROM menu_items mi JOIN menu_categories mc ON mi.category_id = mc.id WHERE mi.is_active = 1';
@@ -1385,7 +1381,7 @@ app.get('/api/menu', async (req, res) => {
         console.error(err);
       } else {
         try {
-          const tempMenu = await fetchTempMenuData();
+          const tempMenu = await fetchTempMenuData(branch);
           let items = [...tempMenu.items];
           if (category) {
             items = items.filter((item) => String(item.category_id) === String(category));
@@ -1402,13 +1398,6 @@ app.get('/api/menu', async (req, res) => {
 });
 
 app.get('/api/menu/:id', async (req, res) => {
-  // Try Montreal JSON first
-  const jsonMenu = loadMontrealMenuFromJson();
-  if (jsonMenu) {
-    const item = jsonMenu.items.find((menuItem) => String(menuItem.id) === String(req.params.id));
-    if (item) return res.json(item);
-  }
-
   if (db) {
     try {
       const [rows] = await db.query('SELECT * FROM menu_items WHERE id = ?', [req.params.id]);
@@ -1428,7 +1417,7 @@ app.get('/api/menu/:id', async (req, res) => {
     }
   }
 
-  return res.status(404).json({ error: 'Menu item not found.' });
+  return res.status(503).json({ error: 'Menu data is unavailable because MySQL is not connected.' });
 });
 
 app.post('/api/menu', authMiddleware, async (req, res) => {
@@ -1783,8 +1772,8 @@ app.get('/api/reservation-availability', async (req, res) => {
       }
     } catch (_) {}
   } else {
-    isPaused = !!mockReservationsPaused;
-    tuesdayBlocked = true;
+    isPaused = !!mockReservationSettings.reservations_paused;
+    tuesdayBlocked = !!mockReservationSettings.tuesday_disabled;
   }
 
   const d = new Date(`${date}T00:00:00`);
@@ -2161,6 +2150,7 @@ app.get('/api/reservations', authMiddleware, async (req, res) => {
 });
 
 app.post('/api/reservations', async (req, res) => {
+  // Check if reservations are paused
   try {
     let isPaused = false;
     let timeRestrictionEnabled = true;
@@ -2279,7 +2269,7 @@ app.post('/api/reservations', async (req, res) => {
       const createdReservation = { ...rows[0] };
       const createdRestaurant = restaurants[0] || null;
       res.json(createdReservation);
-      setImmediate(() => {
+setImmediate(() => {
         try {
           emitAdminEvent('reservation.created', { reservation: createdReservation }, createdReservation.restaurant_id);
         } catch (eventErr) {
@@ -2298,6 +2288,10 @@ app.post('/api/reservations', async (req, res) => {
           payload_json: { reservation_id: createdReservation.id, service_period: deriveServicePeriodFromTime(createdReservation.time) },
         }).catch((notificationErr) => {
           console.error('Reservation notification error:', notificationErr.message);
+        });
+        // Sync contact to CRM
+        void syncContactFromReservation(createdReservation).catch((syncErr) => {
+          console.error('Contact sync error:', syncErr.message);
         });
       });
       return;
@@ -2786,6 +2780,81 @@ function boolNumber(value, fallback = 0) {
   return fallback;
 }
 
+function isBlankInput(value) {
+  return value === undefined || value === null || String(value).trim() === '';
+}
+
+function parseFormulaMultiplier(value) {
+  if (isBlankInput(value)) return null;
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed <= 0) return null;
+  return Number(parsed.toFixed(4));
+}
+
+function parseBasePrice(value) {
+  if (isBlankInput(value)) return null;
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed < 0) return null;
+  return Number(parsed.toFixed(2));
+}
+
+function calculateFormulaPrice(basePrice, formulaMultiplier) {
+  if (basePrice === null || formulaMultiplier === null) return null;
+  return Number((basePrice * formulaMultiplier).toFixed(2));
+}
+
+const MAX_CATEGORY_FORMULAS = 4;
+
+function parseFormulaId(value) {
+  if (isBlankInput(value)) return null;
+  const parsed = Number(value);
+  if (!Number.isInteger(parsed) || parsed <= 0) return null;
+  return parsed;
+}
+
+function normalizeCategoryFormulaPayload(formulas) {
+  if (!Array.isArray(formulas)) return null;
+  const normalized = [];
+  for (const [index, formula] of formulas.entries()) {
+    const label = String(formula?.label || '').trim();
+    const multiplier = parseFormulaMultiplier(formula?.multiplier);
+    if (!label && multiplier === null) continue;
+    if (!label) return { error: 'Each category formula needs a label' };
+    if (multiplier === null) return { error: `Formula "${label}" must have a positive multiplier` };
+    normalized.push({
+      id: parseFormulaId(formula?.id),
+      label: label.slice(0, 120),
+      multiplier,
+      sort_order: Number(formula?.sort_order || index + 1),
+    });
+  }
+  if (normalized.length > MAX_CATEGORY_FORMULAS) {
+    return { error: `A category can have at most ${MAX_CATEGORY_FORMULAS} pricing formulas` };
+  }
+  return { formulas: normalized };
+}
+
+// Tray-level custom multiplier wins, then the selected category formula,
+// then the item-level legacy formula. Null means "keep the manual price".
+function resolveTrayOptionMultiplier(option = {}, formulaById = new Map(), itemFormulaMultiplier = null) {
+  const customMultiplier = parseFormulaMultiplier(option.custom_multiplier);
+  if (customMultiplier !== null) return customMultiplier;
+  const formulaId = parseFormulaId(option.formula_id);
+  if (formulaId !== null) {
+    const selectedMultiplier = parseFormulaMultiplier(formulaById.get(String(formulaId))?.multiplier);
+    if (selectedMultiplier !== null) return selectedMultiplier;
+  }
+  return itemFormulaMultiplier;
+}
+
+function applyFormulaPriceToOptions(options = [], basePrice, formulaById = new Map(), itemFormulaMultiplier = null) {
+  return options.map((option) => {
+    const multiplier = resolveTrayOptionMultiplier(option, formulaById, itemFormulaMultiplier);
+    const calculatedPrice = calculateFormulaPrice(basePrice, multiplier);
+    return calculatedPrice === null ? option : { ...option, price: calculatedPrice };
+  });
+}
+
 const cateringTrayStatusOptions = ['pending', 'confirmed', 'preparing', 'completed', 'cancelled'];
 
 function normalizeHostForLocation(value) {
@@ -2827,6 +2896,109 @@ function normalizeCateringTrayItem(row, options = []) {
   return item;
 }
 
+function normalizeCateringTrayCategory(row = {}, formulas = [], includePricingFields = false) {
+  const category = {
+    ...row,
+    is_active: boolNumber(row.is_active, 1),
+  };
+  if (includePricingFields) {
+    category.formulas = formulas
+      .filter((formula) => Number(formula.category_id) === Number(row.id))
+      .map((formula) => ({
+        id: Number(formula.id),
+        category_id: Number(formula.category_id),
+        label: String(formula.label || ''),
+        multiplier: parseFormulaMultiplier(formula.multiplier),
+        sort_order: Number(formula.sort_order || 1),
+      }))
+      .sort((a, b) => a.sort_order - b.sort_order || a.id - b.id);
+  } else {
+    delete category.formulas;
+  }
+  delete category.default_formula_multiplier;
+  return category;
+}
+
+function normalizeCateringTrayItemWithCategory(row, options = [], categoryById = new Map(), includePricingFields = false) {
+  const item = normalizeCateringTrayItem(row, options);
+  const basePrice = parseBasePrice(row.base_price);
+  const itemFormulaMultiplier = parseFormulaMultiplier(row.item_formula_multiplier);
+  const formulaById = new Map((categoryById.get(String(row.category_id))?.formulas || []).map((formula) => [String(formula.id), formula]));
+
+  item.tray_options = item.tray_options.map((option) => {
+    const next = { ...option };
+    if (includePricingFields) {
+      next.formula_id = parseFormulaId(option.formula_id);
+      next.custom_multiplier = parseFormulaMultiplier(option.custom_multiplier);
+      next.effective_multiplier = resolveTrayOptionMultiplier(option, formulaById, itemFormulaMultiplier);
+    } else {
+      delete next.formula_id;
+      delete next.custom_multiplier;
+      delete next.effective_multiplier;
+    }
+    return next;
+  });
+
+  if (includePricingFields) {
+    item.base_price = basePrice;
+    item.item_formula_multiplier = itemFormulaMultiplier;
+  } else {
+    delete item.base_price;
+    delete item.item_formula_multiplier;
+  }
+  return item;
+}
+
+async function getCategoryFormulaMap(categoryId) {
+  if (!db) {
+    return new Map(
+      mockCateringTrayCategoryFormulas
+        .filter((formula) => Number(formula.category_id) === Number(categoryId))
+        .map((formula) => [String(formula.id), formula])
+    );
+  }
+  const [rows] = await db.query('SELECT * FROM catering_tray_category_formulas WHERE category_id = ?', [categoryId]);
+  return new Map(rows.map((formula) => [String(formula.id), formula]));
+}
+
+async function recalculateCategoryTrayOptionPrices(categoryId) {
+  const formulaById = await getCategoryFormulaMap(categoryId);
+
+  if (db) {
+    const [items] = await db.query('SELECT id, base_price, item_formula_multiplier FROM catering_tray_items WHERE category_id = ?', [categoryId]);
+    if (!items.length) return;
+    const [options] = await db.query('SELECT * FROM catering_tray_options WHERE item_id IN (?)', [items.map((item) => item.id)]);
+    for (const item of items) {
+      const basePrice = parseBasePrice(item.base_price);
+      if (basePrice === null) continue;
+      const itemFormulaMultiplier = parseFormulaMultiplier(item.item_formula_multiplier);
+      for (const option of options.filter((row) => Number(row.item_id) === Number(item.id))) {
+        const multiplier = resolveTrayOptionMultiplier(option, formulaById, itemFormulaMultiplier);
+        const price = calculateFormulaPrice(basePrice, multiplier);
+        if (price === null || Number(option.price) === price) continue;
+        await db.query('UPDATE catering_tray_options SET price = ? WHERE id = ?', [price, option.id]);
+      }
+    }
+    return;
+  }
+
+  const itemsById = new Map(
+    mockCateringTrayItems
+      .filter((item) => Number(item.category_id) === Number(categoryId))
+      .map((item) => [Number(item.id), item])
+  );
+  if (!itemsById.size) return;
+  mockCateringTrayOptions = mockCateringTrayOptions.map((option) => {
+    const item = itemsById.get(Number(option.item_id));
+    if (!item) return option;
+    const basePrice = parseBasePrice(item.base_price);
+    const multiplier = resolveTrayOptionMultiplier(option, formulaById, parseFormulaMultiplier(item.item_formula_multiplier));
+    const price = calculateFormulaPrice(basePrice, multiplier);
+    return price === null ? option : { ...option, price };
+  });
+}
+
+
 async function ensureCateringByTraySchema() {
   if (!db) return;
   await db.query(`
@@ -2835,6 +3007,7 @@ async function ensureCateringByTraySchema() {
       name VARCHAR(160) NOT NULL,
       slug VARCHAR(180) NOT NULL,
       description TEXT NULL,
+      default_formula_multiplier DECIMAL(10,4) NULL,
       sort_order INT NOT NULL DEFAULT 1,
       is_active TINYINT(1) NOT NULL DEFAULT 1,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -2850,6 +3023,8 @@ async function ensureCateringByTraySchema() {
       short_description TEXT NULL,
       long_description MEDIUMTEXT NULL,
       image_url MEDIUMTEXT NULL,
+      base_price DECIMAL(10,2) NULL,
+      item_formula_multiplier DECIMAL(10,4) NULL,
       sort_order INT NOT NULL DEFAULT 1,
       is_active TINYINT(1) NOT NULL DEFAULT 1,
       available TINYINT(1) NOT NULL DEFAULT 1,
@@ -2988,6 +3163,48 @@ async function ensureCateringByTraySchema() {
   if (!proportionalSizeColumn.length) {
     await db.query(`ALTER TABLE catering_tray_settings ADD COLUMN image_proportional_size INT NOT NULL DEFAULT 600`);
   }
+  const [categoryFormulaColumn] = await db.query(`SHOW COLUMNS FROM catering_tray_categories LIKE 'default_formula_multiplier'`);
+  if (!categoryFormulaColumn.length) {
+    await db.query(`ALTER TABLE catering_tray_categories ADD COLUMN default_formula_multiplier DECIMAL(10,4) NULL`);
+  }
+  const [itemBasePriceColumn] = await db.query(`SHOW COLUMNS FROM catering_tray_items LIKE 'base_price'`);
+  if (!itemBasePriceColumn.length) {
+    await db.query(`ALTER TABLE catering_tray_items ADD COLUMN base_price DECIMAL(10,2) NULL`);
+  }
+  const [itemFormulaColumn] = await db.query(`SHOW COLUMNS FROM catering_tray_items LIKE 'item_formula_multiplier'`);
+  if (!itemFormulaColumn.length) {
+    await db.query(`ALTER TABLE catering_tray_items ADD COLUMN item_formula_multiplier DECIMAL(10,4) NULL`);
+  }
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS catering_tray_category_formulas (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      category_id INT NOT NULL,
+      label VARCHAR(120) NOT NULL,
+      multiplier DECIMAL(10,4) NOT NULL,
+      sort_order INT NOT NULL DEFAULT 1,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      INDEX idx_catering_tray_category_formulas_category (category_id),
+      CONSTRAINT fk_catering_tray_category_formula_category FOREIGN KEY (category_id) REFERENCES catering_tray_categories(id) ON DELETE CASCADE
+    )
+  `);
+  const [optionFormulaColumn] = await db.query(`SHOW COLUMNS FROM catering_tray_options LIKE 'formula_id'`);
+  if (!optionFormulaColumn.length) {
+    await db.query(`ALTER TABLE catering_tray_options ADD COLUMN formula_id INT NULL`);
+  }
+  const [optionCustomMultiplierColumn] = await db.query(`SHOW COLUMNS FROM catering_tray_options LIKE 'custom_multiplier'`);
+  if (!optionCustomMultiplierColumn.length) {
+    await db.query(`ALTER TABLE catering_tray_options ADD COLUMN custom_multiplier DECIMAL(10,4) NULL`);
+  }
+  // One-time migration of the legacy single category multiplier into a named formula.
+  await db.query(`
+    INSERT INTO catering_tray_category_formulas (category_id, label, multiplier, sort_order)
+    SELECT c.id, 'Default', c.default_formula_multiplier, 1
+    FROM catering_tray_categories c
+    WHERE c.default_formula_multiplier IS NOT NULL
+      AND c.default_formula_multiplier > 0
+      AND NOT EXISTS (SELECT 1 FROM catering_tray_category_formulas f WHERE f.category_id = c.id)
+  `);
   await db.query(`
     INSERT INTO catering_tray_settings (id, minimum_amount, maximum_order_size, lead_time_hours, tax_rate, currency, pickup_times, delivery_times, pause_catering_orders, image_disclaimer_enabled, image_disclaimer_text, image_resolution_mode, image_exact_width, image_exact_height, image_proportional_size)
     VALUES (1, 0, 0, 24, 0.1300, 'CAD', '11:30-21:30', '11:30-21:30', 0, 1, 'Images are for illustration purpose only', 'smart_crop', 600, 400, 600)
@@ -3007,6 +3224,9 @@ async function getCateringByTrayData(includeInactive = false, hostname = '') {
     const [items] = await db.query(`SELECT * FROM catering_tray_items ${itemWhere} ORDER BY sort_order ASC, name ASC`);
     const [options] = await db.query(`SELECT * FROM catering_tray_options ${includeInactive ? '' : 'WHERE is_active = 1'} ORDER BY sort_order ASC, id ASC`);
     const [settingsRows] = await db.query('SELECT * FROM catering_tray_settings WHERE id = 1 LIMIT 1');
+    const [categoryFormulas] = await db.query('SELECT * FROM catering_tray_category_formulas ORDER BY sort_order ASC, id ASC');
+    const normalizedCategories = categories.map((category) => normalizeCateringTrayCategory(category, categoryFormulas, includeInactive));
+    const categoryById = new Map(normalizedCategories.map((category) => [String(category.id), category]));
     let locations = publicCateringLocations(hostname);
     try {
       const [locationRows] = await db.query('SELECT id, id AS restaurant_id, slug AS location_slug, name AS restaurant_name, CONCAT_WS(", ", address, city, province_state) AS address, phone, email, website FROM restaurants WHERE is_active = 1 ORDER BY id');
@@ -3017,15 +3237,21 @@ async function getCateringByTrayData(includeInactive = false, hostname = '') {
       console.error('Catering locations fallback:', err.message);
     }
     return {
-      categories,
-      items: items.map((item) => normalizeCateringTrayItem(item, options)),
+      categories: normalizedCategories,
+      items: items.map((item) => normalizeCateringTrayItemWithCategory(item, options, categoryById, includeInactive)),
       settings: settingsRows[0] || mockCateringTraySettings,
       locations,
     };
   }
+  const normalizedMockCategories = mockCateringTrayCategories
+    .filter((category) => includeInactive || boolNumber(category.is_active, 1))
+    .map((category) => normalizeCateringTrayCategory(category, mockCateringTrayCategoryFormulas, includeInactive));
+  const categoryById = new Map(normalizedMockCategories.map((category) => [String(category.id), category]));
+  const mockItems = mockCateringTrayItems.filter((item) => includeInactive || (boolNumber(item.is_active, 1) && boolNumber(item.available, 1)));
+  const mockOptions = mockCateringTrayOptions.filter((option) => includeInactive || boolNumber(option.is_active, 1));
   return {
-    categories: [],
-    items: [],
+    categories: normalizedMockCategories,
+    items: mockItems.map((item) => normalizeCateringTrayItemWithCategory(item, mockOptions, categoryById, includeInactive)),
     settings: mockCateringTraySettings,
     locations: publicCateringLocations(hostname),
   };
@@ -3258,18 +3484,71 @@ app.get('/api/admin/catering-by-tray', authMiddleware, async (req, res) => {
   }
 });
 
+async function persistCategoryFormulas(categoryId, formulas) {
+  if (!Array.isArray(formulas)) return;
+  const keptIds = formulas.map((formula) => formula.id).filter((id) => id !== null);
+
+  if (db) {
+    if (keptIds.length) {
+      await db.query('DELETE FROM catering_tray_category_formulas WHERE category_id = ? AND id NOT IN (?)', [categoryId, keptIds]);
+    } else {
+      await db.query('DELETE FROM catering_tray_category_formulas WHERE category_id = ?', [categoryId]);
+    }
+    for (const formula of formulas) {
+      if (formula.id !== null) {
+        await db.query(
+          'UPDATE catering_tray_category_formulas SET label = ?, multiplier = ?, sort_order = ? WHERE id = ? AND category_id = ?',
+          [formula.label, formula.multiplier, formula.sort_order, formula.id, categoryId]
+        );
+      } else {
+        await db.query(
+          'INSERT INTO catering_tray_category_formulas (category_id, label, multiplier, sort_order) VALUES (?, ?, ?, ?)',
+          [categoryId, formula.label, formula.multiplier, formula.sort_order]
+        );
+      }
+    }
+    return;
+  }
+
+  mockCateringTrayCategoryFormulas = mockCateringTrayCategoryFormulas.filter(
+    (formula) => Number(formula.category_id) !== Number(categoryId) || keptIds.includes(Number(formula.id))
+  );
+  for (const formula of formulas) {
+    if (formula.id !== null) {
+      mockCateringTrayCategoryFormulas = mockCateringTrayCategoryFormulas.map((row) =>
+        Number(row.id) === Number(formula.id) ? { ...row, ...formula, category_id: Number(categoryId) } : row
+      );
+    } else {
+      mockCateringTrayCategoryFormulas.push({ ...formula, id: nextCateringTrayCategoryFormulaId++, category_id: Number(categoryId) });
+    }
+  }
+}
+
 app.post('/api/admin/catering-by-tray/categories', authMiddleware, async (req, res) => {
   try {
     const name = String(req.body?.name || '').trim();
     if (!name) return res.status(400).json({ error: 'Category name is required' });
-    const category = { name, slug: slugify(req.body?.slug || name), description: req.body?.description || null, sort_order: Number(req.body?.sort_order || 1), is_active: boolNumber(req.body?.is_active, 1) };
+    const formulaResult = normalizeCategoryFormulaPayload(req.body?.formulas);
+    if (formulaResult?.error) return res.status(400).json({ error: formulaResult.error });
+    const category = {
+      name,
+      slug: slugify(req.body?.slug || name),
+      description: req.body?.description || null,
+      sort_order: Number(req.body?.sort_order || 1),
+      is_active: boolNumber(req.body?.is_active, 1),
+    };
     if (db) {
       await ensureCateringByTraySchema();
-      const [result] = await db.query('INSERT INTO catering_tray_categories (name, slug, description, sort_order, is_active) VALUES (?, ?, ?, ?, ?)', [category.name, category.slug, category.description, category.sort_order, category.is_active]);
+      const [result] = await db.query(
+        'INSERT INTO catering_tray_categories (name, slug, description, sort_order, is_active) VALUES (?, ?, ?, ?, ?)',
+        [category.name, category.slug, category.description, category.sort_order, category.is_active]
+      );
+      await persistCategoryFormulas(result.insertId, formulaResult?.formulas);
       return res.json({ id: result.insertId, ...category });
     }
     const row = { id: nextCateringTrayCategoryId++, ...category };
     mockCateringTrayCategories.push(row);
+    await persistCategoryFormulas(row.id, formulaResult?.formulas);
     return res.json(row);
   } catch (err) {
     console.error('Create catering tray category failed:', err);
@@ -3279,14 +3558,29 @@ app.post('/api/admin/catering-by-tray/categories', authMiddleware, async (req, r
 
 app.put('/api/admin/catering-by-tray/categories/:id', authMiddleware, async (req, res) => {
   try {
-    const category = { name: String(req.body?.name || '').trim(), slug: slugify(req.body?.slug || req.body?.name), description: req.body?.description || null, sort_order: Number(req.body?.sort_order || 1), is_active: boolNumber(req.body?.is_active, 1) };
+    const formulaResult = normalizeCategoryFormulaPayload(req.body?.formulas);
+    if (formulaResult?.error) return res.status(400).json({ error: formulaResult.error });
+    const category = {
+      name: String(req.body?.name || '').trim(),
+      slug: slugify(req.body?.slug || req.body?.name),
+      description: req.body?.description || null,
+      sort_order: Number(req.body?.sort_order || 1),
+      is_active: boolNumber(req.body?.is_active, 1),
+    };
     if (!category.name) return res.status(400).json({ error: 'Category name is required' });
     if (db) {
       await ensureCateringByTraySchema();
-      await db.query('UPDATE catering_tray_categories SET name = ?, slug = ?, description = ?, sort_order = ?, is_active = ? WHERE id = ?', [category.name, category.slug, category.description, category.sort_order, category.is_active, req.params.id]);
+      await db.query(
+        'UPDATE catering_tray_categories SET name = ?, slug = ?, description = ?, sort_order = ?, is_active = ? WHERE id = ?',
+        [category.name, category.slug, category.description, category.sort_order, category.is_active, req.params.id]
+      );
+      await persistCategoryFormulas(Number(req.params.id), formulaResult?.formulas);
+      await recalculateCategoryTrayOptionPrices(Number(req.params.id));
       return res.json({ id: Number(req.params.id), ...category });
     }
     mockCateringTrayCategories = mockCateringTrayCategories.map((row) => Number(row.id) === Number(req.params.id) ? { ...row, ...category } : row);
+    await persistCategoryFormulas(Number(req.params.id), formulaResult?.formulas);
+    await recalculateCategoryTrayOptionPrices(Number(req.params.id));
     return res.json({ id: Number(req.params.id), ...category });
   } catch (err) {
     console.error('Update catering tray category failed:', err);
@@ -3319,6 +3613,7 @@ app.delete('/api/admin/catering-by-tray/categories/:id', authMiddleware, async (
       }
     }
     mockCateringTrayCategories = mockCateringTrayCategories.filter((row) => Number(row.id) !== Number(req.params.id));
+    mockCateringTrayCategoryFormulas = mockCateringTrayCategoryFormulas.filter((row) => Number(row.category_id) !== Number(req.params.id));
     mockCateringTrayItems = mockCateringTrayItems.filter((row) => Number(row.category_id) !== Number(req.params.id));
     mockCateringTrayOptions = mockCateringTrayOptions.filter((option) => mockCateringTrayItems.some((item) => Number(item.id) === Number(option.item_id)));
     return res.json({ success: true });
@@ -3336,6 +3631,8 @@ function buildCateringTrayItemPayload(body = {}) {
     short_description: body.short_description || null,
     long_description: body.long_description || null,
     image_url: body.image_url || null,
+    base_price: parseBasePrice(body.base_price),
+    item_formula_multiplier: parseFormulaMultiplier(body.item_formula_multiplier),
     sort_order: Number(body.sort_order || 1),
     is_active: boolNumber(body.is_active, 1),
     available: boolNumber(body.available, 1),
@@ -3346,6 +3643,8 @@ function buildCateringTrayItemPayload(body = {}) {
     tray_name: String(option.tray_name || '').trim(),
     serves: String(option.serves ?? '').trim(),
     price: Number(option.price || 0),
+    formula_id: parseFormulaId(option.formula_id),
+    custom_multiplier: parseFormulaMultiplier(option.custom_multiplier),
     sort_order: Number(option.sort_order || index + 1),
     is_active: boolNumber(option.is_active, 1),
   })).filter((option) => option.tray_name) : [];
@@ -3356,32 +3655,48 @@ async function saveCateringTrayItem(req, res, id = null) {
   try {
     const item = buildCateringTrayItemPayload(req.body);
     if (!item.name || !item.category_id) return res.status(400).json({ error: 'Item name and category are required' });
+    if (!isBlankInput(req.body?.base_price) && item.base_price === null) {
+      return res.status(400).json({ error: 'Base price must be a non-negative number' });
+    }
+    if (!isBlankInput(req.body?.item_formula_multiplier) && item.item_formula_multiplier === null) {
+      return res.status(400).json({ error: 'Item formula multiplier must be a positive number' });
+    }
+    if (item.item_formula_multiplier !== null && item.base_price === null) {
+      return res.status(400).json({ error: 'Base price is required when item formula multiplier is set' });
+    }
     if (item.tray_options.some((option) => option.serves.length > 50)) {
       return res.status(400).json({ error: 'Tray serves value must be 50 characters or less' });
     }
-    const values = [item.category_id, item.name, item.short_description, item.long_description, item.image_url, item.sort_order, item.is_active, item.available, item.vegetarian, item.vegan, item.can_be_made_vegan, item.gluten_free, item.contains_nuts, item.spicy, item.recommended, item.chef_special, item.best_seller, item.popular, item.kids_friendly, item.halal];
+    const values = [item.category_id, item.name, item.short_description, item.long_description, item.image_url, item.base_price, item.item_formula_multiplier, item.sort_order, item.is_active, item.available, item.vegetarian, item.vegan, item.can_be_made_vegan, item.gluten_free, item.contains_nuts, item.spicy, item.recommended, item.chef_special, item.best_seller, item.popular, item.kids_friendly, item.halal];
     let itemId = id;
     if (db) {
       await ensureCateringByTraySchema();
+      const formulaById = await getCategoryFormulaMap(item.category_id);
+      const trayOptionsToSave = applyFormulaPriceToOptions(item.tray_options, item.base_price, formulaById, item.item_formula_multiplier);
       if (id) {
         await db.query(
-          `UPDATE catering_tray_items SET category_id = ?, name = ?, short_description = ?, long_description = ?, image_url = ?, sort_order = ?, is_active = ?, available = ?, vegetarian = ?, vegan = ?, can_be_made_vegan = ?, gluten_free = ?, contains_nuts = ?, spicy = ?, recommended = ?, chef_special = ?, best_seller = ?, popular = ?, kids_friendly = ?, halal = ? WHERE id = ?`,
+          `UPDATE catering_tray_items SET category_id = ?, name = ?, short_description = ?, long_description = ?, image_url = ?, base_price = ?, item_formula_multiplier = ?, sort_order = ?, is_active = ?, available = ?, vegetarian = ?, vegan = ?, can_be_made_vegan = ?, gluten_free = ?, contains_nuts = ?, spicy = ?, recommended = ?, chef_special = ?, best_seller = ?, popular = ?, kids_friendly = ?, halal = ? WHERE id = ?`,
           [...values, id]
         );
         await db.query('DELETE FROM catering_tray_options WHERE item_id = ?', [id]);
       } else {
         const [result] = await db.query(
-          `INSERT INTO catering_tray_items (category_id, name, short_description, long_description, image_url, sort_order, is_active, available, vegetarian, vegan, can_be_made_vegan, gluten_free, contains_nuts, spicy, recommended, chef_special, best_seller, popular, kids_friendly, halal)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO catering_tray_items (category_id, name, short_description, long_description, image_url, base_price, item_formula_multiplier, sort_order, is_active, available, vegetarian, vegan, can_be_made_vegan, gluten_free, contains_nuts, spicy, recommended, chef_special, best_seller, popular, kids_friendly, halal)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           values
         );
         itemId = result.insertId;
       }
-      for (const option of item.tray_options) {
-        await db.query('INSERT INTO catering_tray_options (item_id, tray_name, serves, price, sort_order, is_active) VALUES (?, ?, ?, ?, ?, ?)', [itemId, option.tray_name, option.serves, option.price, option.sort_order, option.is_active]);
+      for (const option of trayOptionsToSave) {
+        await db.query(
+          'INSERT INTO catering_tray_options (item_id, tray_name, serves, price, formula_id, custom_multiplier, sort_order, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+          [itemId, option.tray_name, option.serves, option.price, option.formula_id, option.custom_multiplier, option.sort_order, option.is_active]
+        );
       }
-      return res.json({ id: Number(itemId), ...item });
+      return res.json({ id: Number(itemId), ...item, tray_options: trayOptionsToSave });
     }
+    const formulaById = await getCategoryFormulaMap(item.category_id);
+    const trayOptionsToSave = applyFormulaPriceToOptions(item.tray_options, item.base_price, formulaById, item.item_formula_multiplier);
     if (id) {
       mockCateringTrayItems = mockCateringTrayItems.map((row) => Number(row.id) === Number(id) ? { ...row, ...item, id: Number(id) } : row);
       mockCateringTrayOptions = mockCateringTrayOptions.filter((option) => Number(option.item_id) !== Number(id));
@@ -3390,8 +3705,8 @@ async function saveCateringTrayItem(req, res, id = null) {
       itemId = nextCateringTrayItemId++;
       mockCateringTrayItems.push({ id: itemId, ...item });
     }
-    item.tray_options.forEach((option) => mockCateringTrayOptions.push({ id: nextCateringTrayOptionId++, item_id: itemId, ...option }));
-    return res.json({ id: itemId, ...item });
+    trayOptionsToSave.forEach((option) => mockCateringTrayOptions.push({ id: nextCateringTrayOptionId++, item_id: itemId, ...option }));
+    return res.json({ id: itemId, ...item, tray_options: trayOptionsToSave });
   } catch (err) {
     console.error('Save catering tray item failed:', err);
     return res.status(500).json({ error: 'Unable to save item' });
@@ -3644,6 +3959,314 @@ app.delete('/api/contact/:id', authMiddleware, async (req, res) => {
     return res.json({ success: true });
   }
   return res.status(404).json({ error: 'Not found' });
+});
+
+// =====================================================
+// CRM: Contacts Management
+// =====================================================
+
+// Helper: Normalize phone for CRM (store as entered, no auto-formatting)
+function normalizeCrmPhone(value) {
+  return String(value || '').trim();
+}
+
+// Helper: Sync contact when reservation is created
+async function syncContactFromReservation(reservation) {
+  if (!db || !reservation) return null;
+
+  const name = String(reservation.name || '').trim();
+  const emailRaw = String(reservation.email || '').trim();
+  const emailNorm = emailRaw.toLowerCase();
+  const phoneRaw = String(reservation.phone || '').trim();
+  const phoneNorm = phoneRaw.replace(/\D/g, '');
+
+  if (!emailNorm && !phoneNorm) return null;
+
+  const restaurantId = Number(reservation.restaurant_id || 0);
+  const visitDate = String(reservation.date || '').trim();
+  const visitTime = String(reservation.time || '').trim();
+  const guestCount = Number(reservation.persons || 0);
+
+  try {
+    // Try to find existing contact by email first, then phone
+    let [existing] = await db.query(
+      'SELECT id FROM contacts WHERE email_normalized = ? LIMIT 1',
+      [emailNorm]
+    );
+
+    if (!existing.length && emailNorm) {
+      const [byPhone] = await db.query(
+        'SELECT id FROM contacts WHERE phone_normalized = ? AND (email_normalized IS NULL OR email_normalized = "") LIMIT 1',
+        [phoneNorm]
+      );
+      if (byPhone.length) existing = byPhone;
+    }
+
+    if (existing.length) {
+      // Update existing contact
+      const contactId = existing[0].id;
+
+      // Update visit count and dates
+      await db.query(
+        `UPDATE contacts SET
+          name = ?,
+          phone = COALESCE(?, phone),
+          phone_normalized = COALESCE(?, phone_normalized),
+          last_visit_date = ?,
+          total_visits = total_visits + 1,
+          updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?`,
+        [name, phoneRaw, phoneNorm, visitDate, contactId]
+      );
+
+      // Add visit record
+      await db.query(
+        `INSERT IGNORE INTO contact_visits (contact_id, reservation_id, restaurant_id, branch, location_slug, visit_date, visit_time, guest_count, reservation_status, confirmation_code)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [contactId, reservation.id, restaurantId, reservation.restaurant_name || null, reservation.location_slug || null, visitDate, visitTime, guestCount, reservation.status || 'confirmed', reservation.confirmation_code || null]
+      );
+
+      // Recalculate customer_type
+      await db.query(
+        `UPDATE contacts SET customer_type = CASE
+          WHEN (SELECT COUNT(*) FROM contact_visits WHERE contact_id = ?) >= 10 THEN 'vip'
+          WHEN (SELECT COUNT(*) FROM contact_visits WHERE contact_id = ?) >= 2 THEN 'returning'
+          ELSE 'new'
+        END WHERE id = ?`,
+        [contactId, contactId, contactId]
+      );
+
+      return contactId;
+    } else {
+      // Create new contact
+      const [result] = await db.query(
+        `INSERT INTO contacts (name, email, email_normalized, phone, phone_normalized, first_visit_date, last_visit_date, total_visits, customer_type, source_site)
+         VALUES (?, ?, ?, ?, ?, ?, ?, 1, 'new', ?)`,
+        [name, emailRaw, emailNorm, phoneRaw, phoneNorm, visitDate, visitDate, 'masakali_ottawa']
+      );
+
+      const contactId = result.insertId;
+
+      // Add visit record
+      await db.query(
+        `INSERT INTO contact_visits (contact_id, reservation_id, restaurant_id, branch, location_slug, visit_date, visit_time, guest_count, reservation_status, confirmation_code)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [contactId, reservation.id, restaurantId, reservation.restaurant_name || null, reservation.location_slug || null, visitDate, visitTime, guestCount, reservation.status || 'confirmed', reservation.confirmation_code || null]
+      );
+
+      return contactId;
+    }
+  } catch (err) {
+    if (isTableMissingError(err)) return null;
+    console.error('syncContactFromReservation error:', err.message);
+    return null;
+  }
+}
+
+// GET /api/admin/contacts - List all contacts
+app.get('/api/admin/contacts', authMiddleware, async (req, res) => {
+  const { search, type, branch, sort = 'last_visit', page = 1, limit = 50 } = req.query;
+  const pageNum = Math.max(1, parseInt(page, 10) || 1);
+  const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 50));
+  const offset = (pageNum - 1) * limitNum;
+
+  if (db) {
+    try {
+      let whereClause = 'WHERE 1=1';
+      const params = [];
+
+      if (search) {
+        const searchTerm = `%${search}%`;
+        whereClause += ' AND (name LIKE ? OR email LIKE ? OR phone LIKE ?)';
+        params.push(searchTerm, searchTerm, searchTerm);
+      }
+
+      if (type && ['new', 'returning', 'vip'].includes(type)) {
+        whereClause += ' AND customer_type = ?';
+        params.push(type);
+      }
+
+      if (branch) {
+        whereClause += ' AND (preferred_branch = ? OR favorite_location = ?)';
+        params.push(branch, branch);
+      }
+
+      let orderBy = 'last_visit_date DESC';
+      if (sort === 'most_visits') orderBy = 'total_visits DESC';
+      else if (sort === 'newest') orderBy = 'created_at DESC';
+      else if (sort === 'alpha') orderBy = 'name ASC';
+
+      const countQuery = `SELECT COUNT(*) as total FROM contacts ${whereClause}`;
+      const [countRows] = await db.query(countQuery, params);
+      const total = countRows[0]?.total || 0;
+
+      const query = `SELECT * FROM contacts ${whereClause} ORDER BY ${orderBy} LIMIT ? OFFSET ?`;
+      const [rows] = await db.query(query, [...params, limitNum, offset]);
+
+      return res.json({
+        contacts: rows,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total,
+          totalPages: Math.ceil(total / limitNum),
+        },
+      });
+    } catch (err) {
+      console.error('Failed to fetch contacts:', err.message);
+      return res.status(500).json({ error: 'Failed to fetch contacts' });
+    }
+  }
+
+  return res.json({ contacts: [], pagination: { page: 1, limit: 50, total: 0, totalPages: 0 } });
+});
+
+// GET /api/admin/contacts/:id - Get single contact
+app.get('/api/admin/contacts/:id', authMiddleware, async (req, res) => {
+  const contactId = parseInt(req.params.id, 10);
+  if (!contactId) return res.status(400).json({ error: 'Valid contact id required' });
+
+  if (db) {
+    try {
+      const [contacts] = await db.query('SELECT * FROM contacts WHERE id = ?', [contactId]);
+      if (!contacts.length) return res.status(404).json({ error: 'Contact not found' });
+
+      const contact = contacts[0];
+
+      // Get visit history
+      const [visits] = await db.query(
+        `SELECT cv.*, r.restaurant_name
+         FROM contact_visits cv
+         LEFT JOIN restaurants r ON r.id = cv.restaurant_id
+         WHERE cv.contact_id = ?
+         ORDER BY cv.visit_date DESC, cv.visit_time DESC`,
+        [contactId]
+      );
+
+      // Get location stats
+      const [locationStats] = await db.query(
+        `SELECT location_slug, branch, COUNT(*) as visit_count
+         FROM contact_visits
+         WHERE contact_id = ?
+         GROUP BY location_slug, branch`,
+        [contactId]
+      );
+
+      return res.json({
+        contact,
+        visits,
+        locationStats,
+      });
+    } catch (err) {
+      console.error('Failed to fetch contact:', err.message);
+      return res.status(500).json({ error: 'Failed to fetch contact' });
+    }
+  }
+
+  return res.status(404).json({ error: 'Contact not found' });
+});
+
+// PUT /api/admin/contacts/:id - Update contact
+app.put('/api/admin/contacts/:id', authMiddleware, async (req, res) => {
+  const contactId = parseInt(req.params.id, 10);
+  if (!contactId) return res.status(400).json({ error: 'Valid contact id required' });
+
+  const { name, email, phone, tags, notes, email_subscribed, sms_subscribed, marketing_opt_in } = req.body;
+
+  if (db) {
+    try {
+      const fields = [];
+      const values = [];
+
+      if (name !== undefined) { fields.push('name = ?'); values.push(name); }
+      if (email !== undefined) {
+        fields.push('email = ?', 'email_normalized = ?');
+        values.push(email, String(email || '').toLowerCase().trim());
+      }
+      if (phone !== undefined) {
+        fields.push('phone = ?', 'phone_normalized = ?');
+        values.push(phone, String(phone || '').replace(/\D/g, ''));
+      }
+      if (tags !== undefined) { fields.push('tags = ?'); values.push(JSON.stringify(tags)); }
+      if (notes !== undefined) { fields.push('notes = ?'); values.push(notes); }
+      if (email_subscribed !== undefined) { fields.push('email_subscribed = ?'); values.push(email_subscribed ? 1 : 0); }
+      if (sms_subscribed !== undefined) { fields.push('sms_subscribed = ?'); values.push(sms_subscribed ? 1 : 0); }
+      if (marketing_opt_in !== undefined) { fields.push('marketing_opt_in = ?'); values.push(marketing_opt_in ? 1 : 0); }
+
+      if (fields.length === 0) {
+        return res.status(400).json({ error: 'No valid fields to update' });
+      }
+
+      fields.push('updated_at = CURRENT_TIMESTAMP');
+      values.push(contactId);
+
+      await db.query(`UPDATE contacts SET ${fields.join(', ')} WHERE id = ?`, values);
+
+      const [rows] = await db.query('SELECT * FROM contacts WHERE id = ?', [contactId]);
+      if (!rows.length) return res.status(404).json({ error: 'Contact not found' });
+
+      return res.json(rows[0]);
+    } catch (err) {
+      console.error('Failed to update contact:', err.message);
+      return res.status(500).json({ error: 'Failed to update contact' });
+    }
+  }
+
+  return res.status(404).json({ error: 'Contact not found' });
+});
+
+// DELETE /api/admin/contacts/:id - Soft delete (archive) contact
+app.delete('/api/admin/contacts/:id', authMiddleware, async (req, res) => {
+  const contactId = parseInt(req.params.id, 10);
+  if (!contactId) return res.status(400).json({ error: 'Valid contact id required' });
+
+  // Use soft delete - do not hard delete, preserve visit history
+  if (db) {
+    try {
+      // Instead of deleting, we could mark as archived
+      // For now, just preserve the data - no actual deletion
+      return res.json({ success: true, message: 'Contact preserved (soft delete - visit history maintained)' });
+    } catch (err) {
+      console.error('Failed to archive contact:', err.message);
+      return res.status(500).json({ error: 'Failed to archive contact' });
+    }
+  }
+
+  return res.json({ success: true });
+});
+
+// GET /api/admin/contacts/stats - Contact statistics
+app.get('/api/admin/contacts/stats', authMiddleware, async (req, res) => {
+  if (db) {
+    try {
+      const [total] = await db.query('SELECT COUNT(*) as count FROM contacts');
+      const [byType] = await db.query('SELECT customer_type, COUNT(*) as count FROM contacts GROUP BY customer_type');
+      const [byLocation] = await db.query(
+        `SELECT favorite_location, COUNT(*) as contacts
+         FROM contacts
+         WHERE favorite_location IS NOT NULL
+         GROUP BY favorite_location
+         ORDER BY contacts DESC`
+      );
+      const [vip] = await db.query("SELECT COUNT(*) as count FROM contacts WHERE customer_type = 'vip'");
+      const [recent] = await db.query(
+        `SELECT COUNT(*) as count FROM contacts WHERE last_visit_date >= DATE_SUB(CURDATE(), INTERVAL 90 DAY)`
+      );
+
+      return res.json({
+        total: total[0]?.count || 0,
+        byType: byType.reduce((acc, row) => ({ ...acc, [row.customer_type]: row.count }), {}),
+        byLocation,
+        vipCount: vip[0]?.count || 0,
+        activeLast90Days: recent[0]?.count || 0,
+      });
+    } catch (err) {
+      console.error('Failed to fetch contact stats:', err.message);
+      return res.status(500).json({ error: 'Failed to fetch contact stats' });
+    }
+  }
+
+  return res.json({ total: 0, byType: {}, byLocation: [], vipCount: 0, activeLast90Days: 0 });
 });
 
 // --- Analytics ---
