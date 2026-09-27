@@ -243,7 +243,9 @@
     "viewMenu": "View Menu",
     "mainBranch": "Main Branch",
     "new": "New",
-    "callForHours": "Call for latest hours"
+    "callForHours": "Call for latest hours",
+    "noLocationsIn": "No {{country}} locations available yet.",
+    "openInMaps": "Open in Google Maps"
   },
   "manageReservations": {
     "manageReservations": "Manage Reservations",
