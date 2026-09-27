@@ -109,7 +109,7 @@ async function initDB() {
       host: process.env.DB_HOST || 'sv63.ifastnet12.org',
       user: process.env.DB_USER || 'masakali_kiran',
       password: process.env.DB_PASS || 'K143iran',
-      database: process.env.DB_NAME || 'masakali_ottawa',
+      database: process.env.DB_NAME || 'masakali_montreal',
       port: parseInt(process.env.DB_PORT || '3306', 10),
       connectTimeout: parseInt(process.env.DB_CONNECT_TIMEOUT || '8000', 10),
       waitForConnections: true,
@@ -287,7 +287,7 @@ async function initDB() {
       `);
       await db.query(
         `INSERT INTO hiring_banner_settings (id, is_enabled, banner_text, cta_text)
-         VALUES (1, 1, 'JOIN OUR TEAM: NOW HIRING ✨ Masakali Stittsville, Masakali Wellington Now Open! ✨', 'Apply Now')
+         VALUES (1, 1, 'JOIN OUR TEAM: NOW HIRING Masakali Montreal Now Open!', 'Apply Now')
          ON DUPLICATE KEY UPDATE id = id`
       );
       await db.query(`
@@ -385,10 +385,10 @@ async function initDB() {
 const mockRestaurants = [
   { id: 1, name: 'Masakali Indian Cuisine – Wellington', slug: 'wellington', brand: 'Masakali Indian Cuisine', address: '1111 Wellington St. W', city: 'Ottawa', province_state: 'Ontario', country: 'Canada', phone: '(613) 792-9777', email: 'wellington@masakali.ca', website: 'https://masakaliottawa.ca', is_active: true },
   { id: 2, name: 'Masakali Indian Cuisine – Stittsville', slug: 'stittsville', brand: 'Masakali Indian Cuisine', address: '5507 Hazeldean Rd Unit C3-1', city: 'Stittsville', province_state: 'Ontario', country: 'Canada', phone: '(613) 878-3939', email: 'stittsville@masakali.ca', website: 'https://masakaliottawa.ca', is_active: true },
-  { id: 3, name: 'Masakali Indian Cuisine – Montreal', slug: 'montreal', brand: 'Masakali Indian Cuisine', address: '1015 Sherbrooke St W', city: 'Montreal', province_state: 'Quebec', country: 'Canada', phone: '(514) 228-6777', email: 'montreal@masakali.ca', website: 'https://masakalimontreal.ca', is_active: true },
+  { id: 3, name: 'Masakali Indian Cuisine – Montreal', slug: 'montreal', brand: 'Masakali Indian Cuisine', address: '1015 Sherbrooke St W', city: 'Montreal', province_state: 'Quebec', country: 'Canada', phone: '(514) 228-6777', email: 'masakalimontreal@gmail.com', website: 'https://masakalimontreal.ca', is_active: true },
   { id: 4, name: 'RangDe Indian Cuisine', slug: 'rangde', brand: 'RangDe Indian Cuisine', address: '700 March Rd Unit H', city: 'Kanata', province_state: 'Ontario', country: 'Canada', phone: '(613) 595-0777', email: 'info@rangdeottawa.com', website: 'https://rangdeottawa.com', is_active: true },
   { id: 5, name: 'Masakali Indian Resto Bar', slug: 'restobar', brand: 'Masakali Restobar', address: '97 Clarence St.', city: 'Ottawa', province_state: 'Ontario', country: 'Canada', phone: '(613) 789-6777', email: 'info@masakalirestrobar.ca', website: 'https://masakalirestrobar.ca', is_active: true },
-  { id: 6, name: 'Masakali Indian Cuisine – California', slug: 'california', brand: 'Masakali Indian Cuisine', address: '10310 S De Anza Blvd', city: 'Cupertino', province_state: 'California', country: 'USA', phone: '', email: 'contact@masakalicalifornia.com', website: 'https://masakalicalifornia.com', is_active: true },
+  { id: 6, name: 'Masakali Indian Cuisine – California', slug: 'california', brand: 'Masakali Indian Cuisine', address: '10310 S De Anza Blvd', city: 'Cupertino', province_state: 'California', country: 'USA', phone: '(408) 352-5097', email: 'contact@masakalicalifornia.com', website: 'https://masakalicalifornia.com', is_active: true },
 ];
 
 function normalizeSpiceLevel(value) {
@@ -590,29 +590,101 @@ async function verifyTurnstileToken(token, remoteIp = '') {
   }
 }
 
-function normalizeMenuBranch(branch) {
-  const value = String(branch || '').trim().toLowerCase();
-  return value === 'wellington' ? 'wellington' : 'stittsville';
+// =====================================================
+// Montreal Menu from JSON File
+// =====================================================
+let _montrealMenuCache = null;
+let _montrealMenuCacheTime = 0;
+const MONTREAL_MENU_CACHE_TTL = 60 * 1000; // 1 minute
+
+function loadMontrealMenuFromJson() {
+  const now = Date.now();
+  if (_montrealMenuCache && (now - _montrealMenuCacheTime) < MONTREAL_MENU_CACHE_TTL) {
+    return _montrealMenuCache;
+  }
+
+  const filePath = path.join(__dirname, 'src', 'data', 'masakali_montreal_menu.json');
+  if (!fs.existsSync(filePath)) {
+    console.log('Montreal menu JSON not found at:', filePath);
+    return null;
+  }
+
+  try {
+    const raw = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    const categoriesObj = raw.categories || {};
+    const itemsArr = raw.items || [];
+
+    // Build categories array
+    const categories = Object.values(categoriesObj)
+      .filter(cat => cat.items && cat.items.length > 0)
+      .sort((a, b) => (a.sortOrder ?? 999) - (b.sortOrder ?? 999))
+      .map(cat => ({
+        id: cat.id,
+        name: cat.name,
+        slug: String(cat.name || '')
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-|-$/g, ''),
+        sort_order: cat.sortOrder ?? 0,
+        is_active: true,
+      }));
+
+    // Build a lookup: itemId -> categoryIds
+    const itemCategoryMap = {};
+    Object.values(categoriesObj).forEach(cat => {
+      (cat.items || []).forEach(itemId => {
+        if (!itemCategoryMap[itemId]) itemCategoryMap[itemId] = [];
+        itemCategoryMap[itemId].push(cat.id);
+      });
+    });
+
+    // Build items array
+    const items = [];
+    itemsArr.forEach(item => {
+      if (item.available === false) return;
+      const catIds = itemCategoryMap[item.id] || [];
+      if (catIds.length === 0) return;
+
+      const priceCents = Number(item.price || 0);
+      const priceDollars = Number.isFinite(priceCents) ? Number((priceCents / 100).toFixed(2)) : 0;
+      const firstImage = Array.isArray(item.images) && item.images.length > 0 ? item.images[0].source : null;
+
+      catIds.forEach(categoryId => {
+        const category = categoriesObj[categoryId];
+        items.push({
+          id: item.id,
+          source_id: item.id,
+          name: item.name || 'Menu Item',
+          description: item.description || '',
+          price: priceDollars,
+          image_url: firstImage,
+          images: item.images || [],
+          category_id: categoryId,
+          category_name: category ? category.name : 'Menu',
+          is_vegetarian: false,
+          spice_level: 'medium',
+          is_featured: false,
+          is_active: true,
+        });
+      });
+    });
+
+    _montrealMenuCache = { categories, items };
+    _montrealMenuCacheTime = now;
+    console.log(`✓ Montreal menu loaded from JSON: ${categories.length} categories, ${items.length} items`);
+    return _montrealMenuCache;
+  } catch (err) {
+    console.error('Failed to load Montreal menu JSON:', err.message);
+    return null;
+  }
 }
 
-function getTempMenuTableNames(branch) {
-  const normalizedBranch = normalizeMenuBranch(branch);
-  return {
-    branch: normalizedBranch,
-    categories: `temp_categories_${normalizedBranch}`,
-    categoryItems: `temp_category_items_${normalizedBranch}`,
-    items: `temp_items_${normalizedBranch}`,
-    itemImages: `temp_item_images_${normalizedBranch}`,
-  };
-}
-
-async function fetchTempMenuData(branch = 'stittsville') {
+async function fetchTempMenuData() {
   if (!db) throw new Error('Database not connected');
-  const tables = getTempMenuTableNames(branch);
 
   const [categoryRows] = await db.query(
     `SELECT id, name, sort_order
-      FROM ${tables.categories}
+      FROM temp_categories_stittsville
      ORDER BY sort_order ASC, name ASC`
   );
 
@@ -636,12 +708,12 @@ async function fetchTempMenuData(branch = 'stittsville') {
        i.description,
        i.price,
        i.available,
-      NULL AS image_type,
+       img.image_type,
        img.image_url
-        FROM ${tables.categoryItems} ci
-        JOIN ${tables.categories} c ON ci.category_id = c.id
-        JOIN ${tables.items} i ON ci.item_id = i.id
-        LEFT JOIN ${tables.itemImages} img ON img.item_id = i.id
+        FROM temp_category_items_stittsville ci
+        JOIN temp_categories_stittsville c ON ci.category_id = c.id
+        JOIN temp_items_stittsville i ON ci.item_id = i.id
+        LEFT JOIN temp_item_images_stittsville img ON img.item_id = i.id
      WHERE i.available = 1
      ORDER BY c.sort_order ASC, c.name ASC, i.name ASC`
   );
@@ -881,7 +953,7 @@ let mockOnlineOrderPopupSettings = { ...defaultOnlineOrderPopupSettings };
 let mockHiringBannerSettings = {
   id: 1,
   is_enabled: 1,
-  banner_text: 'JOIN OUR TEAM: NOW HIRING ✨ Masakali Stittsville, Masakali Wellington Now Open! ✨',
+  banner_text: 'JOIN OUR TEAM: NOW HIRING ✨ Masakali Montreal Now Open! ✨',
   cta_text: 'Apply Now',
 };
 let mockHiringApplications = [];
@@ -974,8 +1046,7 @@ function normalizeEmail(value) {
 function normalizeReservationPhone(value) {
   const digits = String(value || '').replace(/\D/g, '');
   if (!digits) return '';
-  if (digits.length === 10) return `1${digits}`;
-  if (digits.length === 11 && digits.startsWith('1')) return digits;
+  if (digits.length === 11 && digits.startsWith('1')) return digits.slice(1);
   return digits;
 }
 
@@ -1056,36 +1127,26 @@ const emailSystem = createEmailTemplateSystem({
   mockEmailNotificationSettings,
   siteConfig: {
   "brand": "Masakali Indian Cuisine",
-  "defaultRestaurantName": "Masakali Ottawa",
+  "defaultRestaurantName": "Masakali Montreal",
   "smtpHost": process.env.EMAIL_SMTP_HOST || process.env.EMAIL_HOST || "",
   "reservationUser": process.env.RESERVATION_EMAIL_USER || "",
   "reservationAdminEmail": process.env.RESERVATION_ADMIN_EMAIL || process.env.RESERVATION_EMAIL_USER || "",
   "reservationPass": process.env.RESERVATION_EMAIL_PASS || "",
   "contactUser": process.env.CONTACT_EMAIL_USER || "",
   "contactPass": process.env.CONTACT_EMAIL_PASS || "",
-  "baseUrl": "https://masakaliottawa.ca",
+  "baseUrl": "https://masakalimontreal.ca",
   "logoPath": "/logo/Masakali-Indian-Cuisine.png",
   "logoAlt": "Masakali Indian Cuisine",
   "locations": [
     {
-      "restaurant_id": 2,
-      "location_slug": "stittsville",
-      "restaurant_name": "Masakali Indian Cuisine - Stittsville",
-      "address": "5507 Hazeldean Rd Unit C3-1, Stittsville, ON",
-      "phone": "(613) 878-3939",
-      "business_hours": "Mon-Sun: 11:30 AM - 10:00 PM",
-      "online_order_url": "https://www.clover.com/online-ordering/masakali-indian-cuisine-ottawa",
+      "restaurant_id": 3,
+      "location_slug": "montreal",
+      "restaurant_name": "Masakali Indian Cuisine - Montreal",
+      "address": "1015 Sherbrooke St W, Montreal, QC H3A 1G5",
+      "phone": "(514) 228-6777",
+      "business_hours": "Mon-Sun: 12:00 PM - 10:00 PM",
+      "online_order_url": "https://www.clover.com/online-ordering/masakali-montreal",
       "sort_order": 1
-    },
-    {
-      "restaurant_id": 1,
-      "location_slug": "wellington",
-      "restaurant_name": "Masakali Indian Cuisine - Wellington",
-      "address": "1111 Wellington St. W, Ottawa, ON",
-      "phone": "(613) 792-9777",
-      "business_hours": "Mon-Sun: 11:30 AM - 10:00 PM",
-      "online_order_url": "https://www.clover.com/online-ordering/masakali-indian-cuisinew-ottawa",
-      "sort_order": 2
     }
   ]
 },
@@ -1178,6 +1239,12 @@ async function ensureHomepageContentTables() {
 }
 
 async function getAllMenuItems() {
+  // Try Montreal JSON first
+  const jsonMenu = loadMontrealMenuFromJson();
+  if (jsonMenu && jsonMenu.items.length > 0) {
+    return jsonMenu.items;
+  }
+
   if (db) {
     try {
       const [rows] = await db.query(
@@ -1192,27 +1259,12 @@ async function getAllMenuItems() {
       // In some deployments local menu tables may not exist yet.
       if (!isTableMissingError(err)) throw err;
 
-      const branches = ['stittsville', 'wellington'];
-      const combinedItems = [];
-
-      for (const branch of branches) {
-        try {
-          const tempMenu = await fetchTempMenuData(branch);
-          const normalizedItems = (tempMenu?.items || []).map((item) => {
-            const baseKey = String(item?.source_id ?? item?.id ?? '').trim();
-            return {
-              ...item,
-              menu_branch: branch,
-              source_id: branch === 'wellington' ? `wellington:${baseKey}` : baseKey,
-            };
-          });
-          combinedItems.push(...normalizedItems);
-        } catch (tempErr) {
-          if (!isTableMissingError(tempErr)) throw tempErr;
-        }
+      try {
+        const tempMenu = await fetchTempMenuData();
+        return tempMenu.items;
+      } catch (tempErr) {
+        if (!isTableMissingError(tempErr)) throw tempErr;
       }
-
-      return combinedItems;
     }
   }
 
@@ -1329,7 +1381,12 @@ app.get('/api/restaurants/:slug', async (req, res) => {
 
 // --- Menu ---
 app.get('/api/categories', async (req, res) => {
-  const branch = normalizeMenuBranch(req.query?.branch);
+  // Try Montreal JSON first
+  const jsonMenu = loadMontrealMenuFromJson();
+  if (jsonMenu && jsonMenu.categories.length > 0) {
+    return res.json(jsonMenu.categories);
+  }
+
   if (db) {
     try {
       const [rows] = await db.query('SELECT * FROM menu_categories WHERE is_active = 1 ORDER BY sort_order');
@@ -1339,7 +1396,7 @@ app.get('/api/categories', async (req, res) => {
         console.error(err);
       } else {
         try {
-          const tempMenu = await fetchTempMenuData(branch);
+          const tempMenu = await fetchTempMenuData();
           return res.json(tempMenu.categories);
         } catch (tempErr) {
           if (!isTableMissingError(tempErr)) {
@@ -1368,6 +1425,16 @@ app.get('/api/menu', async (req, res) => {
     }
   }
 
+  // Try Montreal JSON first
+  const jsonMenu = loadMontrealMenuFromJson();
+  if (jsonMenu && jsonMenu.items.length > 0) {
+    let items = [...jsonMenu.items];
+    if (category) {
+      items = items.filter((item) => String(item.category_id) === String(category));
+    }
+    return res.json(items);
+  }
+
   if (db) {
     try {
       let query = 'SELECT mi.*, mc.name as category_name FROM menu_items mi JOIN menu_categories mc ON mi.category_id = mc.id WHERE mi.is_active = 1';
@@ -1381,7 +1448,7 @@ app.get('/api/menu', async (req, res) => {
         console.error(err);
       } else {
         try {
-          const tempMenu = await fetchTempMenuData(branch);
+          const tempMenu = await fetchTempMenuData();
           let items = [...tempMenu.items];
           if (category) {
             items = items.filter((item) => String(item.category_id) === String(category));
@@ -1398,6 +1465,13 @@ app.get('/api/menu', async (req, res) => {
 });
 
 app.get('/api/menu/:id', async (req, res) => {
+  // Try Montreal JSON first
+  const jsonMenu = loadMontrealMenuFromJson();
+  if (jsonMenu) {
+    const item = jsonMenu.items.find((menuItem) => String(menuItem.id) === String(req.params.id));
+    if (item) return res.json(item);
+  }
+
   if (db) {
     try {
       const [rows] = await db.query('SELECT * FROM menu_items WHERE id = ?', [req.params.id]);
@@ -1417,7 +1491,7 @@ app.get('/api/menu/:id', async (req, res) => {
     }
   }
 
-  return res.status(503).json({ error: 'Menu data is unavailable because MySQL is not connected.' });
+  return res.status(404).json({ error: 'Menu item not found.' });
 });
 
 app.post('/api/menu', authMiddleware, async (req, res) => {
@@ -1772,8 +1846,8 @@ app.get('/api/reservation-availability', async (req, res) => {
       }
     } catch (_) {}
   } else {
-    isPaused = !!mockReservationSettings.reservations_paused;
-    tuesdayBlocked = !!mockReservationSettings.tuesday_disabled;
+    isPaused = !!mockReservationsPaused;
+    tuesdayBlocked = true;
   }
 
   const d = new Date(`${date}T00:00:00`);
@@ -2269,7 +2343,7 @@ app.post('/api/reservations', async (req, res) => {
       const createdReservation = { ...rows[0] };
       const createdRestaurant = restaurants[0] || null;
       res.json(createdReservation);
-setImmediate(() => {
+      setImmediate(() => {
         try {
           emitAdminEvent('reservation.created', { reservation: createdReservation }, createdReservation.restaurant_id);
         } catch (eventErr) {
@@ -2288,10 +2362,6 @@ setImmediate(() => {
           payload_json: { reservation_id: createdReservation.id, service_period: deriveServicePeriodFromTime(createdReservation.time) },
         }).catch((notificationErr) => {
           console.error('Reservation notification error:', notificationErr.message);
-        });
-        // Sync contact to CRM
-        void syncContactFromReservation(createdReservation).catch((syncErr) => {
-          console.error('Contact sync error:', syncErr.message);
         });
       });
       return;
@@ -3959,314 +4029,6 @@ app.delete('/api/contact/:id', authMiddleware, async (req, res) => {
     return res.json({ success: true });
   }
   return res.status(404).json({ error: 'Not found' });
-});
-
-// =====================================================
-// CRM: Contacts Management
-// =====================================================
-
-// Helper: Normalize phone for CRM (store as entered, no auto-formatting)
-function normalizeCrmPhone(value) {
-  return String(value || '').trim();
-}
-
-// Helper: Sync contact when reservation is created
-async function syncContactFromReservation(reservation) {
-  if (!db || !reservation) return null;
-
-  const name = String(reservation.name || '').trim();
-  const emailRaw = String(reservation.email || '').trim();
-  const emailNorm = emailRaw.toLowerCase();
-  const phoneRaw = String(reservation.phone || '').trim();
-  const phoneNorm = phoneRaw.replace(/\D/g, '');
-
-  if (!emailNorm && !phoneNorm) return null;
-
-  const restaurantId = Number(reservation.restaurant_id || 0);
-  const visitDate = String(reservation.date || '').trim();
-  const visitTime = String(reservation.time || '').trim();
-  const guestCount = Number(reservation.persons || 0);
-
-  try {
-    // Try to find existing contact by email first, then phone
-    let [existing] = await db.query(
-      'SELECT id FROM contacts WHERE email_normalized = ? LIMIT 1',
-      [emailNorm]
-    );
-
-    if (!existing.length && emailNorm) {
-      const [byPhone] = await db.query(
-        'SELECT id FROM contacts WHERE phone_normalized = ? AND (email_normalized IS NULL OR email_normalized = "") LIMIT 1',
-        [phoneNorm]
-      );
-      if (byPhone.length) existing = byPhone;
-    }
-
-    if (existing.length) {
-      // Update existing contact
-      const contactId = existing[0].id;
-
-      // Update visit count and dates
-      await db.query(
-        `UPDATE contacts SET
-          name = ?,
-          phone = COALESCE(?, phone),
-          phone_normalized = COALESCE(?, phone_normalized),
-          last_visit_date = ?,
-          total_visits = total_visits + 1,
-          updated_at = CURRENT_TIMESTAMP
-        WHERE id = ?`,
-        [name, phoneRaw, phoneNorm, visitDate, contactId]
-      );
-
-      // Add visit record
-      await db.query(
-        `INSERT IGNORE INTO contact_visits (contact_id, reservation_id, restaurant_id, branch, location_slug, visit_date, visit_time, guest_count, reservation_status, confirmation_code)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [contactId, reservation.id, restaurantId, reservation.restaurant_name || null, reservation.location_slug || null, visitDate, visitTime, guestCount, reservation.status || 'confirmed', reservation.confirmation_code || null]
-      );
-
-      // Recalculate customer_type
-      await db.query(
-        `UPDATE contacts SET customer_type = CASE
-          WHEN (SELECT COUNT(*) FROM contact_visits WHERE contact_id = ?) >= 10 THEN 'vip'
-          WHEN (SELECT COUNT(*) FROM contact_visits WHERE contact_id = ?) >= 2 THEN 'returning'
-          ELSE 'new'
-        END WHERE id = ?`,
-        [contactId, contactId, contactId]
-      );
-
-      return contactId;
-    } else {
-      // Create new contact
-      const [result] = await db.query(
-        `INSERT INTO contacts (name, email, email_normalized, phone, phone_normalized, first_visit_date, last_visit_date, total_visits, customer_type, source_site)
-         VALUES (?, ?, ?, ?, ?, ?, ?, 1, 'new', ?)`,
-        [name, emailRaw, emailNorm, phoneRaw, phoneNorm, visitDate, visitDate, 'masakali_ottawa']
-      );
-
-      const contactId = result.insertId;
-
-      // Add visit record
-      await db.query(
-        `INSERT INTO contact_visits (contact_id, reservation_id, restaurant_id, branch, location_slug, visit_date, visit_time, guest_count, reservation_status, confirmation_code)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [contactId, reservation.id, restaurantId, reservation.restaurant_name || null, reservation.location_slug || null, visitDate, visitTime, guestCount, reservation.status || 'confirmed', reservation.confirmation_code || null]
-      );
-
-      return contactId;
-    }
-  } catch (err) {
-    if (isTableMissingError(err)) return null;
-    console.error('syncContactFromReservation error:', err.message);
-    return null;
-  }
-}
-
-// GET /api/admin/contacts - List all contacts
-app.get('/api/admin/contacts', authMiddleware, async (req, res) => {
-  const { search, type, branch, sort = 'last_visit', page = 1, limit = 50 } = req.query;
-  const pageNum = Math.max(1, parseInt(page, 10) || 1);
-  const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 50));
-  const offset = (pageNum - 1) * limitNum;
-
-  if (db) {
-    try {
-      let whereClause = 'WHERE 1=1';
-      const params = [];
-
-      if (search) {
-        const searchTerm = `%${search}%`;
-        whereClause += ' AND (name LIKE ? OR email LIKE ? OR phone LIKE ?)';
-        params.push(searchTerm, searchTerm, searchTerm);
-      }
-
-      if (type && ['new', 'returning', 'vip'].includes(type)) {
-        whereClause += ' AND customer_type = ?';
-        params.push(type);
-      }
-
-      if (branch) {
-        whereClause += ' AND (preferred_branch = ? OR favorite_location = ?)';
-        params.push(branch, branch);
-      }
-
-      let orderBy = 'last_visit_date DESC';
-      if (sort === 'most_visits') orderBy = 'total_visits DESC';
-      else if (sort === 'newest') orderBy = 'created_at DESC';
-      else if (sort === 'alpha') orderBy = 'name ASC';
-
-      const countQuery = `SELECT COUNT(*) as total FROM contacts ${whereClause}`;
-      const [countRows] = await db.query(countQuery, params);
-      const total = countRows[0]?.total || 0;
-
-      const query = `SELECT * FROM contacts ${whereClause} ORDER BY ${orderBy} LIMIT ? OFFSET ?`;
-      const [rows] = await db.query(query, [...params, limitNum, offset]);
-
-      return res.json({
-        contacts: rows,
-        pagination: {
-          page: pageNum,
-          limit: limitNum,
-          total,
-          totalPages: Math.ceil(total / limitNum),
-        },
-      });
-    } catch (err) {
-      console.error('Failed to fetch contacts:', err.message);
-      return res.status(500).json({ error: 'Failed to fetch contacts' });
-    }
-  }
-
-  return res.json({ contacts: [], pagination: { page: 1, limit: 50, total: 0, totalPages: 0 } });
-});
-
-// GET /api/admin/contacts/:id - Get single contact
-app.get('/api/admin/contacts/:id', authMiddleware, async (req, res) => {
-  const contactId = parseInt(req.params.id, 10);
-  if (!contactId) return res.status(400).json({ error: 'Valid contact id required' });
-
-  if (db) {
-    try {
-      const [contacts] = await db.query('SELECT * FROM contacts WHERE id = ?', [contactId]);
-      if (!contacts.length) return res.status(404).json({ error: 'Contact not found' });
-
-      const contact = contacts[0];
-
-      // Get visit history
-      const [visits] = await db.query(
-        `SELECT cv.*, r.restaurant_name
-         FROM contact_visits cv
-         LEFT JOIN restaurants r ON r.id = cv.restaurant_id
-         WHERE cv.contact_id = ?
-         ORDER BY cv.visit_date DESC, cv.visit_time DESC`,
-        [contactId]
-      );
-
-      // Get location stats
-      const [locationStats] = await db.query(
-        `SELECT location_slug, branch, COUNT(*) as visit_count
-         FROM contact_visits
-         WHERE contact_id = ?
-         GROUP BY location_slug, branch`,
-        [contactId]
-      );
-
-      return res.json({
-        contact,
-        visits,
-        locationStats,
-      });
-    } catch (err) {
-      console.error('Failed to fetch contact:', err.message);
-      return res.status(500).json({ error: 'Failed to fetch contact' });
-    }
-  }
-
-  return res.status(404).json({ error: 'Contact not found' });
-});
-
-// PUT /api/admin/contacts/:id - Update contact
-app.put('/api/admin/contacts/:id', authMiddleware, async (req, res) => {
-  const contactId = parseInt(req.params.id, 10);
-  if (!contactId) return res.status(400).json({ error: 'Valid contact id required' });
-
-  const { name, email, phone, tags, notes, email_subscribed, sms_subscribed, marketing_opt_in } = req.body;
-
-  if (db) {
-    try {
-      const fields = [];
-      const values = [];
-
-      if (name !== undefined) { fields.push('name = ?'); values.push(name); }
-      if (email !== undefined) {
-        fields.push('email = ?', 'email_normalized = ?');
-        values.push(email, String(email || '').toLowerCase().trim());
-      }
-      if (phone !== undefined) {
-        fields.push('phone = ?', 'phone_normalized = ?');
-        values.push(phone, String(phone || '').replace(/\D/g, ''));
-      }
-      if (tags !== undefined) { fields.push('tags = ?'); values.push(JSON.stringify(tags)); }
-      if (notes !== undefined) { fields.push('notes = ?'); values.push(notes); }
-      if (email_subscribed !== undefined) { fields.push('email_subscribed = ?'); values.push(email_subscribed ? 1 : 0); }
-      if (sms_subscribed !== undefined) { fields.push('sms_subscribed = ?'); values.push(sms_subscribed ? 1 : 0); }
-      if (marketing_opt_in !== undefined) { fields.push('marketing_opt_in = ?'); values.push(marketing_opt_in ? 1 : 0); }
-
-      if (fields.length === 0) {
-        return res.status(400).json({ error: 'No valid fields to update' });
-      }
-
-      fields.push('updated_at = CURRENT_TIMESTAMP');
-      values.push(contactId);
-
-      await db.query(`UPDATE contacts SET ${fields.join(', ')} WHERE id = ?`, values);
-
-      const [rows] = await db.query('SELECT * FROM contacts WHERE id = ?', [contactId]);
-      if (!rows.length) return res.status(404).json({ error: 'Contact not found' });
-
-      return res.json(rows[0]);
-    } catch (err) {
-      console.error('Failed to update contact:', err.message);
-      return res.status(500).json({ error: 'Failed to update contact' });
-    }
-  }
-
-  return res.status(404).json({ error: 'Contact not found' });
-});
-
-// DELETE /api/admin/contacts/:id - Soft delete (archive) contact
-app.delete('/api/admin/contacts/:id', authMiddleware, async (req, res) => {
-  const contactId = parseInt(req.params.id, 10);
-  if (!contactId) return res.status(400).json({ error: 'Valid contact id required' });
-
-  // Use soft delete - do not hard delete, preserve visit history
-  if (db) {
-    try {
-      // Instead of deleting, we could mark as archived
-      // For now, just preserve the data - no actual deletion
-      return res.json({ success: true, message: 'Contact preserved (soft delete - visit history maintained)' });
-    } catch (err) {
-      console.error('Failed to archive contact:', err.message);
-      return res.status(500).json({ error: 'Failed to archive contact' });
-    }
-  }
-
-  return res.json({ success: true });
-});
-
-// GET /api/admin/contacts/stats - Contact statistics
-app.get('/api/admin/contacts/stats', authMiddleware, async (req, res) => {
-  if (db) {
-    try {
-      const [total] = await db.query('SELECT COUNT(*) as count FROM contacts');
-      const [byType] = await db.query('SELECT customer_type, COUNT(*) as count FROM contacts GROUP BY customer_type');
-      const [byLocation] = await db.query(
-        `SELECT favorite_location, COUNT(*) as contacts
-         FROM contacts
-         WHERE favorite_location IS NOT NULL
-         GROUP BY favorite_location
-         ORDER BY contacts DESC`
-      );
-      const [vip] = await db.query("SELECT COUNT(*) as count FROM contacts WHERE customer_type = 'vip'");
-      const [recent] = await db.query(
-        `SELECT COUNT(*) as count FROM contacts WHERE last_visit_date >= DATE_SUB(CURDATE(), INTERVAL 90 DAY)`
-      );
-
-      return res.json({
-        total: total[0]?.count || 0,
-        byType: byType.reduce((acc, row) => ({ ...acc, [row.customer_type]: row.count }), {}),
-        byLocation,
-        vipCount: vip[0]?.count || 0,
-        activeLast90Days: recent[0]?.count || 0,
-      });
-    } catch (err) {
-      console.error('Failed to fetch contact stats:', err.message);
-      return res.status(500).json({ error: 'Failed to fetch contact stats' });
-    }
-  }
-
-  return res.json({ total: 0, byType: {}, byLocation: [], vipCount: 0, activeLast90Days: 0 });
 });
 
 // --- Analytics ---
