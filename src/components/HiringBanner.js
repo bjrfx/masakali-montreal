@@ -172,6 +172,7 @@ export default function HiringBanner() {
             exit={{ y: -60, opacity: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
             className="hiring-banner"
+            style={{zIndex: 1}}
             onClick={handleBannerClick}
             role="banner"
             aria-label={t('hiringBanner.aria.banner')}
