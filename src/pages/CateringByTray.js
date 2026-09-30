@@ -524,6 +524,19 @@ export default function CateringByTray() {
     return map;
   }, [payload.items, visibleCategories]);
   const selectedLocation = payload.locations.find((loc) => String(loc.id || loc.restaurant_id || loc.location_slug) === locationId) || payload.locations[0] || {};
+  useEffect(() => {
+    const priceByCartKey = new Map();
+    payload.items.forEach((item) => {
+      (item.tray_options || []).forEach((option) => {
+        priceByCartKey.set(`${item.id}:${option.id}`, Number(option.price));
+      });
+    });
+    if (!priceByCartKey.size) return;
+    setCart((previous) => previous.map((line) => {
+      const price = priceByCartKey.get(line.cartKey);
+      return price === undefined ? line : { ...line, price };
+    }));
+  }, [payload.items]);
   const subtotal = cart.reduce((sum, line) => sum + Number(line.price) * line.quantity, 0);
   const total = subtotal + subtotal * taxRate;
 
