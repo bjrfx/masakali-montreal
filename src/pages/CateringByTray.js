@@ -839,7 +839,7 @@ export default function CateringByTray() {
                               </div>
                             </div>
                             <button onClick={() => addToCart(item)} className="btn-gold !px-5 min-[480px]:w-full md:w-auto">
-                              Add To Order
+                              Add To Quote
                             </button>
                           </div>
                         </div>
