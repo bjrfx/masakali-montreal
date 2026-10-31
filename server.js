@@ -3077,7 +3077,7 @@ app.put('/api/reservations/manage/:id', async (req, res) => {
   if (db) {
     try {
       const [existingRows] = await db.query(
-        `SELECT r.*, rest.name as restaurant_name
+        `SELECT r.*, rest.name as restaurant_name, rest.slug as restaurant_slug
          FROM reservations r
          JOIN restaurants rest ON r.restaurant_id = rest.id
          WHERE r.id = ?
@@ -3099,7 +3099,7 @@ app.put('/api/reservations/manage/:id', async (req, res) => {
       await db.query(`UPDATE reservations SET ${setClause} WHERE id = ?`, [...updateValues, id]);
 
       const [updatedRows] = await db.query(
-        `SELECT r.*, rest.name as restaurant_name
+        `SELECT r.*, rest.name as restaurant_name, rest.slug as restaurant_slug
          FROM reservations r
          JOIN restaurants rest ON r.restaurant_id = rest.id
          WHERE r.id = ?
@@ -3111,9 +3111,12 @@ app.put('/api/reservations/manage/:id', async (req, res) => {
       sendReservationUpdateEmails(existing, updated, {
         id: updated.restaurant_id,
         name: updated.restaurant_name,
+        slug: updated.restaurant_slug,
       });
 
-      return res.json(updated);
+      const reservationResponse = { ...updated };
+      delete reservationResponse.restaurant_slug;
+      return res.json(reservationResponse);
     } catch (err) {
       console.error(err);
       return res.status(500).json({ error: 'Failed to update reservation.' });
