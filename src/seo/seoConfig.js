@@ -20,6 +20,7 @@ export const siteSeo = {
   ogLocale: 'en_CA',
   htmlLang: 'en',
   cuisine: 'Indian',
+  priceCurrency: 'CAD',
   priceRange: '$$',
   email: 'masakalimontreal@gmail.com',
   servesCuisine: ['Indian', 'North Indian', 'South Indian'],
@@ -393,7 +394,7 @@ export function buildRecommendedDishesJsonLd() {
       '@id': `${absoluteUrl('/menu')}#recommended-dishes`,
       name: `${siteSeo.siteName} recommended dishes`,
       description:
-        'Signature, chef-recommended, vegetarian, customer-favourite, and must-try dishes curated from the Masakali menu. Not a sales ranking.',
+        'Signature, chef-recommended, vegetarian, customer-favourite, and must-try dishes curated from the restaurant menu. Not a sales ranking.',
       numberOfItems: dishes.length,
       itemListElement: dishes.map((dish, index) => ({
         '@type': 'ListItem',
@@ -442,7 +443,7 @@ export function buildMenuItemJsonLd(item, path) {
       item.price != null && item.price !== ''
         ? {
             '@type': 'Offer',
-            priceCurrency: 'CAD',
+            priceCurrency: siteSeo.priceCurrency || 'CAD',
             price: String(item.price),
             availability: 'https://schema.org/InStock',
           }

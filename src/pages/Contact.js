@@ -96,6 +96,12 @@ export default function Contact() {
             <div className="section-divider !mx-0" />
             <h1 className="font-display text-5xl md:text-6xl font-bold text-neutral-900 dark:text-white mt-4 mb-4">{t('contact.getIn')} <span className="text-gold-gradient">{t('contact.touch')}</span></h1>
             <p className="text-neutral-600 dark:text-neutral-400 text-lg max-w-2xl">{t('contact.heroDesc')}</p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link to={localePath('/reservations')} className="btn-gold">{t('navbar.reservations', { defaultValue: 'Reservations' })}</Link>
+              <Link to={localePath('/menu')} className="btn-outline-gold">{t('navbar.menu', { defaultValue: 'Menu' })}</Link>
+              <Link to={localePath('/locations')} className="btn-outline-gold">{t('navbar.locations', { defaultValue: 'Locations' })}</Link>
+              <Link to={localePath('/catering-by-tray')} className="btn-outline-gold">{t('navbar.catering', { defaultValue: 'Catering' })}</Link>
+            </div>
           </AnimatedSection>
         </div>
       </section>

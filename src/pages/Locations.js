@@ -12,6 +12,7 @@ import {
   buildTelHref, formatLocationAddress, formatPhoneDisplay, getCountryLocations, getDirectionsUrl,
   getLocationImageUrl, getOpeningHoursLines, getWebsiteLabel, getWebsiteUrl, isLocationNew,
 } from '../utils/locationHelpers';
+import { filterSiteLocations } from '../siteConfig';
 
 function AnimatedSection({ children, className = '', delay = 0 }) {
   const ref = useRef(null);
@@ -173,15 +174,33 @@ export default function Locations() {
       });
   }, []);
 
-  const visibleCountries = countries.filter((country) => getCountryLocations(country).length > 0);
   const allLocations = useMemo(
-    () => visibleCountries.flatMap((country) => getCountryLocations(country)),
-    [visibleCountries],
+    () => countries.flatMap((country) => getCountryLocations(country)),
+    [countries],
+  );
+  const siteLocations = useMemo(() => filterSiteLocations(allLocations), [allLocations]);
+  const siteSlugSet = useMemo(
+    () => new Set(siteLocations.map((loc) => String(loc.slug || loc.location_slug || loc.id))),
+    [siteLocations],
+  );
+  const sisterLocations = useMemo(
+    () => allLocations.filter((loc) => !siteSlugSet.has(String(loc.slug || loc.location_slug || loc.id))),
+    [allLocations, siteSlugSet],
   );
   const locationsJsonLd = useMemo(
-    () => (allLocations.length ? buildLocationsPageJsonLd(allLocations) : null),
-    [allLocations],
+    () => (siteLocations.length ? buildLocationsPageJsonLd(siteLocations) : null),
+    [siteLocations],
   );
+  const visibleSiteCountries = useMemo(() => {
+    return countries
+      .map((country) => ({
+        ...country,
+        locations: getCountryLocations(country).filter((loc) =>
+          siteSlugSet.has(String(loc.slug || loc.location_slug || loc.id))
+        ),
+      }))
+      .filter((country) => (country.locations || []).length > 0);
+  }, [countries, siteSlugSet]);
 
   const countryLabel = (name) => {
     const key = String(name || '').trim().toLowerCase();
@@ -199,7 +218,7 @@ export default function Locations() {
 
   return (
     <div className="min-h-screen pt-20 relative">
-      <Seo {...seo} jsonLd={locationsJsonLd || undefined} />
+      <Seo {...seo} jsonLd={locationsJsonLd || undefined} breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Locations', path: '/locations' }]} />
       <div className="indian-mandala-tl" />
       <div className="indian-mandala-br" />
 
@@ -238,8 +257,8 @@ export default function Locations() {
             </div>
           ) : (
             <div className="space-y-12">
-              {countries.map((country, countryIndex) => {
-                const countryLocations = getCountryLocations(country);
+              {visibleSiteCountries.map((country, countryIndex) => {
+                const countryLocations = country.locations || getCountryLocations(country);
                 return (
                   <div key={country.id || country.name}>
                     <AnimatedSection className="mb-6" delay={countryIndex * 0.05}>
@@ -257,6 +276,45 @@ export default function Locations() {
                   </div>
                 );
               })}
+              {sisterLocations.length > 0 && (
+                <AnimatedSection className="mt-4">
+                  <h2 className="font-display text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-3">
+                    Sister restaurants
+                  </h2>
+                  <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-8 max-w-2xl">
+                    Other Masakali Group restaurants. Visit each brand&apos;s website for menus and reservations.
+                  </p>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {sisterLocations.map((restaurant, i) => {
+                      const websiteUrl = getWebsiteUrl(restaurant);
+                      const directionsUrl = getDirectionsUrl(restaurant);
+                      return (
+                        <div key={restaurant.id || restaurant.slug || i} className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                          <h3 className="text-neutral-900 dark:text-white font-semibold text-lg mb-1">{restaurant.name || restaurant.brand}</h3>
+                          <p className="text-neutral-500 text-sm mb-4">{formatLocationAddress(restaurant)}</p>
+                          <div className="flex flex-wrap gap-3">
+                            {websiteUrl ? (
+                              <a href={websiteUrl} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-amber-600 dark:text-amber-400 hover:underline inline-flex items-center gap-1">
+                                Visit website <ExternalLink size={12} />
+                              </a>
+                            ) : null}
+                            {directionsUrl ? (
+                              <a href={directionsUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-neutral-500 hover:text-amber-500 inline-flex items-center gap-1">
+                                Directions
+                              </a>
+                            ) : null}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </AnimatedSection>
+              )}
+              <div className="pt-4 text-center flex flex-wrap justify-center gap-4">
+                <Link to={localePath("/reservations")} className="btn-gold">{t("locations.reserve")}</Link>
+                <Link to={localePath("/contact")} className="btn-outline-gold">{t("navbar.contact", { defaultValue: "Contact" })}</Link>
+                <Link to={localePath("/menu")} className="btn-outline-gold">{t("navbar.menu", { defaultValue: "Menu" })}</Link>
+              </div>
             </div>
           )}
         </div>

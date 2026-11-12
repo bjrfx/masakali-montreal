@@ -1,49 +1,142 @@
+# Crawl policy for search engines and AI retrieval systems.
+# Admin, reservation-management, and API routes are private.
+# Allowing a crawler does not guarantee indexing or AI citations.
+
 User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /admin/
 Disallow: /manage-reservations
+Disallow: /api
+Disallow: /api/
+Disallow: /fr/manage-reservations
+
+# Traditional search crawlers
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /manage-reservations
+Disallow: /api
+Disallow: /api/
+Disallow: /fr/manage-reservations
+
+User-agent: Googlebot-Image
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /manage-reservations
+Disallow: /api
+Disallow: /api/
+Disallow: /fr/manage-reservations
+
+User-agent: Bingbot
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /manage-reservations
+Disallow: /api
+Disallow: /api/
+Disallow: /fr/manage-reservations
+
+User-agent: DuckDuckBot
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /manage-reservations
+Disallow: /api
+Disallow: /api/
+Disallow: /fr/manage-reservations
+
+# AI search / answer-engine crawlers (retrieval; admin still disallowed)
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /manage-reservations
+Disallow: /api
+Disallow: /api/
+Disallow: /fr/manage-reservations
 
 User-agent: GPTBot
 Allow: /
 Disallow: /admin
 Disallow: /admin/
 Disallow: /manage-reservations
+Disallow: /api
+Disallow: /api/
+Disallow: /fr/manage-reservations
 
 User-agent: ChatGPT-User
 Allow: /
 Disallow: /admin
 Disallow: /admin/
 Disallow: /manage-reservations
-
-User-agent: Google-Extended
-Allow: /
-Disallow: /admin
-Disallow: /admin/
-Disallow: /manage-reservations
-
-User-agent: anthropic-ai
-Allow: /
-Disallow: /admin
-Disallow: /admin/
-Disallow: /manage-reservations
+Disallow: /api
+Disallow: /api/
+Disallow: /fr/manage-reservations
 
 User-agent: ClaudeBot
 Allow: /
 Disallow: /admin
 Disallow: /admin/
 Disallow: /manage-reservations
+Disallow: /api
+Disallow: /api/
+Disallow: /fr/manage-reservations
+
+User-agent: anthropic-ai
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /manage-reservations
+Disallow: /api
+Disallow: /api/
+Disallow: /fr/manage-reservations
 
 User-agent: PerplexityBot
 Allow: /
 Disallow: /admin
 Disallow: /admin/
 Disallow: /manage-reservations
+Disallow: /api
+Disallow: /api/
+Disallow: /fr/manage-reservations
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /manage-reservations
+Disallow: /api
+Disallow: /api/
+Disallow: /fr/manage-reservations
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /manage-reservations
+Disallow: /api
+Disallow: /api/
+Disallow: /fr/manage-reservations
 
 User-agent: Bytespider
 Allow: /
 Disallow: /admin
 Disallow: /admin/
 Disallow: /manage-reservations
+Disallow: /api
+Disallow: /api/
+Disallow: /fr/manage-reservations
+
+User-agent: CCBot
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /manage-reservations
+Disallow: /api
+Disallow: /api/
+Disallow: /fr/manage-reservations
 
 Sitemap: https://masakalimontreal.ca/sitemap.xml

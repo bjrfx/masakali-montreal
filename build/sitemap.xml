@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Static fallback only; /sitemap.xml (server) is authoritative and includes menu URLs + hreflang alternates. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://masakalimontreal.ca/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
   <url><loc>https://masakalimontreal.ca/about</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
@@ -16,6 +17,4 @@
   <url><loc>https://masakalimontreal.ca/fr/catering</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://masakalimontreal.ca/fr/catering-by-tray</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://masakalimontreal.ca/fr/contact</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://masakalimontreal.ca/llms.txt</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://masakalimontreal.ca/llms-full.txt</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>
 </urlset>

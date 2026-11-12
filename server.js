@@ -83,8 +83,33 @@ app.set('trust proxy', true);
 // =====================================================
 // SEO / AI discovery files (BEFORE express.static so they are not shadowed)
 // =====================================================
+const { applySeoShell, canEnhancePath } = require('./seoHtmlShell');
 const SEO_SITE_URL = (process.env.SITE_URL || process.env.REACT_APP_SITE_URL || 'https://masakalimontreal.ca').replace(/\/$/, '');
 const SEO_PUBLIC_PATHS = ['/', '/about', '/menu', '/locations', '/reservations', '/catering', '/catering-by-tray', '/contact', '/fr', '/fr/about', '/fr/menu', '/fr/locations', '/fr/reservations', '/fr/catering', '/fr/catering-by-tray', '/fr/contact'];
+const SEO_MARKETING_EN_PATHS = ['/', '/about', '/menu', '/locations', '/reservations', '/catering', '/catering-by-tray', '/contact'];
+
+function seoFrenchPathFromEnglish(enPath) {
+  if (enPath === '/') return '/fr';
+  return `/fr${enPath}`;
+}
+
+function escapeXmlAttr(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function sitemapHreflangAlternates(enUrl, frUrl) {
+  const en = escapeXmlAttr(enUrl);
+  const fr = escapeXmlAttr(frUrl);
+  return [
+    `    <xhtml:link rel="alternate" hreflang="en-CA" href="${en}"/>`,
+    `    <xhtml:link rel="alternate" hreflang="fr-CA" href="${fr}"/>`,
+    `    <xhtml:link rel="alternate" hreflang="x-default" href="${en}"/>`,
+  ].join('\n');
+}
 
 function slugifySeoName(text) {
   return String(text || '')
@@ -114,54 +139,146 @@ function sendPublicTextFile(res, fileName, contentType) {
 app.get('/robots.txt', (req, res) => {
   res.type('text/plain').send(
     [
+      '# Crawl policy for search engines and AI retrieval systems.',
+      '# Admin, reservation-management, and API routes are private.',
+      '# Allowing a crawler does not guarantee indexing or AI citations.',
+      '',
       'User-agent: *',
       'Allow: /',
       'Disallow: /admin',
       'Disallow: /admin/',
       'Disallow: /manage-reservations',
+      'Disallow: /api',
+      'Disallow: /api/',
+      'Disallow: /fr/manage-reservations',
       '',
-      '# AI / search crawlers (explicit allow; admin routes remain disallowed above)',
+      '# Traditional search crawlers',
+      'User-agent: Googlebot',
+      'Allow: /',
+      'Disallow: /admin',
+      'Disallow: /admin/',
+      'Disallow: /manage-reservations',
+      'Disallow: /api',
+      'Disallow: /api/',
+      'Disallow: /fr/manage-reservations',
+      '',
+      'User-agent: Googlebot-Image',
+      'Allow: /',
+      'Disallow: /admin',
+      'Disallow: /admin/',
+      'Disallow: /manage-reservations',
+      'Disallow: /api',
+      'Disallow: /api/',
+      'Disallow: /fr/manage-reservations',
+      '',
+      'User-agent: Bingbot',
+      'Allow: /',
+      'Disallow: /admin',
+      'Disallow: /admin/',
+      'Disallow: /manage-reservations',
+      'Disallow: /api',
+      'Disallow: /api/',
+      'Disallow: /fr/manage-reservations',
+      '',
+      'User-agent: DuckDuckBot',
+      'Allow: /',
+      'Disallow: /admin',
+      'Disallow: /admin/',
+      'Disallow: /manage-reservations',
+      'Disallow: /api',
+      'Disallow: /api/',
+      'Disallow: /fr/manage-reservations',
+      '',
+      '# AI search / answer-engine crawlers (retrieval; admin still disallowed)',
+      'User-agent: OAI-SearchBot',
+      'Allow: /',
+      'Disallow: /admin',
+      'Disallow: /admin/',
+      'Disallow: /manage-reservations',
+      'Disallow: /api',
+      'Disallow: /api/',
+      'Disallow: /fr/manage-reservations',
+      '',
       'User-agent: GPTBot',
       'Allow: /',
       'Disallow: /admin',
       'Disallow: /admin/',
       'Disallow: /manage-reservations',
+      'Disallow: /api',
+      'Disallow: /api/',
+      'Disallow: /fr/manage-reservations',
       '',
       'User-agent: ChatGPT-User',
       'Allow: /',
       'Disallow: /admin',
       'Disallow: /admin/',
       'Disallow: /manage-reservations',
-      '',
-      'User-agent: Google-Extended',
-      'Allow: /',
-      'Disallow: /admin',
-      'Disallow: /admin/',
-      'Disallow: /manage-reservations',
-      '',
-      'User-agent: anthropic-ai',
-      'Allow: /',
-      'Disallow: /admin',
-      'Disallow: /admin/',
-      'Disallow: /manage-reservations',
+      'Disallow: /api',
+      'Disallow: /api/',
+      'Disallow: /fr/manage-reservations',
       '',
       'User-agent: ClaudeBot',
       'Allow: /',
       'Disallow: /admin',
       'Disallow: /admin/',
       'Disallow: /manage-reservations',
+      'Disallow: /api',
+      'Disallow: /api/',
+      'Disallow: /fr/manage-reservations',
+      '',
+      'User-agent: anthropic-ai',
+      'Allow: /',
+      'Disallow: /admin',
+      'Disallow: /admin/',
+      'Disallow: /manage-reservations',
+      'Disallow: /api',
+      'Disallow: /api/',
+      'Disallow: /fr/manage-reservations',
       '',
       'User-agent: PerplexityBot',
       'Allow: /',
       'Disallow: /admin',
       'Disallow: /admin/',
       'Disallow: /manage-reservations',
+      'Disallow: /api',
+      'Disallow: /api/',
+      'Disallow: /fr/manage-reservations',
+      '',
+      'User-agent: Google-Extended',
+      'Allow: /',
+      'Disallow: /admin',
+      'Disallow: /admin/',
+      'Disallow: /manage-reservations',
+      'Disallow: /api',
+      'Disallow: /api/',
+      'Disallow: /fr/manage-reservations',
+      '',
+      'User-agent: Applebot-Extended',
+      'Allow: /',
+      'Disallow: /admin',
+      'Disallow: /admin/',
+      'Disallow: /manage-reservations',
+      'Disallow: /api',
+      'Disallow: /api/',
+      'Disallow: /fr/manage-reservations',
       '',
       'User-agent: Bytespider',
       'Allow: /',
       'Disallow: /admin',
       'Disallow: /admin/',
       'Disallow: /manage-reservations',
+      'Disallow: /api',
+      'Disallow: /api/',
+      'Disallow: /fr/manage-reservations',
+      '',
+      'User-agent: CCBot',
+      'Allow: /',
+      'Disallow: /admin',
+      'Disallow: /admin/',
+      'Disallow: /manage-reservations',
+      'Disallow: /api',
+      'Disallow: /api/',
+      'Disallow: /fr/manage-reservations',
       '',
       `Sitemap: ${SEO_SITE_URL}/sitemap.xml`,
       '',
@@ -174,37 +291,92 @@ app.get('/llms-full.txt', (req, res) => sendPublicTextFile(res, 'llms-full.txt',
 
 app.get('/sitemap.xml', async (req, res) => {
   try {
-    const urls = new Set(SEO_PUBLIC_PATHS.map((p) => `${SEO_SITE_URL}${p === '/' ? '/' : p}`));
-    urls.add(`${SEO_SITE_URL}/llms.txt`);
-    urls.add(`${SEO_SITE_URL}/llms-full.txt`);
+    // HTML indexable pages only — do not include llms.txt / llms-full.txt.
+    const entries = new Map(); // loc -> { lastmod?: string, alternates?: string }
+    const addUrl = (loc, lastmod, alternates) => {
+      if (!loc || typeof loc !== 'string') return;
+      const existing = entries.get(loc);
+      if (!existing) {
+        entries.set(loc, { ...(lastmod ? { lastmod } : {}), ...(alternates ? { alternates } : {}) });
+        return;
+      }
+      if (lastmod && (!existing.lastmod || lastmod > existing.lastmod)) {
+        existing.lastmod = lastmod;
+      }
+      if (alternates && !existing.alternates) {
+        existing.alternates = alternates;
+      }
+    };
+
+    const addMenuItemUrls = (id, name, lastmod) => {
+      if (!id || !name) return;
+      const slug = slugifySeoName(name);
+      const enLoc = `${SEO_SITE_URL}/menu/${slug}-${id}`;
+      const frLoc = `${SEO_SITE_URL}/fr/menu/${slug}-${id}`;
+      const alternates = sitemapHreflangAlternates(enLoc, frLoc);
+      addUrl(enLoc, lastmod, alternates);
+      addUrl(frLoc, lastmod, alternates);
+    };
+
+    SEO_MARKETING_EN_PATHS.forEach((p) => {
+      const enLoc = `${SEO_SITE_URL}${p === '/' ? '/' : p}`;
+      const frPath = seoFrenchPathFromEnglish(p);
+      const frLoc = `${SEO_SITE_URL}${frPath}`;
+      const alternates = sitemapHreflangAlternates(enLoc, frLoc);
+      addUrl(enLoc, undefined, alternates);
+      addUrl(frLoc, undefined, alternates);
+    });
+
     if (db) {
       try {
-        const [rows] = await db.query('SELECT id, name FROM menu_items WHERE is_available IS NULL OR is_available = 1 LIMIT 5000');
+        const [rows] = await db.query(
+          'SELECT id, name, updated_at FROM menu_items WHERE is_available IS NULL OR is_available = 1 LIMIT 5000'
+        );
         (rows || []).forEach((row) => {
-          if (!row?.id || !row?.name) return;
-          urls.add(`${SEO_SITE_URL}/menu/${slugifySeoName(row.name)}-${row.id}`);
-          urls.add(`${SEO_SITE_URL}/fr/menu/${slugifySeoName(row.name)}-${row.id}`);
+          const lastmodDate = row.updated_at ? new Date(row.updated_at) : null;
+          const lastmod = lastmodDate && !Number.isNaN(lastmodDate.getTime())
+            ? lastmodDate.toISOString().slice(0, 10)
+            : undefined;
+          addMenuItemUrls(row.id, row.name, lastmod);
         });
       } catch (err) {
-        // Menu table may be unavailable; keep static URLs only.
+        try {
+          const [rows] = await db.query('SELECT id, name FROM menu_items WHERE is_available IS NULL OR is_available = 1 LIMIT 5000');
+          (rows || []).forEach((row) => addMenuItemUrls(row.id, row.name));
+        } catch (_) { /* ignore */ }
       }
       try {
-        const [cacheRows] = await db.query('SELECT payload FROM clover_menu_cache');
+        const [cacheRows] = await db.query('SELECT payload, updated_at FROM clover_menu_cache');
         (cacheRows || []).forEach((row) => {
           try {
             const payload = JSON.parse(row.payload || '{}');
-            (payload.items || []).forEach((item) => {
-              if (!item?.id || !item?.name) return;
-              urls.add(`${SEO_SITE_URL}/menu/${slugifySeoName(item.name)}-${item.id}`);
-              urls.add(`${SEO_SITE_URL}/fr/menu/${slugifySeoName(item.name)}-${item.id}`);
-            });
+            const cacheMod = row.updated_at ? new Date(row.updated_at) : null;
+            const lastmod = cacheMod && !Number.isNaN(cacheMod.getTime())
+              ? cacheMod.toISOString().slice(0, 10)
+              : undefined;
+            (payload.items || []).forEach((item) => addMenuItemUrls(item.id, item.name, lastmod));
           } catch (_) { /* ignore bad cache rows */ }
         });
       } catch (err) {
-        // Clover cache table may not exist yet.
+        try {
+          const [cacheRows] = await db.query('SELECT payload FROM clover_menu_cache');
+          (cacheRows || []).forEach((row) => {
+            try {
+              const payload = JSON.parse(row.payload || '{}');
+              (payload.items || []).forEach((item) => addMenuItemUrls(item.id, item.name));
+            } catch (_) { /* ignore */ }
+          });
+        } catch (_) { /* ignore */ }
       }
     }
-    const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${[...urls].map((loc) => `  <url><loc>${loc}</loc><changefreq>weekly</changefreq></url>`).join('\n')}\n</urlset>\n`;
+
+    const urlXml = [...entries.entries()].map(([loc, meta]) => {
+      const lastmodTag = meta.lastmod ? `\n    <lastmod>${escapeXmlAttr(meta.lastmod)}</lastmod>` : '';
+      const alternateTags = meta.alternates ? `\n${meta.alternates}` : '';
+      const safeLoc = escapeXmlAttr(loc);
+      return `  <url>\n    <loc>${safeLoc}</loc>${lastmodTag}${alternateTags}\n    <changefreq>weekly</changefreq>\n  </url>`;
+    }).join('\n');
+    const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urlXml}\n</urlset>\n`;
     res.type('application/xml').send(body);
   } catch (err) {
     console.error('sitemap error', err);
@@ -214,6 +386,8 @@ app.get('/sitemap.xml', async (req, res) => {
 
 // Serve static files from build directory (hashed assets can be cached aggressively)
 app.use(express.static(path.join(__dirname, 'build'), {
+  // Disable directory index so `/` goes through the SEO shell catch-all (sendSpaIndex).
+  index: false,
   maxAge: '1y',
   setHeaders(res, filePath) {
     if (filePath.endsWith('.html') || filePath.endsWith('service-worker.js') || filePath.endsWith('sw.js') || filePath.endsWith('manifest.json')) {
@@ -525,8 +699,8 @@ const mockRestaurants = [
   { id: 1, name: 'Masakali Indian Cuisine – Wellington', slug: 'wellington', brand: 'Masakali Indian Cuisine', address: '1111 Wellington St. W', city: 'Ottawa', province_state: 'Ontario', country: 'Canada', phone: '(613) 792-9777', email: 'wellington@masakali.ca', website: 'https://masakaliottawa.ca', is_active: true },
   { id: 2, name: 'Masakali Indian Cuisine – Stittsville', slug: 'stittsville', brand: 'Masakali Indian Cuisine', address: '5507 Hazeldean Rd Unit C3-1', city: 'Stittsville', province_state: 'Ontario', country: 'Canada', phone: '(613) 878-3939', email: 'stittsville@masakali.ca', website: 'https://masakaliottawa.ca', is_active: true },
   { id: 3, name: 'Masakali Indian Cuisine – Montreal', slug: 'montreal', brand: 'Masakali Indian Cuisine', address: '1015 Sherbrooke St W', city: 'Montreal', province_state: 'Quebec', country: 'Canada', phone: '(514) 228-6777', email: 'masakalimontreal@gmail.com', website: 'https://masakalimontreal.ca', is_active: true },
-  { id: 4, name: 'RangDe Indian Cuisine', slug: 'rangde', brand: 'RangDe Indian Cuisine', address: '700 March Rd Unit H', city: 'Kanata', province_state: 'Ontario', country: 'Canada', phone: '(613) 595-0777', email: 'info@rangdeottawa.com', website: 'https://rangdeottawa.com', is_active: true },
-  { id: 5, name: 'Masakali Indian Resto Bar', slug: 'restobar', brand: 'Masakali Restobar', address: '97 Clarence St.', city: 'Ottawa', province_state: 'Ontario', country: 'Canada', phone: '(613) 789-6777', email: 'info@masakalirestrobar.ca', website: 'https://masakalirestrobar.ca', is_active: true },
+  { id: 4, name: 'RangDe Indian Cuisine', slug: 'rangde', brand: 'RangDe Indian Cuisine', address: '700 March Rd Unit H', city: 'Kanata', province_state: 'Ontario', country: 'Canada', phone: '(613) 595-0777', email: 'info@rangdeottawa.com', website: 'https://rangdeottawa.ca', is_active: true },
+  { id: 5, name: 'Masakali Indian Resto Bar', slug: 'restobar', brand: 'Masakali Restobar', address: '97 Clarence St.', city: 'Ottawa', province_state: 'Ontario', country: 'Canada', phone: '(613) 789-6777', email: 'info@masakalirestobar.ca', website: 'https://masakalirestobar.ca', is_active: true },
   { id: 6, name: 'Masakali Indian Cuisine – California', slug: 'california', brand: 'Masakali Indian Cuisine', address: '10310 S De Anza Blvd', city: 'Cupertino', province_state: 'California', country: 'USA', phone: '(408) 352-5097', email: 'contact@masakalicalifornia.com', website: 'https://masakalicalifornia.com', is_active: true },
 ];
 
@@ -5436,9 +5610,126 @@ try {
 
 // =====================================================
 // SPA Catch-All (must be last)
+// Known public routes → 200; unknown paths → HTTP 404 with SPA shell
+// so React Router can still render the client NotFound page.
 // =====================================================
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+const SPA_EXACT_ROUTES = new Set([
+  ...SEO_PUBLIC_PATHS,
+  '/manage-reservations',
+  '/fr/manage-reservations',
+  '/cateringbytray',
+  '/fr/cateringbytray',
+  '/admin',
+  '/admin/login',
+]);
+
+const SPA_PREFIXES = [
+  '/menu/',
+  '/fr/menu/',
+  '/admin/',
+  '/catering-by-tray/order-summary/',
+  '/fr/catering-by-tray/order-summary/',
+];
+
+
+function sendSpaIndex(res, indexHtml, pathname, statusCode = 200) {
+  try {
+    let html = fs.readFileSync(indexHtml, 'utf8');
+    if (canEnhancePath(pathname)) {
+      html = applySeoShell(html, pathname);
+    }
+    if (statusCode === 404) {
+      res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    } else if (
+      pathname === '/admin'
+      || pathname.startsWith('/admin/')
+      || pathname === '/manage-reservations'
+      || pathname === '/fr/manage-reservations'
+    ) {
+      res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    }
+    res.status(statusCode);
+    res.type('html');
+    res.setHeader('Cache-Control', 'no-cache');
+    return res.send(html);
+  } catch (err) {
+    if (statusCode === 404) {
+      res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    }
+    return res.status(statusCode).sendFile(indexHtml);
+  }
+}
+
+function sendSpaNotFound(res, indexHtml, pathname = '/') {
+  return sendSpaIndex(res, indexHtml, pathname, 404);
+}
+
+function sendPlainNotFound(res) {
+  res.status(404);
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  return res.type('text/plain').send('Not found');
+}
+
+function extractMenuItemIdFromPath(pathname) {
+  const match = String(pathname || '').match(/\/(?:fr\/)?menu\/(?:[^/]*-)?([A-Za-z0-9]+)$/);
+  return match ? match[1] : '';
+}
+
+function isKnownSpaRoute(pathname) {
+  const raw = String(pathname || '/');
+  const normalized = raw.replace(/\/+$/, '') || '/';
+  if (SPA_EXACT_ROUTES.has(raw) || SPA_EXACT_ROUTES.has(normalized)) return true;
+  return SPA_PREFIXES.some((prefix) => raw.startsWith(prefix) || normalized.startsWith(prefix));
+}
+
+async function publicMenuItemExists(itemId) {
+  if (!itemId || !db) return null;
+  try {
+    const [cacheRows] = await db.query('SELECT payload FROM clover_menu_cache');
+    for (const row of cacheRows || []) {
+      try {
+        const payload = JSON.parse(row.payload || '{}');
+        if ((payload.items || []).some((item) => String(item?.id) === String(itemId))) {
+          return true;
+        }
+      } catch (_) { /* ignore */ }
+    }
+  } catch (_) { /* cache unavailable */ }
+  try {
+    const [rows] = await db.query(
+      'SELECT id FROM menu_items WHERE CAST(id AS CHAR) = ? AND (is_available IS NULL OR is_available = 1) LIMIT 1',
+      [String(itemId)]
+    );
+    if (rows && rows.length) return true;
+  } catch (_) { /* menu_items unavailable */ }
+  return false;
+}
+
+app.get('*', async (req, res) => {
+  const indexHtml = path.join(__dirname, 'build', 'index.html');
+  const pathname = req.path || '/';
+
+  if (/\.[a-zA-Z0-9]{1,8}$/.test(pathname) && !pathname.endsWith('.html')) {
+    return sendPlainNotFound(res);
+  }
+
+  if (pathname.startsWith('/menu/') || pathname.startsWith('/fr/menu/')) {
+    const itemId = extractMenuItemIdFromPath(pathname);
+    if (!itemId) {
+      return sendSpaNotFound(res, indexHtml, pathname);
+    }
+    const exists = await publicMenuItemExists(itemId);
+    if (exists === false) {
+      return sendSpaNotFound(res, indexHtml, pathname);
+    }
+    return sendSpaIndex(res, indexHtml, pathname);
+  }
+
+  if (isKnownSpaRoute(pathname)) {
+    return sendSpaIndex(res, indexHtml, pathname);
+  }
+
+  return sendSpaNotFound(res, indexHtml, pathname);
 });
 
 // =====================================================

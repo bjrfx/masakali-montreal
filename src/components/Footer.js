@@ -13,14 +13,14 @@ const exploreLinks = [
 
 const serviceLinks = [
   { key: 'reserveTable', path: '/reservations' },
-  { key: 'cateringServices', path: '/catering' },
+  { key: 'cateringServices', path: '/catering-by-tray' },
   { key: 'contactUs', path: '/contact' },
 ];
 
 const brands = [
   { name: 'Masakali Ottawa', url: 'https://masakaliottawa.ca' },
-  { name: 'Masakali Restobar', url: 'https://masakalirestrobar.ca' },
-  { name: 'RangDe Ottawa', url: 'https://rangdeottawa.com' },
+  { name: 'Masakali Restobar', url: 'https://masakalirestobar.ca' },
+  { name: 'RangDe Ottawa', url: 'https://rangdeottawa.ca' },
   { name: 'Masakali Montreal', url: 'https://masakalimontreal.ca' },
   { name: 'Masakali California', url: 'https://masakalicalifornia.com' },
 ];
@@ -41,6 +41,7 @@ export default function Footer() {
                 src="/logo/Masakali-Indian-Cuisine.svg"
                 alt="Masakali"
                 className="h-40 w-auto"
+                width="180" height="160" decoding="async"
                 onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }}
               />
               <span className="hidden font-display text-2xl text-gold-gradient font-bold">Masakali</span>

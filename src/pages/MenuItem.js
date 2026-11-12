@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { api } from '../api';
 import Seo from '../seo/Seo';
@@ -22,7 +22,10 @@ function formatPrice(value, currency = 'CAD') {
 
 export default function MenuItem() {
   const { itemSlug } = useParams();
+  const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
+  const isFrench = pathname === '/fr' || pathname.startsWith('/fr/');
+  const localePrefix = isFrench ? '/fr' : '';
   const itemId = menuItemIdFromParam(itemSlug);
   const locationKey = searchParams.get('location') || '';
   const [data, setData] = useState(null);
@@ -62,36 +65,54 @@ export default function MenuItem() {
   }, [itemId, locationKey]);
 
   const item = data?.item;
+  const dishMissing = !loading && (!!error || !item);
+  const menuBase = `${localePrefix}/menu`.replace(/\/{2,}/g, '/') || '/menu';
   const menuBack = data?.location_key
-    ? `/menu?location=${encodeURIComponent(data.location_key)}`
-    : (locationKey ? `/menu?location=${encodeURIComponent(locationKey)}` : '/menu');
+    ? `${menuBase}?location=${encodeURIComponent(data.location_key)}`
+    : (locationKey ? `${menuBase}?location=${encodeURIComponent(locationKey)}` : menuBase);
   const path = item
-    ? `${menuItemPath(item)}${data?.location_key ? `?location=${encodeURIComponent(data.location_key)}` : ''}`
-    : `/menu/${itemSlug}`;
-  const title = item ? `${item.name} | ${siteSeo.brandShort} Menu` : `Menu Item | ${siteSeo.brandShort}`;
+    ? `${menuItemPath(item, localePrefix)}${data?.location_key ? `?location=${encodeURIComponent(data.location_key)}` : ''}`
+    : `${localePrefix}/menu/${itemSlug}`;
+  const canonicalPath = path.split('?')[0];
+  const homePath = localePrefix || '/';
+  const title = item
+    ? `${item.name} | ${siteSeo.brandShort} | ${siteSeo.areaServed}`
+    : `Menu Item | ${siteSeo.brandShort}`;
   const description = item
-    ? `${item.name}${item.description ? ` — ${item.description}` : ''} at ${siteSeo.siteName}.`
+    ? (item.description
+      ? `${item.name} — ${item.description}`.slice(0, 160)
+      : `${item.name} at ${siteSeo.siteName} in ${siteSeo.areaServed}. See the menu for current availability.`)
     : `Menu details at ${siteSeo.siteName}.`;
 
   return (
     <div className="min-h-screen bg-neutral-50 pt-20 dark:bg-dark-950">
       <Seo
-        title={title}
+        title={dishMissing ? `Dish unavailable | ${siteSeo.brandShort}` : title}
         description={description.slice(0, 160)}
-        path={path.split('?')[0]}
+        path={canonicalPath}
         image={item?.image_url || undefined}
         type="article"
+        noindex={dishMissing}
         breadcrumbs={[
-          { name: 'Home', path: '/' },
-          { name: 'Menu', path: '/menu' },
-          { name: item?.name || 'Dish', path: path.split('?')[0] },
+          { name: 'Home', path: homePath },
+          { name: 'Menu', path: menuBase },
+          { name: item?.name || 'Dish', path: canonicalPath },
         ]}
-        jsonLd={item ? buildMenuItemJsonLd(item, path.split('?')[0]) : null}
+        jsonLd={item ? buildMenuItemJsonLd(item, canonicalPath) : null}
       />
       <div className="indian-mandala-tl" />
       <div className="indian-mandala-br" />
 
       <section className="mx-auto max-w-5xl px-4 py-10">
+        <nav aria-label="Breadcrumb" className="mb-6 text-sm text-neutral-500">
+          <ol className="flex flex-wrap items-center gap-2">
+            <li><Link to={homePath} className="hover:text-amber-600 dark:hover:text-amber-400">Home</Link></li>
+            <li aria-hidden="true">/</li>
+            <li><Link to={menuBack} className="hover:text-amber-600 dark:hover:text-amber-400">Menu</Link></li>
+            <li aria-hidden="true">/</li>
+            <li className="text-neutral-800 dark:text-neutral-200">{item?.name || 'Dish'}</li>
+          </ol>
+        </nav>
         <Link to={menuBack} className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-amber-600 hover:underline dark:text-amber-400">
           <ArrowLeft size={16} /> Back to menu
         </Link>
@@ -122,20 +143,29 @@ export default function MenuItem() {
               </div>
               <div className="p-8 md:p-10">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-600 dark:text-amber-400">
-                  {item.category_name || 'Menu'}
+                  <Link
+                    to={item.category_id
+                      ? `${(menuBack || '/menu').split('#')[0].split('?')[0]}${(data?.location_key || locationKey) ? `?location=${encodeURIComponent(data?.location_key || locationKey)}` : ''}#menu-cat-${item.category_id}`
+                      : menuBack}
+                    className="hover:underline"
+                  >
+                    {item.category_name || 'Menu'}
+                  </Link>
                 </p>
                 <h1 className="mt-3 font-display text-4xl font-bold text-neutral-900 dark:text-white">{item.name}</h1>
                 {item.description ? (
                   <p className="mt-5 leading-relaxed text-neutral-600 dark:text-neutral-300">{item.description}</p>
                 ) : (
-                  <p className="mt-5 text-neutral-500">An authentic Indian dish served at {siteSeo.siteName}.</p>
+                  <p className="mt-5 text-neutral-500">Available at {siteSeo.siteName} in {siteSeo.areaServed}. Full details are listed on our menu.</p>
                 )}
                 <p className="mt-6 text-3xl font-semibold text-amber-600 dark:text-amber-400">
                   {formatPrice(item.price, data.currency)}
                 </p>
                 <div className="mt-8 flex flex-wrap gap-3">
-                  <Link to="/reservations" className="btn-gold">Reserve a table</Link>
+                  <Link to={`${localePrefix}/reservations`.replace('//', '/')} className="btn-gold">Reserve a table</Link>
                   <Link to={menuBack} className="btn-outline-gold">More dishes</Link>
+                  <Link to="/catering-by-tray" className="btn-outline-gold">Catering</Link>
+                  <Link to="/contact" className="btn-outline-gold">Contact</Link>
                 </div>
                 <p className="mt-8 text-sm text-neutral-500">
                   {data.location_name || siteSeo.siteName} · {siteSeo.areaServed}
@@ -150,7 +180,7 @@ export default function MenuItem() {
                   {data.related.map((related) => (
                     <Link
                       key={related.id}
-                      to={`${menuItemPath(related)}${data.location_key ? `?location=${encodeURIComponent(data.location_key)}` : ''}`}
+                      to={`${menuItemPath(related, localePrefix)}${data.location_key ? `?location=${encodeURIComponent(data.location_key)}` : ''}`}
                       className="group rounded-2xl border border-neutral-200 bg-white p-4 transition hover:border-amber-400 dark:border-neutral-800 dark:bg-neutral-900"
                     >
                       <div className="flex items-center justify-between gap-3">

@@ -7,8 +7,9 @@ import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import HiringBanner from './components/HiringBanner';
 import AdminLayout from './components/AdminLayout';
+import Seo from './seo/Seo';
 
-const Home = lazy(() => import('./pages/Home'));
+import Home from './pages/Home';
 const About = lazy(() => import('./pages/About'));
 const Menu = lazy(() => import('./pages/Menu'));
 const MenuItem = lazy(() => import('./pages/MenuItem'));
@@ -24,6 +25,7 @@ const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'));
 const AdminMenuManagement = lazy(() => import('./pages/admin/MenuManagement'));
 const AdminReservations = lazy(() => import('./pages/admin/ReservationManagement'));
 const AdminAnalytics = lazy(() => import('./pages/admin/Analytics'));
+const AdminSeoMonitoring = lazy(() => import('./pages/admin/SeoMonitoring'));
 const AdminCateringManagement = lazy(() => import('./pages/admin/CateringManagement'));
 const AdminCateringByTrayManagement = lazy(() => import('./pages/admin/CateringByTrayManagement'));
 const AdminContactManagement = lazy(() => import('./pages/admin/ContactManagement'));
@@ -71,8 +73,10 @@ function LanguageSync({ children, lang }) {
 function PublicLayout() {
   return (
     <>
-      <HiringBanner />
-      <Navbar />
+      <div className="site-header">
+        <HiringBanner />
+        <Navbar />
+      </div>
       <Suspense fallback={<PageFallback />}>
         <Outlet />
       </Suspense>
@@ -87,6 +91,7 @@ function NotFoundPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
+      <Seo title="Page not found | Masakali" description="The requested page could not be found." noindex />
       <div className="text-center">
         <h1 className="text-6xl font-display text-gold-gradient mb-4">404</h1>
         <p className="text-neutral-500 dark:text-neutral-400 mb-8">{t('common.pageNotFound')}</p>
@@ -196,6 +201,7 @@ function App() {
           <Route path="/admin/notifications" element={<AdminPage><AdminNotificationEmailSettings token={adminToken} /></AdminPage>} />
           <Route path="/admin/reservation-settings" element={<AdminPage><AdminReservationSettings token={adminToken} /></AdminPage>} />
           <Route path="/admin/analytics" element={<AdminPage><AdminAnalytics token={adminToken} /></AdminPage>} />
+          <Route path="/admin/seo" element={<AdminPage><AdminSeoMonitoring token={adminToken} /></AdminPage>} />
           <Route path="/admin/hiring" element={<AdminPage><AdminHiringBannerManagement token={adminToken} /></AdminPage>} />
           <Route path="/admin/smart-calendar" element={<AdminPage><AdminSmartCalendar token={adminToken} /></AdminPage>} />
 

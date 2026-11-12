@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
 import {
@@ -36,7 +36,8 @@ export default function Seo({
   faqs,
 }) {
   const location = useLocation();
-  const resolvedPath = path || location.pathname || '/';
+  const rawPath = path || location.pathname || '/';
+  const resolvedPath = String(rawPath).split('?')[0].split('#')[0] || '/';
   const isFrench = resolvedPath === '/fr' || resolvedPath.startsWith('/fr/');
   const pageTitle = title || siteSeo.defaultTitle;
   const pageDescription = description || siteSeo.defaultDescription;
@@ -48,8 +49,8 @@ export default function Seo({
     const enPath = toEnglishPath(resolvedPath);
     const frPath = toFrenchPath(resolvedPath);
     return [
-      { hreflang: 'en', href: absoluteUrl(enPath) },
-      { hreflang: 'fr', href: absoluteUrl(frPath) },
+      { hreflang: 'en-CA', href: absoluteUrl(enPath) },
+      { hreflang: 'fr-CA', href: absoluteUrl(frPath) },
       { hreflang: 'x-default', href: absoluteUrl(enPath) },
     ];
   }, [resolvedPath]);
@@ -96,7 +97,13 @@ export default function Seo({
     });
   }
 
-  return (
+  
+  useEffect(() => {
+    // Remove server-injected SEO tags so Helmet owns a single set (no duplicate canonical/JSON-LD).
+    document.querySelectorAll('[data-seo-prerender]').forEach((el) => el.remove());
+  }, []);
+
+return (
     <Helmet prioritizeSeoTags>
       <html lang={isFrench ? 'fr' : 'en'} />
       <title>{pageTitle}</title>
