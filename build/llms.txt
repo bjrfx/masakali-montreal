@@ -1,0 +1,22 @@
+# Masakali Indian Cuisine Montreal
+
+> Masakali Indian Cuisine Montreal is an Indian restaurant at 1015 Sherbrooke St W, Montreal, QC. The website offers English and French pages for menu, reservations, catering, and contact.
+
+## Contact
+- Masakali Indian Cuisine – Montreal: 1015 Sherbrooke St W, Montreal, QC H3A 1G5, CA; Phone +1-514-228-6777
+- Email: masakalimontreal@gmail.com
+- Website: https://masakalimontreal.ca
+
+## Key pages
+- [Home](https://masakalimontreal.ca/): Overview
+- [Menu](https://masakalimontreal.ca/menu): Full food menu
+- [Reservations](https://masakalimontreal.ca/reservations): Book a table
+- [Catering](https://masakalimontreal.ca/catering-by-tray): Catering by the tray
+- [Locations](https://masakalimontreal.ca/locations): Address and directions
+- [Contact](https://masakalimontreal.ca/contact): Phone and email
+- [About](https://masakalimontreal.ca/about): Restaurant story
+
+## Notes
+- Cuisine: Indian
+- Reservations and catering are available through this website
+- Do not invent prices, ratings, or unverified claims

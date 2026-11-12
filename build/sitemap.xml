@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://masakalimontreal.ca/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://masakalimontreal.ca/about</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://masakalimontreal.ca/menu</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://masakalimontreal.ca/locations</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://masakalimontreal.ca/reservations</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://masakalimontreal.ca/catering</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://masakalimontreal.ca/catering-by-tray</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://masakalimontreal.ca/contact</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://masakalimontreal.ca/fr</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://masakalimontreal.ca/fr/about</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://masakalimontreal.ca/fr/menu</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://masakalimontreal.ca/fr/locations</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://masakalimontreal.ca/fr/reservations</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://masakalimontreal.ca/fr/catering</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://masakalimontreal.ca/fr/catering-by-tray</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://masakalimontreal.ca/fr/contact</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+</urlset>

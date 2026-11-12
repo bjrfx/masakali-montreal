@@ -1,3 +1,5 @@
+import Seo from '../seo/Seo';
+import usePageSeo from '../seo/usePageSeo';
 import React, { useState, useRef } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { Users, CalendarDays, MapPin, Utensils, Check, Loader2, ArrowRight, PartyPopper, Phone } from 'lucide-react';
@@ -38,6 +40,7 @@ const packages = [
 ];
 
 export default function Catering() {
+  const seo = usePageSeo('catering');
   const { t, i18n } = useTranslation();
   const [form, setForm] = useState({ name: '', email: '', phone: '', event_date: '', guests: '', event_location: '', event_type: '', notes: '' });
   const [submitting, setSubmitting] = useState(false);
@@ -83,6 +86,7 @@ export default function Catering() {
 
   return (
     <div className="min-h-screen pt-20 relative">
+      <Seo {...seo} />
       <div className="indian-mandala-tl" /><div className="indian-mandala-br" />
       {/* Hero */}
       <section className="py-20 bg-pattern bg-indian-paisley relative overflow-hidden bg-indian-arch">

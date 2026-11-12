@@ -1,3 +1,5 @@
+import Seo from '../seo/Seo';
+import usePageSeo from '../seo/usePageSeo';
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
@@ -87,6 +89,7 @@ function shouldShowReservationTimeWarning(enabled, restrictionEnabled, selectedD
 const RESERVATION_TIME_WARNING_MESSAGE = 'Your selected reservation time is less than 1 hour from now. Please select another time, or contact the restaurant directly to make a reservation.';
 
 export default function Reservations() {
+  const seo = usePageSeo('reservations');
   const { t, i18n } = useTranslation();
   const [restaurants, setRestaurants] = useState([]);
   const [form, setForm] = useState({
@@ -247,6 +250,7 @@ const handleSubmit = async (e) => {
 
   return (
     <div className="min-h-screen pt-20 relative">
+      <Seo {...seo} />
       <div className="indian-mandala-tl" />
       <div className="indian-mandala-br" />
 

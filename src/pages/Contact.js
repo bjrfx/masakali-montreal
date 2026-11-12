@@ -1,3 +1,6 @@
+import Seo from '../seo/Seo';
+import { siteFaqs } from '../seo/seoConfig';
+import usePageSeo from '../seo/usePageSeo';
 import React, { useState, useRef } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { MapPin, Phone, Mail, Clock, Check, Loader2, ArrowRight, MessageSquare } from 'lucide-react';
@@ -24,6 +27,7 @@ const subjectKeys = [
 ];
 
 export default function Contact() {
+  const seo = usePageSeo('contact');
   const { t, i18n } = useTranslation();
   const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
   const [submitting, setSubmitting] = useState(false);
@@ -80,6 +84,7 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen pt-20 relative">
+      <Seo {...seo} faqs={siteFaqs} />
       <div className="indian-mandala-tl" /><div className="indian-mandala-br" />
 
       {/* Hero */}
@@ -202,6 +207,20 @@ export default function Contact() {
               </motion.div>
             )}
           </AnimatePresence>
+        </div>
+      </section>
+
+      <section className="py-16 bg-white dark:bg-neutral-950" aria-labelledby="faq-heading">
+        <div className="max-w-4xl mx-auto px-4">
+          <h2 id="faq-heading" className="font-display text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-8">Frequently Asked Questions</h2>
+          <div className="space-y-4">
+            {siteFaqs.map(([question, answer]) => (
+              <div key={question} className="border border-neutral-200 dark:border-neutral-800 rounded-xl p-5 bg-neutral-50 dark:bg-neutral-900/50">
+                <h3 className="text-neutral-900 dark:text-white font-semibold mb-2">{question}</h3>
+                <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed">{answer}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
     </div>

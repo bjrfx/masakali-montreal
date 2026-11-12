@@ -1,3 +1,5 @@
+import Seo from '../seo/Seo';
+import usePageSeo from '../seo/usePageSeo';
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
@@ -152,6 +154,7 @@ function LocationCard({ restaurant, delay = 0, t, localePath }) {
 }
 
 export default function Locations() {
+  const seo = usePageSeo('locations');
   const { t } = useTranslation();
   const localePath = useLocalizedPath();
   const [countries, setCountries] = useState([]);
@@ -185,6 +188,7 @@ export default function Locations() {
 
   return (
     <div className="min-h-screen pt-20 relative">
+      <Seo {...seo} />
       <div className="indian-mandala-tl" />
       <div className="indian-mandala-br" />
 
