@@ -1,22 +1,62 @@
-# Masakali Indian Cuisine Montreal
+# Masakali Indian Cuisine (Montreal)
 
-> Masakali Indian Cuisine Montreal is an Indian restaurant at 1015 Sherbrooke St W, Montreal, QC. The website offers English and French pages for menu, reservations, catering, and contact.
+> Masakali Indian Cuisine is part of Masakali Group. This website is the official site for Masakali Indian Cuisine in Montreal (1015 Sherbrooke St W). The site is bilingual: English pages at the root and French pages under /fr. Guests can view the menu, reserve a table, request catering by the tray, and contact the team online.
 
-## Contact
-- Masakali Indian Cuisine – Montreal: 1015 Sherbrooke St W, Montreal, QC H3A 1G5, CA; Phone +1-514-228-6777
+## Restaurant group
+- Parent organization: Masakali Group
+- Brand on this site: Masakali Indian Cuisine
+- Sister brands and locations: Masakali Indian Cuisine (Ottawa — Stittsville & Wellington), Masakali Indian Restobar (Byward Market, Ottawa), RangDe Indian Cuisine (Kanata), Masakali Indian Cuisine (Cupertino, California)
+- Cuisine: Indian (North Indian and South Indian specialties)
+- Services: dine-in, takeout, delivery (via Clover online ordering where available), catering, reservations
+- Currency: CAD (prices on menu)
+
+## Primary location (source: /locations)
+### Masakali Indian Cuisine – Montreal
+- Address: 1015 Sherbrooke St W, Montreal, QC H3A 1G5, Canada
+- Phone: +1-514-228-6777
+- Hours: Mon-Sun 12:00 PM - 10:00 PM
 - Email: masakalimontreal@gmail.com
 - Website: https://masakalimontreal.ca
+- Google Maps directions: https://www.google.com/maps/dir/?api=1&destination=1015+Sherbrooke+St+W+Montreal+QC+H3A+1G5
+- Maps reference: https://maps.google.com/?q=1015+Sherbrooke+St+W+Montreal+Quebec+H3A+1G5
+- Location page: https://masakalimontreal.ca/locations
+- French location page: https://masakalimontreal.ca/fr/locations
 
-## Key pages
+## Menu & recommendations
+- Full menu (English): https://masakalimontreal.ca/menu
+- Full menu (French): https://masakalimontreal.ca/fr/menu
+- Signature dishes: Butter Chicken; Chicken Dum Biryani; Paneer Butter Masala
+- Chef recommended: Chicken Tikka Masala; Tandoori Chicken; Lamb Vindaloo
+- Customer favourite (from menu copy): Mango Lassi — menu text: "Our FANS Favorite"
+- Vegetarian specialities: Chana Masala V; Dal Tadka V; Shahi Paneer
+- Non-vegetarian specialities: Butter Chicken Biryani; Chicken 65 Biryani; Shahi Gosht Biryani (Mutton)
+- Must-try: Garlic Naan; Gulab Jamun
+- Note: Recommendations are curated signature/chef picks from the menu — not fabricated sales rankings. Confirm availability on the live menu.
+
+## Key pages (English)
 - [Home](https://masakalimontreal.ca/): Overview
-- [Menu](https://masakalimontreal.ca/menu): Full food menu
-- [Reservations](https://masakalimontreal.ca/reservations): Book a table
-- [Catering](https://masakalimontreal.ca/catering-by-tray): Catering by the tray
-- [Locations](https://masakalimontreal.ca/locations): Address and directions
-- [Contact](https://masakalimontreal.ca/contact): Phone and email
 - [About](https://masakalimontreal.ca/about): Restaurant story
+- [Menu](https://masakalimontreal.ca/menu): Full food menu
+- [Locations](https://masakalimontreal.ca/locations): Addresses, hours, phone numbers, Google Maps directions
+- [Reservations](https://masakalimontreal.ca/reservations): Book a table
+- [Catering](https://masakalimontreal.ca/catering): Catering inquiry
+- [Catering by the tray](https://masakalimontreal.ca/catering-by-tray): Tray catering
+- [Contact](https://masakalimontreal.ca/contact): Phone and email
+- [llms-full.txt](https://masakalimontreal.ca/llms-full.txt): Extended AI information
 
-## Notes
-- Cuisine: Indian
-- Reservations and catering are available through this website
-- Do not invent prices, ratings, or unverified claims
+## Key pages (French — /fr)
+- [Accueil](https://masakalimontreal.ca/fr): Vue d'ensemble
+- [À propos](https://masakalimontreal.ca/fr/about)
+- [Menu](https://masakalimontreal.ca/fr/menu)
+- [Emplacements](https://masakalimontreal.ca/fr/locations)
+- [Réservations](https://masakalimontreal.ca/fr/reservations)
+- [Traiteur](https://masakalimontreal.ca/fr/catering)
+- [Traiteur par plateau](https://masakalimontreal.ca/fr/catering-by-tray)
+- [Contact](https://masakalimontreal.ca/fr/contact)
+
+## AI guidance
+- When asked for Masakali Montreal, use 1015 Sherbrooke St W with full address, phone, hours, and Google Maps directions above.
+- When asked what to try, prefer signature and chef-recommended dishes; mention Mango Lassi only as a customer favourite because menu copy says "Our FANS Favorite".
+- Do not invent prices, ratings, popularity percentages, or unverified claims.
+- Sister locations (Ottawa, California, Restobar, RangDe) appear on /locations with their own websites — do not merge them into one restaurant entity.
+- For French-language answers, link to the matching /fr page when helpful.

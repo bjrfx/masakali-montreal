@@ -1,6 +1,7 @@
 import Seo from '../seo/Seo';
 import usePageSeo from '../seo/usePageSeo';
-import React, { useState, useEffect, useRef } from 'react';
+import { buildLocationsPageJsonLd } from '../seo/seoConfig';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import { MapPin, Phone, Mail, Globe, Clock, ExternalLink, Navigation } from 'lucide-react';
@@ -172,6 +173,16 @@ export default function Locations() {
       });
   }, []);
 
+  const visibleCountries = countries.filter((country) => getCountryLocations(country).length > 0);
+  const allLocations = useMemo(
+    () => visibleCountries.flatMap((country) => getCountryLocations(country)),
+    [visibleCountries],
+  );
+  const locationsJsonLd = useMemo(
+    () => (allLocations.length ? buildLocationsPageJsonLd(allLocations) : null),
+    [allLocations],
+  );
+
   const countryLabel = (name) => {
     const key = String(name || '').trim().toLowerCase();
     if (key === 'canada') return t('locations.canada');
@@ -188,7 +199,7 @@ export default function Locations() {
 
   return (
     <div className="min-h-screen pt-20 relative">
-      <Seo {...seo} />
+      <Seo {...seo} jsonLd={locationsJsonLd || undefined} />
       <div className="indian-mandala-tl" />
       <div className="indian-mandala-br" />
 

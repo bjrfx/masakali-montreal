@@ -245,7 +245,7 @@
     "new": "Nouveau",
     "callForHours": "Appelez pour les heures d'ouverture",
     "noLocationsIn": "Aucun emplacement pour {{country}} pour le moment.",
-    "openInMaps": "Ouvrir dans Google Maps"
+    "openInMaps": "Itinéraire Google Maps"
   },
   "manageReservations": {
     "manageReservations": "Gérer les réservations",

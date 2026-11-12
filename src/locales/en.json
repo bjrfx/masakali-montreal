@@ -245,7 +245,7 @@
     "new": "New",
     "callForHours": "Call for latest hours",
     "noLocationsIn": "No {{country}} locations available yet.",
-    "openInMaps": "Open in Google Maps"
+    "openInMaps": "Google Maps directions"
   },
   "manageReservations": {
     "manageReservations": "Manage Reservations",

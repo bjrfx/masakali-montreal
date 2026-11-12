@@ -16,4 +16,6 @@
   <url><loc>https://masakalimontreal.ca/fr/catering</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://masakalimontreal.ca/fr/catering-by-tray</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://masakalimontreal.ca/fr/contact</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://masakalimontreal.ca/llms.txt</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://masakalimontreal.ca/llms-full.txt</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>
 </urlset>
